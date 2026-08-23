@@ -6,7 +6,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Divider,
   IconButton,
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
@@ -26,18 +25,27 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
   return (
     <Box
       sx={{
-        p: 1.5,
-        borderRadius: 2,
+        px: 2,
+        py: 1.5,
+        borderRadius: 4,
         backgroundColor: 'action.hover',
         display: 'flex',
         flexDirection: 'column',
-        gap: 0.4,
+        gap: 0.5,
       }}
     >
-      <Typography sx={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'text.disabled' }}>
+      <Typography
+        sx={{
+          fontSize: 11,
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '0.06em',
+          color: 'text.disabled',
+        }}
+      >
         {label}
       </Typography>
-      <Box sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>{children}</Box>
+      <Box>{children}</Box>
     </Box>
   );
 }
@@ -62,66 +70,67 @@ export function TransactionDetailsDialog({ open, requestId, onClose }: Transacti
         ),
       }}
       slotProps={{
-        backdrop: { sx: { backgroundColor: 'rgba(7, 19, 33, 0.6)', backdropFilter: 'blur(4px)' } },
+        backdrop: {
+          sx: { backgroundColor: 'rgba(7, 19, 33, 0.6)', backdropFilter: 'blur(4px)' },
+        },
         paper: {
           sx: {
-            borderRadius: 3,
+            borderRadius: 4,
             maxWidth: { xs: 'calc(100vw - 32px)', sm: 480 },
             width: '100%',
             m: 2,
             p: 0,
-            border: '1.5px solid',
-            borderColor: 'primary.main',
+            boxShadow: '0 24px 64px rgba(0,0,0,0.18)',
           },
         },
       }}
     >
-      <DialogContent sx={{ py: 2.5, px: 2.5 }}>
+      <DialogContent sx={{ py: 3, px: 3 }}>
         {/* Header */}
-        <Box display="flex" alignItems="flex-start" justifyContent="space-between" gap={1.5} mb={2}>
-          <Box display="flex" alignItems="center" gap={1.5}>
+        <Box display="flex" alignItems="flex-start" justifyContent="space-between" gap={1.5} mb={2.5}>
+          <Box display="flex" alignItems="flex-start" gap={1.5}>
             <Box
               sx={{
                 width: 44,
                 height: 44,
                 borderRadius: '50%',
-                backgroundColor: 'rgba(20, 93, 184, 0.12)',
+                backgroundColor: 'action.hover',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 20,
                 flexShrink: 0,
               }}
             >
-              🧾
+              <Box
+                component="img"
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23555'%3E%3Cpath d='M19.5 3.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2v14H3v3a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V2l-1.5 1.5zM19 19a1 1 0 0 1-2 0v-1H6v1a1 1 0 0 1-2 0v-2h15v2zm0-4H5V5h14v10z'/%3E%3C/svg%3E"
+                alt="receipt"
+                sx={{ width: 22, height: 22, opacity: 0.6 }}
+              />
             </Box>
             <Box>
-              <Typography sx={{ fontSize: 15, fontWeight: 700, color: 'text.primary', lineHeight: 1.3 }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 700, color: 'text.primary', lineHeight: 1.3 }}>
                 {t('finance.transactionDetails', 'Transaction Details')}
               </Typography>
-              {data && (
-                <Chip
-                  label={t('finance.statusRead', 'Read')}
-                  size="small"
-                  sx={{
-                    mt: 0.5,
-                    height: 20,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    backgroundColor: 'action.selected',
-                    color: 'text.secondary',
-                    borderRadius: 1,
-                  }}
-                />
-              )}
+              <Chip
+                label={t('finance.statusRead', 'Read')}
+                size="small"
+                sx={{
+                  mt: 0.5,
+                  height: 22,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  backgroundColor: 'action.selected',
+                  color: 'text.secondary',
+                  borderRadius: 1.5,
+                }}
+              />
             </Box>
           </Box>
-          <IconButton size="small" onClick={onClose} sx={{ flexShrink: 0, mt: -0.5 }}>
+          <IconButton size="small" onClick={onClose} sx={{ flexShrink: 0, mt: -0.25, color: 'text.secondary' }}>
             <Close fontSize="small" />
           </IconButton>
         </Box>
-
-        <Divider sx={{ mb: 2 }} />
 
         {/* Body */}
         {isLoading ? (
@@ -133,19 +142,34 @@ export function TransactionDetailsDialog({ open, requestId, onClose }: Transacti
             {/* Amount highlight */}
             <Box
               sx={{
-                p: 1.75,
-                borderRadius: 2,
-                backgroundColor: 'rgba(20, 93, 184, 0.06)',
-                border: '1px solid',
-                borderColor: 'divider',
+                p: 2,
+                borderRadius: 4,
+                backgroundColor: 'action.hover',
                 textAlign: 'center',
-                mb: 0.5,
+                mb: 0.25,
               }}
             >
-              <Typography sx={{ fontSize: 12, color: 'text.secondary', fontWeight: 600, mb: 0.25 }}>
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  color: 'text.secondary',
+                  fontWeight: 600,
+                  letterSpacing: '0.04em',
+                  mb: 0.5,
+                }}
+              >
                 {t('finance.requestedAmount', 'Requested Amount')}
               </Typography>
-              <Typography sx={{ fontSize: 28, fontWeight: 700, color: 'text.primary', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
+              <Typography
+                sx={{
+                  fontSize: 30,
+                  fontWeight: 800,
+                  color: 'text.primary',
+                  fontVariantNumeric: 'tabular-nums',
+                  lineHeight: 1.15,
+                  letterSpacing: '-0.02em',
+                }}
+              >
                 {formatCurrencyByCode(data.Amount, data.Currency)}
               </Typography>
             </Box>
@@ -155,30 +179,34 @@ export function TransactionDetailsDialog({ open, requestId, onClose }: Transacti
             </DetailRow>
 
             <DetailRow label={t('finance.requestType', 'Request Type')}>
-              <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{data.RequestType}</Typography>
+              <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
+                {data.RequestType}
+              </Typography>
             </DetailRow>
 
             <DetailRow label={t('finance.employeeEmail', 'Employee Email')}>
-              <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{data.EmployeeEmail}</Typography>
+              <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
+                {data.EmployeeEmail}
+              </Typography>
             </DetailRow>
 
             <DetailRow label={t('finance.reason', 'Reason')}>
-              <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{data.Reason}</Typography>
+              <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
+                {data.Reason}
+              </Typography>
             </DetailRow>
 
             {data.ManagementDecisionReason && (
               <DetailRow label={t('finance.managementDecision', 'Management Decision')}>
-                <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{data.ManagementDecisionReason}</Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
+                  {data.ManagementDecisionReason}
+                </Typography>
               </DetailRow>
             )}
 
             <DetailRow label={t('finance.date', 'Date')}>
-              <Typography sx={{ fontSize: 14, fontWeight: 500 }}>{formatDate(data.DateSubmitted)}</Typography>
-            </DetailRow>
-
-            <DetailRow label={t('finance.requestId', 'Request ID')}>
-              <Typography sx={{ fontSize: 12, fontWeight: 500, color: 'text.secondary', fontFamily: 'monospace', wordBreak: 'break-all' }}>
-                {data.RequestId}
+              <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
+                {formatDate(data.DateSubmitted)}
               </Typography>
             </DetailRow>
           </Box>
@@ -193,7 +221,15 @@ export function TransactionDetailsDialog({ open, requestId, onClose }: Transacti
             fullWidth
             variant="outlined"
             onClick={onClose}
-            sx={{ borderRadius: 99, py: 1, fontSize: 14, fontWeight: 600 }}
+            sx={{
+              borderRadius: 99,
+              py: 1.1,
+              fontSize: 14,
+              fontWeight: 600,
+              borderColor: 'divider',
+              color: 'primary.main',
+              '&:hover': { borderColor: 'primary.main', backgroundColor: 'rgba(20,93,184,0.04)' },
+            }}
           >
             {t('common.close', 'Close')}
           </Button>
