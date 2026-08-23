@@ -4,7 +4,6 @@ import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  cacheDir: 'C:/Users/clint/AppData/Local/Temp/opencode/vite-cache',
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
