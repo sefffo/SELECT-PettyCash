@@ -80,59 +80,84 @@ export function TransactionDetailsDialog({ open, requestId, onClose }: Transacti
             width: '100%',
             m: 2,
             p: 0,
+            maxHeight: 'calc(100vh - 64px)',
+            display: 'flex',
+            flexDirection: 'column',
             boxShadow: '0 24px 64px rgba(0,0,0,0.18)',
           },
         },
       }}
     >
-      <DialogContent sx={{ py: 3, px: 3 }}>
-        {/* Header */}
-        <Box display="flex" alignItems="flex-start" justifyContent="space-between" gap={1.5} mb={2.5}>
-          <Box display="flex" alignItems="flex-start" gap={1.5}>
+      {/* Sticky header — never scrolls away */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 1.5,
+          px: 3,
+          pt: 3,
+          pb: 2,
+          flexShrink: 0,
+        }}
+      >
+        <Box display="flex" alignItems="flex-start" gap={1.5}>
+          <Box
+            sx={{
+              width: 44,
+              height: 44,
+              borderRadius: '50%',
+              backgroundColor: 'action.hover',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
             <Box
-              sx={{
-                width: 44,
-                height: 44,
-                borderRadius: '50%',
-                backgroundColor: 'action.hover',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <Box
-                component="img"
-                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23555'%3E%3Cpath d='M19.5 3.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2v14H3v3a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V2l-1.5 1.5zM19 19a1 1 0 0 1-2 0v-1H6v1a1 1 0 0 1-2 0v-2h15v2zm0-4H5V5h14v10z'/%3E%3C/svg%3E"
-                alt="receipt"
-                sx={{ width: 22, height: 22, opacity: 0.6 }}
-              />
-            </Box>
-            <Box>
-              <Typography sx={{ fontSize: 16, fontWeight: 700, color: 'text.primary', lineHeight: 1.3 }}>
-                {t('finance.transactionDetails', 'Transaction Details')}
-              </Typography>
-              <Chip
-                label={t('finance.statusRead', 'Read')}
-                size="small"
-                sx={{
-                  mt: 0.5,
-                  height: 22,
-                  fontSize: 11,
-                  fontWeight: 600,
-                  backgroundColor: 'action.selected',
-                  color: 'text.secondary',
-                  borderRadius: 1.5,
-                }}
-              />
-            </Box>
+              component="img"
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23555'%3E%3Cpath d='M19.5 3.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2v14H3v3a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V2l-1.5 1.5zM19 19a1 1 0 0 1-2 0v-1H6v1a1 1 0 0 1-2 0v-2h15v2zm0-4H5V5h14v10z'/%3E%3C/svg%3E"
+              alt="receipt"
+              sx={{ width: 22, height: 22, opacity: 0.6 }}
+            />
           </Box>
-          <IconButton size="small" onClick={onClose} sx={{ flexShrink: 0, mt: -0.25, color: 'text.secondary' }}>
-            <Close fontSize="small" />
-          </IconButton>
+          <Box>
+            <Typography sx={{ fontSize: 16, fontWeight: 700, color: 'text.primary', lineHeight: 1.3 }}>
+              {t('finance.transactionDetails', 'Transaction Details')}
+            </Typography>
+            <Chip
+              label={t('finance.statusRead', 'Read')}
+              size="small"
+              sx={{
+                mt: 0.5,
+                height: 22,
+                fontSize: 11,
+                fontWeight: 600,
+                backgroundColor: 'action.selected',
+                color: 'text.secondary',
+                borderRadius: 1.5,
+              }}
+            />
+          </Box>
         </Box>
+        <IconButton size="small" onClick={onClose} sx={{ flexShrink: 0, mt: -0.25, color: 'text.secondary' }}>
+          <Close fontSize="small" />
+        </IconButton>
+      </Box>
 
-        {/* Body */}
+      {/* Scrollable body */}
+      <DialogContent
+        sx={{
+          px: 3,
+          pt: 0,
+          pb: 3,
+          overflowY: 'auto',
+          flex: 1,
+          '&::-webkit-scrollbar': { width: 4 },
+          '&::-webkit-scrollbar-track': { background: 'transparent' },
+          '&::-webkit-scrollbar-thumb': { background: 'rgba(0,0,0,0.15)', borderRadius: 4 },
+        }}
+      >
         {isLoading ? (
           <Box display="flex" justifyContent="center" alignItems="center" py={4}>
             <CircularProgress size={32} />
