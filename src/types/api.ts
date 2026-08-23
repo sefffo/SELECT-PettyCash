@@ -132,6 +132,22 @@ export interface FinanceRequestItem {
   DateSubmitted: string;
 }
 
+/**
+ * Full request details returned by `Finance/GetRequestDetails`.
+ * Shown when finance user clicks on a transaction row.
+ */
+export interface FinanceRequestDetails {
+  RequestId: string;
+  EmployeeEmail: string;
+  Amount: number;
+  Currency: string;
+  Reason: string;
+  ManagementDecisionReason: string | null;
+  Status: string;
+  RequestType: string;
+  DateSubmitted: string;
+}
+
 /** Params for the direct custody payment action `Finance/Payments/Direct`. */
 export interface DirectPaymentParams {
   EmployeeId: string;

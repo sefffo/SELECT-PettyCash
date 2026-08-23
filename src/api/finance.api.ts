@@ -2,6 +2,7 @@ import { execute } from './axios';
 import type {
   DirectPaymentParams,
   FinanceEmployeeBalance,
+  FinanceRequestDetails,
   FinanceRequestItem,
   FinanceSafeBalances,
   FinanceTransactionItem,
@@ -27,6 +28,13 @@ export function getFinanceEmployeeHistory(employeeId: string): Promise<FinanceTr
   return execute<FinanceTransactionItem[]>({
     action: 'Finance/EmployeeHistory',
     parameters: { EmployeeId: employeeId },
+  });
+}
+
+export function getFinanceRequestDetails(requestId: string): Promise<FinanceRequestDetails> {
+  return execute<FinanceRequestDetails>({
+    action: 'Finance/GetRequestDetails',
+    parameters: { RequestId: requestId },
   });
 }
 

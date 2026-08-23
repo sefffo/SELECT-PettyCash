@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useFinanceTransactions } from '@/hooks/api';
 import { FilterChips } from '@/components/feature/FilterChips';
 import { EmptyState, SkeletonLoader, AnimatedNumber } from '@/components/shared';
-import { FinanceStatusChip } from '@/components/finance/FinanceStatusChip';
+import { FinanceStatusChip, TransactionDetailsDialog } from '@/components/finance';
 import { avatarColor, initialsOf, currencyFlag } from '@/utils/avatar';
 import type { FinanceTransactionItem } from '@/types/api';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
@@ -35,6 +35,11 @@ const STATUS_FILTERS: { value: string; labelKey: string }[] = [
   { value: FINANCE_TRANSACTION_STATUSES.Completed, labelKey: 'finance.statusCompleted' },
 ];
 
+// Strip the UI "#" prefix to get the bare UUID used as RequestId
+function toRequestId(transactionNumber: string): string {
+  return transactionNumber.startsWith('#') ? transactionNumber.slice(1) : transactionNumber;
+}
+
 export default function FinanceTransactions() {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -47,6 +52,19 @@ export default function FinanceTransactions() {
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]!);
+
+  // Details dialog state
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  const handleRowClick = (tx: FinanceTransactionItem) => {
+    setSelectedRequestId(toRequestId(tx.TransactionNumber));
+    setDetailsOpen(true);
+  };
+
+  const handleDetailsClose = () => {
+    setDetailsOpen(false);
+  };
 
   const transactions: FinanceTransactionItem[] = useMemo(
     () => (data ?? []).filter((tx) => isFinanceVisibleTransactionStatus(tx.Status)),
@@ -105,6 +123,13 @@ export default function FinanceTransactions() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+      {/* Transaction Details Dialog */}
+      <TransactionDetailsDialog
+        open={detailsOpen}
+        requestId={selectedRequestId}
+        onClose={handleDetailsClose}
+      />
+
       {/* Hero banner */}
       <Box
         component={motion.div}
@@ -289,7 +314,16 @@ export default function FinanceTransactions() {
                 {paged.map((tx) => {
                   const color = avatarColor(tx.Employee);
                   return (
-                    <TableRow key={tx.TransactionNumber} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableRow
+                      key={tx.TransactionNumber}
+                      hover
+                      onClick={() => handleRowClick(tx)}
+                      sx={{
+                        cursor: 'pointer',
+                        '&:last-child td, &:last-child th': { border: 0 },
+                        '&:hover': { backgroundColor: alpha(theme.palette.primary.main, 0.04) },
+                      }}
+                    >
                       <TableCell>
                         <Box display="flex" alignItems="center" gap={1.25} minWidth={0}>
                           <Avatar sx={{ width: 32, height: 32, bgcolor: alpha(color, 0.9), fontSize: 12, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
@@ -360,7 +394,18 @@ export default function FinanceTransactions() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Box sx={{ p: 1.5, borderRadius: 3, backgroundColor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
+                  <Box
+                    onClick={() => handleRowClick(tx)}
+                    sx={{
+                      p: 1.5,
+                      borderRadius: 3,
+                      backgroundColor: 'background.paper',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      cursor: 'pointer',
+                      '&:active': { backgroundColor: alpha(theme.palette.primary.main, 0.04) },
+                    }}
+                  >
                     <Box display="flex" justifyContent="space-between" alignItems="flex-start" gap={1} mb={0.75}>
                       <Box display="flex" alignItems="center" gap={1} minWidth={0}>
                         <Avatar sx={{ width: 32, height: 32, bgcolor: alpha(color, 0.9), fontSize: 12, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
