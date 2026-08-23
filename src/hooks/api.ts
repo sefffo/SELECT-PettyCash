@@ -61,6 +61,7 @@ import {
   getFinanceAllRequests,
   getFinanceEmployeeBalances,
   getFinanceEmployeeHistory,
+  getFinanceRequestDetails,
   getFinanceSafeBalances,
   getFinanceTransactions,
   processFinanceTransaction,
@@ -97,6 +98,7 @@ export const queryKeys = {
   financeSafeBalances: ['finance', 'safe-balances'] as const,
   financeEmployeeBalances: ['finance', 'employee-balances'] as const,
   financeEmployeeHistory: ['finance', 'employee-history'] as const,
+  financeRequestDetails: ['finance', 'request-details'] as const,
 };
 
 export function useEmployeeDashboard() {
@@ -283,6 +285,14 @@ export function useFinanceEmployeeHistory(employeeId: string | null | undefined)
     queryKey: [...queryKeys.financeEmployeeHistory, employeeId] as const,
     queryFn: () => getFinanceEmployeeHistory(employeeId as string),
     enabled: !!employeeId,
+  });
+}
+
+export function useFinanceRequestDetails(requestId: string | null | undefined) {
+  return useQuery({
+    queryKey: [...queryKeys.financeRequestDetails, requestId] as const,
+    queryFn: () => getFinanceRequestDetails(requestId as string),
+    enabled: !!requestId,
   });
 }
 
