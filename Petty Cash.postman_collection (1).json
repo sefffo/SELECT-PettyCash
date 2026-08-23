@@ -1,0 +1,2793 @@
+{
+  "info": {
+    "_postman_id": "eeea9078-ba0a-414b-a188-300a4df1266d",
+    "name": "Petty Cash",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51960229",
+    "_collection_link": "https://go.postman.co/collection/51960229-eeea9078-ba0a-414b-a188-300a4df1266d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Auth/Login\",\r\n    \"Parameters\": {\r\n        \"Email\": \"yassin@company.com\",\r\n        \"Password\": \"555555\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Department",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_1bq6}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Department/Create\",\r\n    \"Parameters\": {\r\n        \"Name\": \"Markeing\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://169.58.112.181/api/execute",
+          "protocol": "http",
+          "host": [
+            "169",
+            "58",
+            "112",
+            "181"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Assign Department",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_17ey}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Admin/AssignDepartment\",\r\n    \"Parameters\": {\r\n        \"TargetUserId\": \"9afa79f4-0fd8-41d3-89fd-79f74536894d\",\r\n        \"DepartmentId\": \"30e19ad7-2851-4ccd-ae2a-6bdc91f777db\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "http://169.58.112.181/api/execute",
+          "protocol": "http",
+          "host": [
+            "169",
+            "58",
+            "112",
+            "181"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin view Departments",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_15et}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Data/Departments\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "http://169.58.112.181/api/execute",
+          "protocol": "http",
+          "host": [
+            "169",
+            "58",
+            "112",
+            "181"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create User",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_01i3}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Admin/CreateUser\",\r\n    \"Parameters\": {\r\n        \"Name\": \"Hossam\",\r\n        \"Email\": \"hossam@company.com\",\r\n        \"Password\": \"5555\",\r\n        \"Role\": \"Manager\",\r\n        \"DepartmentId\": null\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://169.58.112.181/api/execute",
+          "protocol": "http",
+          "host": [
+            "169",
+            "58",
+            "112",
+            "181"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Promote to Manager",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_17ey}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Admin/PromoteManager\",\r\n    \"Parameters\": {\r\n        \"TargetUserId\": \"2cb7a9f4-12ea-403f-8229-fdf299be67ba\",\r\n        \"Role\": \"Manager\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "http://169.58.112.181/api/execute",
+          "protocol": "http",
+          "host": [
+            "169",
+            "58",
+            "112",
+            "181"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Approve Request",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0kbd}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"PettyCash/Approve\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"401c9dbb-697a-4a01-8ac9-049194d77c47\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reject Request",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_169m}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"PettyCash/Reject\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"7f8eca89-4522-4654-a414-9a65ea88170c\",\r\n        \"RejectionReason\": \"Menna trial 1.\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "http://169.58.112.181/api/execute",
+          "protocol": "http",
+          "host": [
+            "169",
+            "58",
+            "112",
+            "181"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Manager view pending requests",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0kbd}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Data/PendingRequests\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Submit Proof of Payment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_17x3}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"PettyCash/SubmitPayment\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"9afa79f4-0fd8-41d3-89fd-79f74536894d\",\r\n        \"ReceiptUrl\": \"https://company-storage.com/receipts/rec_12345.jpg\",\r\n        \"Notes\": \"Here is the receipt for the office supplies.\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Request Review for Proof of Payment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_01z7}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"PettyCash/RequestReview\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"9afa79f4-0fd8-41d3-89fd-79f74536894d\",\r\n        \"ReviewReason\": \"The receipt is too blurry, please upload a clearer picture.\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "http://169.58.112.181/api/execute",
+          "protocol": "http",
+          "host": [
+            "169",
+            "58",
+            "112",
+            "181"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Resubmit Proof of Payment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_02ac}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"PettyCash/Resubmit\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"9afa79f4-0fd8-41d3-89fd-79f74536894d\",\r\n        \"ReceiptUrl\": \"https://company-storage.com/receipts/rec_12345_clear.jpg\",\r\n        \"Notes\": \"Uploaded a clearer version of the receipt.\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://169.58.112.181/api/execute",
+          "protocol": "http",
+          "host": [
+            "169",
+            "58",
+            "112",
+            "181"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Approve Proof of Payment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_0hpd}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"PettyCash/ApproveProof\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"9afa79f4-0fd8-41d3-89fd-79f74536894d\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "http://169.58.112.181/api/execute",
+          "protocol": "http",
+          "host": [
+            "169",
+            "58",
+            "112",
+            "181"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Employee Dashboard",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_07hf}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Dashboard/Employee\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Manager Dashboard",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0cvi}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Dashboard/Manager\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin Dashboard",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_03i1}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Dashboard/Admin\",\r\n    \"Parameters\": {}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Finance Send Approval Update Balance",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_1dqz}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/SendApprovalUpdateBalance\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"9afa79f4-0fd8-41d3-89fd-79f74536894d\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Employee Transactions",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0vp9}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Admin/GetEmployeeProfile\",\r\n    \"Parameters\": {\r\n        \"TargetUserId\": \"b990b37e-4335-40a8-9413-b061e0802237\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete User",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0u8h}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Admin/DeleteUser\",\r\n    \"Parameters\": {\r\n        \"TargetUserId\": \"b3c4126e-ef17-4ff4-9c80-21d09bd6dd27\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Edit User",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_0v84}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Admin/EditUser\",\r\n    \"Parameters\": {\r\n        \"TargetUserId\": \"b3c4126e-ef17-4ff4-9c80-21d09bd6dd27\",\r\n        \"Name\": \"Omar\",\r\n        \"Role\": \"Employee\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin Get Profile",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Admin/GetProfile\",\r\n    \"Parameters\": {\r\n        \"TargetUserId\": \"d3739c46-ee86-4c90-ba36-09f86439d2e1\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Data Departments",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_05xc}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Data/Departments\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Data Users",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0r08}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Data/Users\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Rejected",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_12im}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Manager/GetRejectedRequests\",\r\n    \"Parameters\": {}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Approved",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0khu}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Manager/GetApprovedRequests\",\r\n    \"Parameters\": {}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Pending",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0khu}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Manager/GetPendingRequests\",\r\n    \"Parameters\": {}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Manager Approving Request",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_1b1z}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Manager/UpdateRequestStatus\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"a00dfd7a-2b0c-43fb-929b-b91c62d5da27\",\r\n        \"NewStatus\": \"Approved\" \r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Employee Receives Rejection Reason",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_06np}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/GetMyRequests\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Graph",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_1d0i}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Dashboard/MonthlySpend\",\r\n    \"Parameters\": {\r\n        \"Months\": 6\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Change Status",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_06dt}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Users/ChangeStatus\",\r\n    \"Parameters\": {\r\n        \"UserId\": \"b990b37e-4335-40a8-9413-b061e0802237\",\r\n        \"Status\": \"Inactive\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Change Password",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0p56}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"User/ChangePassword\",\r\n    \"Parameters\": {\r\n        \"OldPassword\":\"6666\",\r\n        \"NewPassword\":\"5555\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin Notifications",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_0vag}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Admin/GetAllNotifications\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Manager Notifications",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_15t9}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Manager/GetNotifications\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Submit Payment updated",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_1bc8}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"PettyCash/Submit\",\r\n    \"Parameters\": {\r\n        \"Amount\": 3000,\r\n        \"CurrencyCode\": \"SAR\",\r\n        \"Reason\": \"Office supplies and printer ink\"\r\n    }\r\n}\r\n\r\n"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Employees Gets Requests",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0qu1}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/GetMyRequests\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get My Requests",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0c7m}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/GetMyRequests\",\r\n    \"Parameters\": {}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Employee Gets Notification",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_14jj}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/GetNotifications\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "first type of requests",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_1974}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"PettyCash/Submit\",\r\n    \"Parameters\": {\r\n        \"Amount\": 500,\r\n        \"Description\": \"Need cash for client lunch tomorrow\",\r\n        \"Category\": \"Meals\",\r\n        \"RequestType\": \"Advance\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Second Type Of Requests",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_19ij}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"PettyCash/Submit\",\r\n    \"Parameters\": {\r\n        \"Amount\": 120,\r\n        \"Description\": \"Bought office supplies from Target\",\r\n        \"Category\": \"Supplies\",\r\n        \"RequestType\": \"Reimbursement\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Expense Trend",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0zhy}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/ExpenseTrend\",\r\n    \"Parameters\": {\r\n        \"Months\": 6\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Budget Usage",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0j3s}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/BudgetUsage\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Top Categories",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0ojf}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/TopCategories\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Budget Summary",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_0whq}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/BudgetSummary\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Expense",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0z2f}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/AddExpense\",\r\n    \"Parameters\": {\r\n        \"Title\": \"Flight to Riyadh\",\r\n        \"Category\": \"Travel\",\r\n        \"Amount\": 1200.00,\r\n        \"Currency\": \"SAR\",\r\n        \"ExpenseDate\": \"2026-08-16\",\r\n        \"Description\": \"Round trip ticket for the quarterly meeting.\",\r\n        \"ReceiptUrl\": \"/uploads/receipts/flight_ticket.pdf\" \r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Employee sees expenses",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_05b4}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/GetExpenses\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Manager expense overview",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_198h}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Manager/ExpenseOverview\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Finance transaction",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_0lja}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/ProcessTransaction\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"d23fa3b2-da2f-4b05-b5cb-7c54f185a6eb\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Employees Sees Wallet Currencies",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0vyw}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/GetWallet\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Safe Balance",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0ajz}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/SafeBalances\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "finance sees employee balance",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0ajz}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/EmployeeBalances\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "finance sees employee requests",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0ajz}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/GetAllRequests\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "finance sees request details",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_19t9}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/GetRequestDetails\",\r\n    \"Parameters\": {\r\n        \"RequestId\": \"258e6dc1-09fb-4bbf-b31f-2e2a48ac816c\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "finance transfers money to employee",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_19t9}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/Payments/Direct\",\r\n    \"Parameters\": {\r\n        \"EmployeeId\": \"4c593e7c-ca45-479a-bd15-02355b445230\",\r\n        \"Amount\": 1500.00,\r\n        \"Currency\": \"EGP\",\r\n        \"Notes\": \"Emergency travel allowance per management override\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "finance sees transactions",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_19t9}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/Transactions\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "finance sees transaction history",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_19t9}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/Transactions\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "finance sees employee history",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_19t9}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/EmployeeHistory\",\r\n    \"Parameters\": {\r\n        \"EmployeeId\": \"46046e48-a729-40c7-8b47-63a218f0388c\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "manager direct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_033q}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Manager/DirectGrant\",\r\n    \"Parameters\": {\r\n        \"EmployeeId\": \"4c593e7c-ca45-479a-bd15-02355b445230\",\r\n        \"Amount\": 1000.00,\r\n        \"Currency\": \"EGP\",\r\n        \"Notes\": \"Manager direct grant test\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Finance Ditrct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0wha}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Finance/Payments/Direct\",\r\n    \"Parameters\": {\r\n        \"EmployeeId\": \"4c593e7c-ca45-479a-bd15-02355b445230\",\r\n        \"Amount\": 1500.00,\r\n        \"Currency\": \"EGP\",\r\n        \"Notes\": \"Direct custody payment notes\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Finance Notitfactions",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_0fmt}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/GetNotifications\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_secret_1bq6"
+    },
+    {
+      "key": "json_web_token_10qw"
+    },
+    {
+      "key": "json_web_token_0gpr"
+    },
+    {
+      "key": "auth_secret_0kbd"
+    },
+    {
+      "key": "supabase_service_role_api_key_141r"
+    },
+    {
+      "key": "auth_secret_169m"
+    },
+    {
+      "key": "supabase_service_role_api_key_17ey"
+    },
+    {
+      "key": "auth_secret_04zp"
+    },
+    {
+      "key": "json_web_token_17ey"
+    },
+    {
+      "key": "auth_secret_0rtl"
+    },
+    {
+      "key": "json_web_token_01z7"
+    },
+    {
+      "key": "supabase_service_role_api_key_17x3"
+    },
+    {
+      "key": "auth_secret_02ac"
+    },
+    {
+      "key": "supabase_service_role_api_key_0hpd"
+    },
+    {
+      "key": "supabase_service_role_api_key_15et"
+    },
+    {
+      "key": "json_web_token_0cwr"
+    },
+    {
+      "key": "auth_secret_07hf"
+    },
+    {
+      "key": "auth_secret_0hhu"
+    },
+    {
+      "key": "json_web_token_0bee"
+    },
+    {
+      "key": "supabase_service_role_api_key_1dqz"
+    },
+    {
+      "key": "auth_secret_15v6"
+    },
+    {
+      "key": "json_web_token_01i3"
+    },
+    {
+      "key": "json_web_token_0vp9",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_14e8",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0u8h",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0v84",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0wcw",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_05xc",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0r08",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0khu",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0khu",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_1b1z",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_1b22",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_06np",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_1d0i",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0x3d",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_06dt",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0p56",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0u8c",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0d0u",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0cvi",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_03i1",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_11jv",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0qu1",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_105r",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0c7m",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0x8z",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_1974",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_19ij",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0zhy",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0j3s",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0ojf",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0whq",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0z2f",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_05b4",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_198h",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0lja",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0vyw",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_1bc8",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0ajz",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0ajz",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_19t9",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_19t9",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_19t9",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_033q",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0s8i",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0wha",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_15t9",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_14jj",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0vag",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_12im",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0fmt",
+      "secret": true
+    }
+  ]
+}
