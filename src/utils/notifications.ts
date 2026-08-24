@@ -13,7 +13,9 @@ export type NotificationKind =
 const KIND_RULES: { kind: NotificationKind; keywords: string[] }[] = [
   { kind: 'approval', keywords: ['approv', 'accept', 'confirm', 'success', 'approved'] },
   { kind: 'rejection', keywords: ['reject', 'declin', 'denied', 'cancel', 'rejected'] },
-  { kind: 'payment', keywords: ['payment', 'proof', 'paid', 'transfer', 'receipt', 'payout'] },
+  // 'finance', 'transaction', 'sent', 'disburs', 'custody' added so Finance-originated
+  // notifications are always classified as payment and get the blue Payments icon.
+  { kind: 'payment', keywords: ['payment', 'proof', 'paid', 'transfer', 'receipt', 'payout', 'finance', 'transaction', 'sent', 'disburs', 'custody', 'advance'] },
   { kind: 'request', keywords: ['request', 'submit', 'created', 'new'] },
   { kind: 'budget', keywords: ['budget', 'float', 'balance', 'wallet', 'limit', 'fund'] },
   { kind: 'team', keywords: ['user', 'employee', 'department', 'team', 'member', 'manager', 'role'] },

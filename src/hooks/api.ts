@@ -321,6 +321,8 @@ export function useProcessTransaction() {
       queryClient.invalidateQueries({ queryKey: queryKeys.financeEmployeeHistory });
       queryClient.invalidateQueries({ queryKey: queryKeys.pendingRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
+      // Invalidate notifications so the employee bell badge refreshes immediately.
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
     },
   });
 }
@@ -336,6 +338,8 @@ export function useSubmitDirectPayment() {
       queryClient.invalidateQueries({ queryKey: queryKeys.financeEmployeeHistory });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
+      // Invalidate notifications so the employee bell badge refreshes immediately.
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
     },
   });
 }
@@ -356,6 +360,8 @@ export function useSubmitDirectGrant() {
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
+      // Invalidate notifications so the employee bell badge refreshes immediately.
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
     },
   });
 }
