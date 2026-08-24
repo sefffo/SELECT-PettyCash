@@ -1,4 +1,4 @@
-import type { ApiDepartment, ApiRole, ApiUser, EmployeeRequestItem, ManagerRequestItem, PendingRequest, PendingRequestStatus } from '@/types/api';
+import type { ApiDepartment, ApiRole, ApiUser, EmployeeAllRequestItem, EmployeeRequestItem, ManagerRequestItem, PendingRequest, PendingRequestStatus } from '@/types/api';
 import type { Employee, ExpenseStatus, Request, RequestStatus, RequestTypeValue, UserRole } from '@/types/vertex';
 
 export function apiRoleToUserRole(role: ApiRole): UserRole {
@@ -52,6 +52,22 @@ function mapCategoryToRequestType(category: string): RequestTypeValue {
   return 'budget';
 }
 
+/**
+ * Maps the `RequestType` field from `Employee/Requests/GetAll` to a
+ * normalized `RequestTypeValue`. Values like `"Advance"` come from the backend
+ * and differ from the free-text category strings used by older endpoints.
+ */
+function mapApiRequestType(requestType: string): RequestTypeValue {
+  const normalized = (requestType ?? '').trim().toLowerCase();
+  switch (normalized) {
+    case 'advance': return 'cash-advance';
+    case 'reimbursement': return 'budget';
+    case 'travel': return 'travel';
+    case 'purchase': return 'purchase';
+    default: return mapCategoryToRequestType(requestType);
+  }
+}
+
 export function buildRequesterNameMap(users: ApiUser[]): Record<string, string> {
   const map: Record<string, string> = {};
   for (const user of users) map[user.Id] = user.Name;
@@ -99,6 +115,27 @@ export function mapEmployeeRequestToRequest(r: EmployeeRequestItem): Request {
     status: mapPendingRequestStatus(r.Status),
     createdAt: r.SubmittedAt ?? '',
     updatedAt: r.SubmittedAt ?? '',
+  };
+}
+
+/**
+ * Maps a row from `Employee/Requests/GetAll` to the shared `Request` shape.
+ * This endpoint uses `Reason` (not `Description`) and `DateRequested` (not
+ * `SubmittedAt`), and exposes an explicit `RequestType` field.
+ */
+export function mapEmployeeAllRequestToRequest(r: EmployeeAllRequestItem): Request {
+  return {
+    id: r.RequestId,
+    employeeId: '',
+    employeeName: '',
+    requestType: mapApiRequestType(r.RequestType),
+    amount: r.Amount,
+    currency: r.Currency ?? undefined,
+    department: '',
+    reason: r.Reason ?? '',
+    status: mapPendingRequestStatus(r.Status),
+    createdAt: r.DateRequested ?? '',
+    updatedAt: r.DateRequested ?? '',
   };
 }
 
