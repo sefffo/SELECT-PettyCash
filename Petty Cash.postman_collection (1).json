@@ -1515,46 +1515,6 @@
       "response": []
     },
     {
-      "name": "Get My Requests",
-      "request": {
-        "auth": {
-          "type": "bearer",
-          "bearer": [
-            {
-              "key": "token",
-              "value": "{{json_web_token_0c7m}}",
-              "type": "string"
-            }
-          ]
-        },
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"Action\": \"Employee/GetMyRequests\",\r\n    \"Parameters\": {}\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "https://pcapi.selecteg.com/api/execute",
-          "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
       "name": "Employee Gets Notification",
       "request": {
         "auth": {
@@ -1865,47 +1825,6 @@
         "body": {
           "mode": "raw",
           "raw": "{\r\n    \"Action\": \"Employee/AddExpense\",\r\n    \"Parameters\": {\r\n        \"Title\": \"Flight to Riyadh\",\r\n        \"Category\": \"Travel\",\r\n        \"Amount\": 1200.00,\r\n        \"Currency\": \"SAR\",\r\n        \"ExpenseDate\": \"2026-08-16\",\r\n        \"Description\": \"Round trip ticket for the quarterly meeting.\",\r\n        \"ReceiptUrl\": \"/uploads/receipts/flight_ticket.pdf\" \r\n    }\r\n}"
-        },
-        "url": {
-          "raw": "https://pcapi.selecteg.com/api/execute",
-          "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Employee sees expenses",
-      "request": {
-        "auth": {
-          "type": "bearer",
-          "bearer": [
-            {
-              "key": "token",
-              "value": "{{json_web_token_05b4}}",
-              "type": "string"
-            }
-          ]
-        },
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"Action\": \"Employee/GetExpenses\",\r\n    \"Parameters\": {}\r\n}"
         },
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
@@ -2520,6 +2439,252 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Employee expense",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_0vsa}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/Expenses/Get\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "expense flow",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_09pk}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/Expenses/Submit\",\r\n    \"Parameters\": {\r\n        \"Amount\": 150.00,\r\n        \"Currency\": \"EGP\",\r\n        \"Notes\": \"Taxi receipt for client meeting\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Employee get all req",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_04z0}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Employee/Requests/GetAll\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "mark all as read",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0j3s}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"User/MarkNotificationsRead\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "mark one as read",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0j3s}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"User/MarkNotificationsRead\",\r\n    \"Parameters\": {\r\n        \"NotificationId\": \"PASTE-NOTIFICATION-ID-HERE\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "manager can see wallets",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0j3s}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Manager/Employees/Balances\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": [
+            "pcapi",
+            "selecteg",
+            "com"
+          ],
+          "path": [
+            "api",
+            "execute"
+          ]
+        }
+      },
+      "response": []
     }
   ],
   "variable": [
@@ -2787,6 +2952,22 @@
     },
     {
       "key": "supabase_service_role_api_key_0fmt",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0vsa",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0vsa",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_09pk",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_04z0",
       "secret": true
     }
   ]

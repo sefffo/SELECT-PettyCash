@@ -16,7 +16,7 @@ interface TimelineStepConfig {
   tone: TimelineTone;
 }
 
-function timelineStepConfig(status: PendingRequestStatus): TimelineStepConfig {
+function timelineStepConfig(status: PendingRequestStatus | undefined): TimelineStepConfig {
   switch (status) {
     case 'Approved':
       return { icon: <Check fontSize="small" />, tone: 'success' };
@@ -36,7 +36,7 @@ function timelineStepConfig(status: PendingRequestStatus): TimelineStepConfig {
   }
 }
 
-function statusBadgeValue(status: PendingRequestStatus): ExpenseStatus {
+function statusBadgeValue(status: PendingRequestStatus | undefined): ExpenseStatus {
   switch (status) {
     case 'Approved':
       return 'approved';

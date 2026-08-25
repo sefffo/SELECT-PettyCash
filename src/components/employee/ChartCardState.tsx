@@ -8,9 +8,11 @@ interface ChartCardStateProps {
   error: boolean;
   empty: boolean;
   onRetry?: () => void;
+  emptyTitle?: string;
+  emptyDescription?: string;
 }
 
-export function ChartCardState({ loading, error, empty, onRetry }: ChartCardStateProps) {
+export function ChartCardState({ loading, error, empty, onRetry, emptyTitle, emptyDescription }: ChartCardStateProps) {
   const { t } = useTranslation();
 
   if (loading) {
@@ -71,8 +73,8 @@ export function ChartCardState({ loading, error, empty, onRetry }: ChartCardStat
     return (
       <EmptyState
         icon="📊"
-        title={t('employee.noExpenseData')}
-        description={t('employee.noExpenseDataHint')}
+        title={emptyTitle ?? t('employee.noExpenseData')}
+        description={emptyDescription ?? t('employee.noExpenseDataHint')}
       />
     );
   }

@@ -96,7 +96,7 @@ export function mapEmployeeRequestToRequest(r: EmployeeRequestItem): Request {
     currency: r.Currency ?? undefined,
     department: '',
     reason: r.Description ?? '',
-    status: mapPendingRequestStatus(r.Status),
+    status: mapPendingRequestStatus(r.Status ?? 'Pending'),
     createdAt: r.SubmittedAt ?? '',
     updatedAt: r.SubmittedAt ?? '',
   };

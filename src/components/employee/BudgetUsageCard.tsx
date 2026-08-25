@@ -76,7 +76,7 @@ export function BudgetUsageCard() {
 
       {isLoading || isError || isEmpty ? (
         <Box sx={{ flex: 1, display: 'flex' }}>
-          <ChartCardState loading={isLoading} error={isError} empty={isEmpty} onRetry={() => void refetch()} />
+          <ChartCardState loading={isLoading} error={isError} empty={isEmpty} onRetry={() => void refetch()} emptyTitle={t('employee.noBudgetData')} emptyDescription={t('employee.noBudgetDataHint')} />
         </Box>
       ) : (
         <Box
@@ -185,7 +185,7 @@ export function BudgetUsageCard() {
               <Box sx={{ height: 6, borderRadius: 3, backgroundColor: COLORS.remaining, overflow: 'hidden' }}>
                 <Box
                   sx={{
-                    width: `${percentage}%`,
+                    width: `${percentage != null ? percentage : 0}%`,
                     height: '100%',
                     borderRadius: 3,
                     backgroundColor: COLORS.used,

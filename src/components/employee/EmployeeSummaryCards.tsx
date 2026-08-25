@@ -14,7 +14,7 @@ export function EmployeeSummaryCards() {
 
   if (isLoading) return <SkeletonLoader type="dashboard" count={2} />;
 
-  const isSettled = (status: string) => status === 'Approved' || status === 'Rejected' || status === 'Completed';
+  const isSettled = (status: string | undefined) => status === 'Approved' || status === 'Rejected' || status === 'Completed';
   const pendingCount = (requests ?? []).filter((r) => !isSettled(r.Status)).length;
   const approvedCount = (requests ?? []).filter((r) => r.Status === 'Approved').length;
 

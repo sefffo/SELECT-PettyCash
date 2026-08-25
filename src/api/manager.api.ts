@@ -1,5 +1,5 @@
 import { execute } from './axios';
-import type { ApiNotification, DirectGrantParams, ManagerExpenseOverviewPoint, ManagerRequestItem } from '@/types/api';
+import type { ApiNotification, DirectGrantParams, ManagerEmployeeBalance, ManagerExpenseOverviewPoint, ManagerRequestItem } from '@/types/api';
 
 export function getManagerPendingRequests(): Promise<ManagerRequestItem[]> {
   return execute<ManagerRequestItem[]>({ action: 'Manager/GetPendingRequests' });
@@ -19,6 +19,10 @@ export function getManagerRejectedRequests(): Promise<ManagerRequestItem[]> {
 
 export function getManagerNotifications(): Promise<ApiNotification[]> {
   return execute<ApiNotification[]>({ action: 'Manager/GetNotifications' });
+}
+
+export function getManagerEmployeeBalances(): Promise<ManagerEmployeeBalance[]> {
+  return execute<ManagerEmployeeBalance[]>({ action: 'Manager/Employees/Balances' });
 }
 
 export function submitDirectGrant(params: DirectGrantParams): Promise<null> {

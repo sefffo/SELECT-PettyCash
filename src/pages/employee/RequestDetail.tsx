@@ -34,7 +34,7 @@ export default function EmployeeRequestDetail() {
     );
   }
 
-  const canSubmitProof = !!rawRequest && isFinanceStage(rawRequest.Status);
+  const canSubmitProof = !!rawRequest && isFinanceStage(rawRequest.Status ?? '');
 
   const showToast = (message: string, severity: 'success' | 'error') => setToast({ open: true, message, severity });
 

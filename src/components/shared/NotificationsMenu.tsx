@@ -1,9 +1,9 @@
 import { useState, type ReactNode } from 'react';
-import { Badge, Box, CircularProgress, Divider, IconButton, Popover, Typography, useTheme } from '@mui/material';
+import { Badge, Box, Button, CircularProgress, Divider, IconButton, Popover, Typography, useTheme } from '@mui/material';
 import { NotificationsNoneOutlined, NotificationsOutlined } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useNotifications } from '@/hooks/api';
+import { useMarkAllNotificationsAsRead, useMarkNotificationAsRead, useNotifications } from '@/hooks/api';
 import { useUnreadNotifications } from '@/hooks/unreadNotifications';
 import { useNotificationStore } from '@/store/notificationStore';
 import { formatDate } from '@/utils/format';
@@ -33,6 +33,9 @@ export function NotificationsMenu({ trigger }: NotificationsMenuProps) {
   const [selected, setSelected] = useState<ApiNotification | null>(null);
   const { data, isLoading, isError } = useNotifications();
   const markAsRead = useNotificationStore((s) => s.markAsRead);
+  const viewedIds = useNotificationStore((s) => s.viewedIds);
+  const markOneAsRead = useMarkNotificationAsRead();
+  const markAllAsRead = useMarkAllNotificationsAsRead();
 
   const open = Boolean(anchorEl);
   const notifications = data ?? [];
@@ -40,8 +43,22 @@ export function NotificationsMenu({ trigger }: NotificationsMenuProps) {
   const badgeLabel = unreadCount > 99 ? '99+' : String(unreadCount);
 
   const handleOpenNotification = (notification: ApiNotification) => {
-    markAsRead(getNotificationKey(notification));
     setSelected(notification);
+    const key = getNotificationKey(notification);
+    if (isNotificationRead(notification) || viewedIds.includes(key)) return;
+    markAsRead(key);
+    const notificationId = notification.Id ?? notification.NotificationId;
+    if (notificationId) {
+      markOneAsRead.mutate(notificationId);
+    }
+  };
+
+  const handleMarkAllRead = () => {
+    if (markAllAsRead.isPending || unreadCount === 0) return;
+    for (const notification of notifications) {
+      markAsRead(getNotificationKey(notification));
+    }
+    markAllAsRead.mutate();
   };
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
@@ -115,20 +132,38 @@ export function NotificationsMenu({ trigger }: NotificationsMenuProps) {
             {t('notification.title')}
           </Typography>
           {unreadCount > 0 && (
-            <Box
-              sx={{
-                backgroundColor: 'rgba(239, 68, 68, 0.12)',
-                color: '#EF4444',
-                fontWeight: 700,
-                fontSize: 11,
-                borderRadius: 1,
-                px: 0.75,
-                py: 0.25,
-                minWidth: 22,
-                textAlign: 'center',
-              }}
-            >
-              {unreadCount}
+            <Box display="flex" alignItems="center" gap={0.5}>
+              <Button
+                onClick={handleMarkAllRead}
+                disabled={markAllAsRead.isPending}
+                sx={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: 'primary.main',
+                  borderRadius: 1,
+                  minWidth: 0,
+                  px: 0.75,
+                  py: 0.25,
+                  '&:hover': { backgroundColor: 'action.hover' },
+                }}
+              >
+                {t('notification.markAllRead')}
+              </Button>
+              <Box
+                sx={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                  color: '#EF4444',
+                  fontWeight: 700,
+                  fontSize: 11,
+                  borderRadius: 1,
+                  px: 0.75,
+                  py: 0.25,
+                  minWidth: 22,
+                  textAlign: 'center',
+                }}
+              >
+                {unreadCount}
+              </Box>
             </Box>
           )}
         </Box>

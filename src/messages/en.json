@@ -155,6 +155,9 @@
     "deleteEmployee": "Delete Employee",
     "moreActions": "More Actions",
     "employeeId": "Employee ID",
+    "walletBalances": "Wallet Balances",
+    "noWalletBalances": "No wallet balances available.",
+    "walletBalancesLoadFailed": "Could not load wallet balances.",
     "employeeTable": {
       "employee": "Employee",
       "email": "Email",
@@ -601,6 +604,8 @@
     "other": "Other",
     "noExpenseData": "No expense data available yet.",
     "noExpenseDataHint": "Charts will update once your expenses are recorded.",
+    "noBudgetData": "No budget configured",
+    "noBudgetDataHint": "Budget will appear once allocated by your manager.",
     "chartLoadFailed": "Couldn't load chart data",
     "chartLoadFailedHint": "Please try again in a moment.",
     "retry": "Retry",

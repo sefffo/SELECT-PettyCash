@@ -3,7 +3,7 @@ import { Box, Button, CircularProgress, Divider, Typography } from '@mui/materia
 import { NotificationsNoneOutlined } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useNotifications } from '@/hooks/api';
+import { useMarkAllNotificationsAsRead, useMarkNotificationAsRead, useNotifications } from '@/hooks/api';
 import { useNotificationStore } from '@/store/notificationStore';
 import { formatDate } from '@/utils/format';
 import {
@@ -34,16 +34,26 @@ export function NotificationsPage({ titleKey, subtitleKey }: NotificationsPagePr
   const unreadCount = notifications.filter(
     (notification) => !isNotificationRead(notification) && !viewedIds.includes(getNotificationKey(notification)),
   ).length;
+  const markOneAsRead = useMarkNotificationAsRead();
+  const markAllAsRead = useMarkAllNotificationsAsRead();
 
   const handleOpen = (notification: ApiNotification) => {
-    markAsRead(getNotificationKey(notification));
     setSelected(notification);
+    const key = getNotificationKey(notification);
+    if (isNotificationRead(notification) || viewedIds.includes(key)) return;
+    markAsRead(key);
+    const notificationId = notification.Id ?? notification.NotificationId;
+    if (notificationId) {
+      markOneAsRead.mutate(notificationId);
+    }
   };
 
   const handleMarkAllRead = () => {
+    if (markAllAsRead.isPending || unreadCount === 0) return;
     for (const notification of notifications) {
       markAsRead(getNotificationKey(notification));
     }
+    markAllAsRead.mutate();
   };
 
   return (
@@ -58,6 +68,7 @@ export function NotificationsPage({ titleKey, subtitleKey }: NotificationsPagePr
         {unreadCount > 0 && (
           <Button
             onClick={handleMarkAllRead}
+            disabled={markAllAsRead.isPending}
             sx={{
               fontSize: 13,
               fontWeight: 600,

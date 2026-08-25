@@ -42,24 +42,51 @@ export default function Login() {
     <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
       {error && (
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-          <Alert severity="error" sx={{ mb: 2, borderRadius: 2, fontSize: 13 }}>{error}</Alert>
+          <Alert severity="error" sx={{ mb: 2, borderRadius: 2, fontSize: 13 }}>
+            {error}
+          </Alert>
         </motion.div>
       )}
 
-      <TextField label={t('auth.email')} type="email" value={email}
+      <TextField
+        label={t('auth.email')}
+        type="email"
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
-        fullWidth required autoFocus
-        slotProps={{ input: { startAdornment: <EmailOutlined sx={{ fontSize: 18, color: 'text.disabled', mr: 1 }} /> } }}
-        sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+        fullWidth
+        required
+        autoFocus
+        slotProps={{
+          input: {
+            startAdornment: <EmailOutlined sx={{ fontSize: 18, color: 'text.disabled', mr: 1 }} />,
+          },
+        }}
+        sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+      />
 
-      <TextField label={t('auth.password')} type="password" value={password}
+      <TextField
+        label={t('auth.password')}
+        type="password"
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
-        fullWidth required
-        slotProps={{ input: { startAdornment: <LockOutlined sx={{ fontSize: 18, color: 'text.disabled', mr: 1 }} /> } }}
-        sx={{ mt: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+        fullWidth
+        required
+        slotProps={{
+          input: {
+            startAdornment: <LockOutlined sx={{ fontSize: 18, color: 'text.disabled', mr: 1 }} />,
+          },
+        }}
+        sx={{ mt: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+      />
 
-      <Button type="submit" variant="contained" fullWidth size="large" disabled={loading}
-        sx={{ mt: 3, py: 1.3, borderRadius: 2, fontSize: 15, fontWeight: 700 }}>
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        size="large"
+        disabled={loading}
+        sx={{ mt: 3, py: 1.3, borderRadius: 2, fontSize: 15, fontWeight: 700 }}
+      >
         {loading ? t('auth.signingIn') : t('auth.signIn')}
       </Button>
     </Box>
@@ -69,17 +96,37 @@ export default function Login() {
     return (
       <Box sx={{ minHeight: '100vh', display: 'flex' }}>
         <Box sx={{ position: 'absolute', top: 12, right: 12, zIndex: 2 }}>
-          <ThemeToggle sx={{ width: 40, height: 40, color: '#FFFFFF', backgroundColor: 'rgba(255,255,255,0.12)', '&:hover': { backgroundColor: 'rgba(255,255,255,0.22)' } }} />
+          <ThemeToggle
+            sx={{
+              width: 40,
+              height: 40,
+              color: '#FFFFFF',
+              backgroundColor: 'rgba(255,255,255,0.12)',
+              '&:hover': { backgroundColor: 'rgba(255,255,255,0.22)' },
+            }}
+          />
         </Box>
-        <Box sx={{
-          flex: '0 0 480px', background: 'linear-gradient(135deg, #0F4A94 0%, #145DB8 50%, #0F4A94 100%)',
-          display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-          p: 6, position: 'relative', overflow: 'hidden',
-        }}>
-          <Box sx={{
-            position: 'absolute', inset: 0,
-            background: 'radial-gradient(ellipse at 30% 50%, rgba(56,189,248,0.08) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(34,197,94,0.06) 0%, transparent 60%)',
-          }} />
+        <Box
+          sx={{
+            flex: '0 0 480px',
+            background: 'linear-gradient(135deg, #0F4A94 0%, #145DB8 50%, #0F4A94 100%)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            p: 6,
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              background:
+                'radial-gradient(ellipse at 30% 50%, rgba(56,189,248,0.08) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(34,197,94,0.06) 0%, transparent 60%)',
+            }}
+          />
           <Box textAlign="center" sx={{ position: 'relative', zIndex: 1 }}>
             <Box
               component={motion.div}
@@ -87,26 +134,51 @@ export default function Login() {
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 180, damping: 12 }}
               sx={{
-                width: 72, height: 72, borderRadius: 3,
+                width: 72,
+                height: 72,
+                borderRadius: 3,
                 backgroundColor: 'rgba(255,255,255,0.15)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                mx: 'auto', mb: 2.5, color: 'white', fontSize: 22, fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mx: 'auto',
+                mb: 2.5,
+                color: 'white',
+                fontSize: 22,
+                fontWeight: 800,
                 backdropFilter: 'blur(8px)',
                 border: '1px solid rgba(255,255,255,0.2)',
-              }}>
+              }}
+            >
               PC
             </Box>
             <Typography variant="h1" fontWeight={800} mb={1} sx={{ color: 'white' }}>
               {t('auth.vertex')}
             </Typography>
-            <Typography sx={{ color: 'rgba(255,255,255,0.7)', maxWidth: 320, lineHeight: 1.6, fontSize: 15 }}>
+            <Typography
+              sx={{ color: 'rgba(255,255,255,0.7)', maxWidth: 320, lineHeight: 1.6, fontSize: 15 }}
+            >
               {t('auth.subtitle')}
             </Typography>
             <Box mt={4} display="flex" gap={1.5} justifyContent="center">
               {['💰', '📊', '✅'].map((emoji, i) => (
-                <Box key={i} component={motion.div}
-                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.1 }}
-                  sx={{ width: 40, height: 40, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                <Box
+                  key={i}
+                  component={motion.div}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + i * 0.1 }}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 2,
+                    backgroundColor: 'rgba(255,255,255,0.08)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 18,
+                  }}
+                >
                   {emoji}
                 </Box>
               ))}
@@ -114,10 +186,23 @@ export default function Login() {
           </Box>
         </Box>
 
-        <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 4, backgroundColor: 'background.default' }}>
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 4,
+            backgroundColor: 'background.default',
+          }}
+        >
           <Box sx={{ maxWidth: 400, width: '100%', p: 4, borderRadius: 3 }}>
-            <Typography sx={{ fontSize: 22, fontWeight: 700, color: 'text.primary', mb: 0.5 }}>{t('auth.signInSubtitle')}</Typography>
-            <Typography sx={{ fontSize: 15, color: 'text.secondary', mb: 3 }}>{t('auth.welcomeBack')}</Typography>
+            <Typography sx={{ fontSize: 22, fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
+              {t('auth.signInSubtitle')}
+            </Typography>
+            <Typography sx={{ fontSize: 15, color: 'text.secondary', mb: 3 }}>
+              {t('auth.welcomeBack')}
+            </Typography>
             {formContent}
           </Box>
         </Box>
@@ -175,21 +260,46 @@ export default function Login() {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 15 }}
           sx={{
-            width: 48, height: 48, borderRadius: 2,
+            width: 48,
+            height: 48,
+            borderRadius: 2,
             backgroundColor: '#145DB8',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            mx: 'auto', mb: 1.5, color: 'white', fontSize: 15, fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mx: 'auto',
+            mb: 1.5,
+            color: 'white',
+            fontSize: 15,
+            fontWeight: 800,
             boxShadow: '0px 6px 16px rgba(20, 93, 184, 0.4)',
-          }}>
+          }}
+        >
           PC
         </Box>
-        <Typography variant="h2" fontWeight={800} mb={0.5} sx={{ color: 'text.primary' }}>{t('auth.vertex')}</Typography>
+        <Typography variant="h2" fontWeight={800} mb={0.5} sx={{ color: 'text.primary' }}>
+          {t('auth.vertex')}
+        </Typography>
         <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>{t('auth.subtitle')}</Typography>
       </Box>
 
-      <Box sx={{ maxWidth: 360, mx: 'auto', width: '100%', p: 2.5, borderRadius: 3, backgroundColor: 'background.paper', border: '1px solid', borderColor: 'divider', boxShadow: '0px 12px 32px rgba(15, 30, 54, 0.12)', position: 'relative' }}>
+      <Box
+        sx={{
+          maxWidth: 360,
+          mx: 'auto',
+          width: '100%',
+          p: 2.5,
+          borderRadius: 3,
+          backgroundColor: 'background.paper',
+          border: '1px solid',
+          borderColor: 'divider',
+          boxShadow: '0px 12px 32px rgba(15, 30, 54, 0.12)',
+          position: 'relative',
+        }}
+      >
         {formContent}
       </Box>
     </Box>
   );
 }
+// ay kalam
