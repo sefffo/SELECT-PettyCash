@@ -24,25 +24,25 @@ export function BudgetUsageCard() {
   const remaining = Number(data?.Remaining ?? 0);
 
   /*
-   * Single source of truth: `TotalBudget` and `Used` come from the same
-   * `Employee/BudgetUsage` response (same budget period, same currency), so
-   * the usage percentage is always derived from them. The backend's separate
-   * `Percentage` field is not trusted — the live API has returned `0` even
-   * when `Used` was non-zero. When no budget is configured (`TotalBudget`
-   * is 0), show the empty state — displaying negative Remaining or a broken
-   * donut is misleading to the user.
+   * Derive usage percentage from TotalBudget + Used rather than trusting the
+   * backend Percentage field (the live API returns 0 even when Used > 0).
+   * When TotalBudget is 0 but Used > 0 we show the donut with 100% used so
+   * the employee can still see they have outstanding spend.
+   * The chart is always rendered once data arrives – only hidden on load/error.
    */
   const percentage =
     totalBudget > 0
       ? Math.min(Math.round((used / totalBudget) * 100), 100)
-      : null;
+      : used > 0
+      ? 100
+      : 0;
 
-  // No budget configured → always show empty state, even if Used > 0
-  const isEmpty = totalBudget <= 0;
+  // Only suppress the chart while loading or on a network error
+  const isEmpty = false;
 
   const chartData = [
-    { name: 'used', value: percentage ?? 0, color: COLORS.used },
-    { name: 'remaining', value: 100 - (percentage ?? 0), color: COLORS.remaining },
+    { name: 'used', value: percentage, color: COLORS.used },
+    { name: 'remaining', value: Math.max(0, 100 - percentage), color: COLORS.remaining },
   ];
 
   return (
@@ -75,7 +75,7 @@ export function BudgetUsageCard() {
         subtitle={t('employee.thisMonth')}
       />
 
-      {isLoading || isError || isEmpty ? (
+      {isLoading || isError ? (
         <Box sx={{ flex: 1, display: 'flex' }}>
           <ChartCardState loading={isLoading} error={isError} empty={isEmpty} onRetry={() => void refetch()} />
         </Box>
@@ -107,7 +107,7 @@ export function BudgetUsageCard() {
                   nameKey="name"
                   innerRadius={52}
                   outerRadius={64}
-                  paddingAngle={2}
+                  paddingAngle={percentage > 0 && percentage < 100 ? 2 : 0}
                   strokeWidth={0}
                   startAngle={90}
                   endAngle={450}
@@ -146,7 +146,7 @@ export function BudgetUsageCard() {
                   lineHeight: 1,
                 }}
               >
-                {percentage === null ? '—' : `${percentage}%`}
+                {`${percentage}%`}
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem', mt: 0.25 }}>
                 {t('employee.used')}

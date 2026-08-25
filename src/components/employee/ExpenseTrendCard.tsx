@@ -34,8 +34,8 @@ export function ExpenseTrendCard() {
     amount: Number(point.Amount ?? point.Total ?? 0),
   }));
 
-  // Treat all-zero data as empty — a flat zero line is misleading
-  const isEmpty = chartData.length === 0 || chartData.every((p) => p.amount === 0);
+  // Only hide the chart when the API returned no data points at all
+  const isEmpty = !isLoading && !isError && chartData.length === 0;
 
   return (
     <Box
