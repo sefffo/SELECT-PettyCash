@@ -68,12 +68,12 @@ export default function FinanceEmployeeHistory() {
   const displayName = (e: FinanceEmployeeBalance): string => userNames[e.EmployeeId] ?? e.Email;
 
   const history: FinanceTransactionItem[] = useMemo(
-    () => (data ?? []).filter((tx) => isFinanceVisibleTransactionStatus(tx.Status)),
+    () => (data ?? []).filter((tx) => isFinanceVisibleTransactionStatus(tx.Status, tx.TransactionType)),
     [data],
   );
 
   const stats = useMemo(() => {
-    const completed = history.filter((tx) => tx.Status === 'Completed').length;
+    const completed = history.filter((tx) => tx.Status === 'Completed' || tx.TransactionType === 'DirectPayment').length;
     return { total: history.length, completed, pending: history.length - completed };
   }, [history]);
 

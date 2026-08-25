@@ -15,7 +15,7 @@ import { FinanceStatusChip, TransactionDetailsDialog } from '@/components/financ
 import { avatarColor, initialsOf, currencyFlag } from '@/utils/avatar';
 import type { FinanceTransactionItem } from '@/types/api';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
-import { isFinanceVisibleTransactionStatus, FINANCE_TRANSACTION_STATUSES } from '@/types/finance';
+import { isFinanceVisibleTransactionStatus, isDisbursedTransactionStatus, FINANCE_TRANSACTION_STATUSES } from '@/types/finance';
 
 type StatusFilter = 'all' | string;
 type SortKey = 'date' | 'amount';
@@ -67,12 +67,14 @@ export default function FinanceTransactions() {
   };
 
   const transactions: FinanceTransactionItem[] = useMemo(
-    () => (data ?? []).filter((tx) => isFinanceVisibleTransactionStatus(tx.Status)),
+    () => (data ?? []).filter((tx) => isFinanceVisibleTransactionStatus(tx.Status, tx.TransactionType)),
     [data],
   );
 
   const stats = useMemo(() => {
-    const completed = transactions.filter((tx) => tx.Status === FINANCE_TRANSACTION_STATUSES.Completed).length;
+    const completed = transactions.filter((tx) =>
+      isDisbursedTransactionStatus(tx.Status, tx.TransactionType),
+    ).length;
     const total = transactions.length;
     const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
     return { total, completed, rate };
