@@ -49,6 +49,18 @@ function MetaRow({ label, value, action }: MetaRowProps) {
   );
 }
 
+/**
+ * Returns the role-scoped path to view a request by its ID.
+ * Employees navigate to /employee/requests/:id so they see their own request detail.
+ * Managers navigate to /manager/requests/:id.
+ * Finance navigates to the finance dashboard (no per-request detail route yet).
+ */
+function getViewRequestPath(role: string | null, requestId: string): string | null {
+  if (role === 'employee') return `/employee/requests/${requestId}`;
+  if (role === 'manager') return `/manager/requests/${requestId}`;
+  return null;
+}
+
 export function NotificationDetailsDialog({ notification, onClose }: NotificationDetailsDialogProps) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -58,12 +70,13 @@ export function NotificationDetailsDialog({ notification, onClose }: Notificatio
   const open = notification !== null;
   const read = notification !== null && (isNotificationRead(notification) || viewedIds.includes(getNotificationKey(notification)));
 
+  const requestId = notification ? getNotificationRequestId(notification) : null;
+  const viewRequestPath = requestId ? getViewRequestPath(role, requestId) : null;
+
   const handleViewRequest = () => {
-    if (!notification) return;
-    const requestId = getNotificationRequestId(notification);
-    if (!requestId) return;
+    if (!viewRequestPath) return;
     onClose();
-    navigate(`/manager/requests/${requestId}`);
+    navigate(viewRequestPath);
   };
 
   return (
@@ -164,12 +177,12 @@ export function NotificationDetailsDialog({ notification, onClose }: Notificatio
                 />
               )}
               {notification.Type && <MetaRow label={t('notification.type')} value={notification.Type} />}
-              {getNotificationRequestId(notification) && (
+              {requestId && (
                 <MetaRow
                   label={t('notification.relatedRequest')}
-                  value={getNotificationRequestId(notification) as string}
+                  value={requestId}
                   action={
-                    role === 'manager' ? (
+                    viewRequestPath ? (
                       <Button
                         size="small"
                         variant="text"

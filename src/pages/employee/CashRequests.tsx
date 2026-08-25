@@ -1,19 +1,26 @@
-import { Box, Typography, Fab, Button } from '@mui/material';
+import { Box, Typography, Fab, Button, Chip } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useMyRequests } from '@/hooks/api';
+import { useEmployeeAllRequests } from '@/hooks/api';
 import { StatusBadge } from '@/components/feature/StatusBadge';
 import { EmptyState, SkeletonLoader } from '@/components/shared';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
-import { mapEmployeeRequestToRequest, sortByDateDesc } from '@/utils/mappers';
+import { mapEmployeeAllRequestToRequest, sortByDateDesc } from '@/utils/mappers';
+
+const REQUEST_TYPE_LABELS: Record<string, string> = {
+  'cash-advance': 'Advance',
+  'budget': 'Budget',
+  'purchase': 'Purchase',
+  'travel': 'Travel',
+};
 
 export default function EmployeeCashRequests() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: requestsData, isLoading: requestsLoading } = useMyRequests();
+  const { data: requestsData, isLoading: requestsLoading } = useEmployeeAllRequests();
 
-  const requests = sortByDateDesc((requestsData ?? []).map(mapEmployeeRequestToRequest));
+  const requests = sortByDateDesc((requestsData ?? []).map(mapEmployeeAllRequestToRequest));
 
   return (
     <Box>
@@ -37,7 +44,18 @@ export default function EmployeeCashRequests() {
             >
               <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={0.5} gap={1}>
                 <Box minWidth={0} flex={1}>
-                  <Typography sx={{ fontSize: { xs: 15, sm: 16 }, fontWeight: 700, color: 'text.primary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{formatCurrencyByCode(req.amount, req.currency)}</Typography>
+                  <Box display="flex" alignItems="center" gap={1} mb={0.25}>
+                    <Typography sx={{ fontSize: { xs: 15, sm: 16 }, fontWeight: 700, color: 'text.primary' }}>
+                      {formatCurrencyByCode(req.amount, req.currency)}
+                    </Typography>
+                    {req.requestType && (
+                      <Chip
+                        label={REQUEST_TYPE_LABELS[req.requestType] ?? req.requestType}
+                        size="small"
+                        sx={{ fontSize: 11, height: 20, backgroundColor: 'action.hover', color: 'text.secondary' }}
+                      />
+                    )}
+                  </Box>
                   <Typography sx={{ fontSize: 12, color: 'text.secondary', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', maxWidth: '100%' }}>
                     {req.reason} · {formatDate(req.createdAt)}
                   </Typography>

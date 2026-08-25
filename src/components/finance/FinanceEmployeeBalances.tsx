@@ -8,7 +8,7 @@ import { alpha } from '@mui/material/styles';
 import { Search, History, SendOutlined, AccountBalanceWalletOutlined, PaidOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { useFinanceEmployeeBalances, useFinanceEmployeeHistory, useRequesterNames, useSubmitDirectPayment, useUsers, useDepartments } from '@/hooks/api';
+import { useFinanceEmployeeBalances, useFinanceEmployeeHistory, useRequesterNames, useSubmitDirectPayment } from '@/hooks/api';
 import { DirectMoneyRequestDialog, EmptyState, SkeletonLoader, Toast, ConfirmationDialog } from '@/components/shared';
 import { FinanceStatusChip } from './FinanceStatusChip';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
@@ -37,7 +37,7 @@ function HistoryDialog({ employeeId, email, onClose }: HistoryDialogProps) {
   const theme = useTheme();
   const { data, isLoading } = useFinanceEmployeeHistory(employeeId);
   const history: FinanceTransactionItem[] = useMemo(
-    () => (data ?? []).filter((tx) => isFinanceVisibleTransactionStatus(tx.Status)),
+    () => (data ?? []).filter((tx) => isFinanceVisibleTransactionStatus(tx.Status, tx.TransactionType)),
     [data],
   );
 
@@ -101,8 +101,6 @@ export function FinanceEmployeeBalances() {
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const { data, isLoading } = useFinanceEmployeeBalances();
   const userNames = useRequesterNames();
-  const { data: users = [] } = useUsers();
-  const { data: departments = [] } = useDepartments();
   const transferMutation = useSubmitDirectPayment();
 
   const [search, setSearch] = useState('');
@@ -117,17 +115,18 @@ export function FinanceEmployeeBalances() {
 
   const balances: FinanceEmployeeBalance[] = useMemo(() => data ?? [], [data]);
 
+  // Build the employee list for the "Request Money" dialog directly from the
+  // already-authorised Finance/EmployeeBalances data — avoids calling the
+  // admin-only Data/Users endpoint which returns 401 for Finance users and
+  // causes the dropdown to appear empty.
   const eligibleEmployees = useMemo(
     () =>
-      users
-        .filter((u) => u.Role === 'Employee')
-        .map((u) => ({
-          id: String(u.Id),
-          name: u.Name,
-          email: u.Email,
-          department: departments.find((d) => d.Id === u.DepartmentId)?.Name ?? '—',
-        })),
-    [users, departments],
+      balances.map((b) => ({
+        id: b.EmployeeId,
+        name: userNames[b.EmployeeId] ?? b.Email,
+        email: b.Email,
+      })),
+    [balances, userNames],
   );
 
   const displayName = (b: FinanceEmployeeBalance): string => userNames[b.EmployeeId] ?? b.Email;

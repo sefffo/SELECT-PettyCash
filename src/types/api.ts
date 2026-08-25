@@ -63,6 +63,22 @@ export interface EmployeeRequestItem {
   SubmittedAt?: string | null;
 }
 
+/**
+ * A request row returned by `Employee/Requests/GetAll`.
+ * This endpoint returns ALL custody requests visible to the employee,
+ * including those initiated by Finance on their behalf.
+ * Fields match the API envelope Data array shape.
+ */
+export interface EmployeeAllRequestItem {
+  RequestId: string;
+  Amount: number;
+  Currency: string;
+  Reason: string;
+  Status: PendingRequestStatus;
+  RequestType: string;
+  DateRequested: string;
+}
+
 export interface EmployeeDashboardData {
   PendingRequestsCount: number;
   TotalSpentEGP: number;
@@ -138,6 +154,22 @@ export interface FinanceRequestItem {
   EmployeeEmail: string;
   Amount: number;
   Currency: string;
+  Status: string;
+  RequestType: string;
+  DateSubmitted: string;
+}
+
+/**
+ * Full request details returned by `Finance/GetRequestDetails`.
+ * Shown when finance user clicks on a transaction row.
+ */
+export interface FinanceRequestDetails {
+  RequestId: string;
+  EmployeeEmail: string;
+  Amount: number;
+  Currency: string;
+  Reason: string;
+  ManagementDecisionReason: string | null;
   Status: string;
   RequestType: string;
   DateSubmitted: string;

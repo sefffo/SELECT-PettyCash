@@ -34,7 +34,8 @@ export function ExpenseTrendCard() {
     amount: Number(point.Amount ?? point.Total ?? 0),
   }));
 
-  const isEmpty = chartData.length === 0;
+  // Only hide the chart when the API returned no data points at all
+  const isEmpty = !isLoading && !isError && chartData.length === 0;
 
   return (
     <Box

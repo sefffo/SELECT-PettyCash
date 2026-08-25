@@ -1,5 +1,5 @@
 import { execute } from './axios';
-import type { ApiNotification, EmployeeExpenseItem, EmployeeRequestItem, PendingRequest } from '@/types/api';
+import type { ApiNotification, EmployeeAllRequestItem, EmployeeExpenseItem, EmployeeRequestItem, PendingRequest } from '@/types/api';
 
 /**
  * Live API contracts (verified against https://pcapi.selecteg.com on 2026-08-24):
@@ -51,6 +51,17 @@ export async function getMyRequests(): Promise<EmployeeRequestItem[]> {
 
 export async function getPendingRequests(): Promise<PendingRequest[]> {
   return execute<PendingRequest[]>({ action: 'Data/PendingRequests' });
+/**
+ * Returns ALL custody requests visible to the authenticated employee,
+ * including requests initiated by Finance on their behalf.
+ * Endpoint: Employee/Requests/GetAll
+ */
+export async function getEmployeeAllRequests(): Promise<EmployeeAllRequestItem[]> {
+  return execute<EmployeeAllRequestItem[]>({ action: 'Employee/Requests/GetAll' });
+}
+
+export async function getExpenses(): Promise<EmployeeExpenseItem[]> {
+  return execute<EmployeeExpenseItem[]>({ action: 'Employee/GetExpenses' });
 }
 
 export function getEmployeeNotifications(): Promise<ApiNotification[]> {

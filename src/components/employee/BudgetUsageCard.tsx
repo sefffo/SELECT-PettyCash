@@ -24,24 +24,21 @@ export function BudgetUsageCard() {
   const remaining = Number(data?.Remaining ?? 0);
 
   /*
-   * Single source of truth: `TotalBudget` and `Used` come from the same
-   * `Employee/BudgetUsage` response (same budget period, same currency), so
-   * the usage percentage is always derived from them. The backend's separate
-   * `Percentage` field is not trusted — the live API has returned `0` even
-   * when `Used` was non-zero. When no budget is configured (`TotalBudget`
-   * is 0), the usage percentage is undefined and rendered as "—" instead of
-   * fabricating 0%.
+   * Derive usage percentage from TotalBudget + Used rather than trusting the
+   * backend Percentage field (the live API returns 0 even when Used > 0).
+   *
+   * When TotalBudget = 0 (no budget configured) we always show 0% — it is
+   * meaningless to show 100% or a negative Remaining in that state.
+   * The donut renders a full grey ring and the Remaining row shows "N/A".
    */
-  const percentage =
-    totalBudget > 0
-      ? Math.min(Math.round((used / totalBudget) * 100), 100)
-      : null;
-
-  const isEmpty = totalBudget <= 0 && used <= 0;
+  const noBudget = totalBudget <= 0;
+  const percentage = noBudget
+    ? 0
+    : Math.min(Math.round((used / totalBudget) * 100), 100);
 
   const chartData = [
-    { name: 'used', value: percentage ?? 0, color: COLORS.used },
-    { name: 'remaining', value: 100 - (percentage ?? 0), color: COLORS.remaining },
+    { name: 'used', value: noBudget ? 0 : percentage, color: COLORS.used },
+    { name: 'remaining', value: noBudget ? 100 : Math.max(0, 100 - percentage), color: COLORS.remaining },
   ];
 
   return (
@@ -74,9 +71,9 @@ export function BudgetUsageCard() {
         subtitle={t('employee.thisMonth')}
       />
 
-      {isLoading || isError || isEmpty ? (
+      {isLoading || isError ? (
         <Box sx={{ flex: 1, display: 'flex' }}>
-          <ChartCardState loading={isLoading} error={isError} empty={isEmpty} onRetry={() => void refetch()} emptyTitle={t('employee.noBudgetData')} emptyDescription={t('employee.noBudgetDataHint')} />
+          <ChartCardState loading={isLoading} error={isError} empty={false} onRetry={() => void refetch()} />
         </Box>
       ) : (
         <Box
@@ -106,7 +103,7 @@ export function BudgetUsageCard() {
                   nameKey="name"
                   innerRadius={52}
                   outerRadius={64}
-                  paddingAngle={2}
+                  paddingAngle={percentage > 0 && percentage < 100 ? 2 : 0}
                   strokeWidth={0}
                   startAngle={90}
                   endAngle={450}
@@ -115,15 +112,17 @@ export function BudgetUsageCard() {
                     <Cell key={entry.name} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip
-                  formatter={(value) => [`${Number(value ?? 0)}%`, '']}
-                  contentStyle={{
-                    backgroundColor: theme.palette.background.paper,
-                    border: `1px solid ${theme.palette.divider}`,
-                    borderRadius: 12,
-                    fontSize: 13,
-                  }}
-                />
+                {!noBudget && (
+                  <Tooltip
+                    formatter={(value) => [`${Number(value ?? 0)}%`, '']}
+                    contentStyle={{
+                      backgroundColor: theme.palette.background.paper,
+                      border: `1px solid ${theme.palette.divider}`,
+                      borderRadius: 12,
+                      fontSize: 13,
+                    }}
+                  />
+                )}
               </PieChart>
             </ResponsiveContainer>
             <Box
@@ -141,11 +140,11 @@ export function BudgetUsageCard() {
                 sx={{
                   fontSize: { xs: 22, sm: 28 },
                   fontWeight: 800,
-                  color: 'text.primary',
+                  color: noBudget ? 'text.disabled' : 'text.primary',
                   lineHeight: 1,
                 }}
               >
-                {percentage === null ? '—' : `${percentage}%`}
+                {noBudget ? '—' : `${percentage}%`}
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem', mt: 0.25 }}>
                 {t('employee.used')}
@@ -160,7 +159,7 @@ export function BudgetUsageCard() {
                   {t('employee.totalBudget')}
                 </Typography>
                 <Typography variant="body2" fontWeight={700} sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>
-                  {formatCurrency(totalBudget)}
+                  {noBudget ? t('employee.noBudgetSet', 'Not set') : formatCurrency(totalBudget)}
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
@@ -175,8 +174,8 @@ export function BudgetUsageCard() {
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8125rem' }}>
                   {t('employee.remaining')}
                 </Typography>
-                <Typography variant="body2" fontWeight={700} sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>
-                  {formatCurrency(remaining)}
+                <Typography variant="body2" fontWeight={700} color={remaining < 0 ? 'error.main' : 'text.primary'} sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>
+                  {noBudget ? '—' : formatCurrency(remaining)}
                 </Typography>
               </Box>
             </Box>

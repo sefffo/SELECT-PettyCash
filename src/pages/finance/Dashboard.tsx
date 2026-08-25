@@ -64,7 +64,12 @@ export default function FinanceDashboard() {
   const dashboardData: FinanceDashboardData = useMemo(() => {
     const tx = transactions ?? [];
     const req = requests ?? [];
-    const disbursed = tx.filter((item) => isDisbursedTransactionStatus(item.Status));
+    // Pass both Status and TransactionType so isDisbursedTransactionStatus can
+    // correctly count direct payments (TransactionType='DirectPayment') even
+    // when their Status has not yet reached 'Completed'.
+    const disbursed = tx.filter((item) =>
+      isDisbursedTransactionStatus(item.Status, item.TransactionType),
+    );
     const pendingPayments = req.filter((item) => isFinancePendingPaymentStatus(item.Status));
     return {
       totalDisbursed: disbursed.reduce((sum, item) => sum + Number(item.Amount ?? 0), 0),

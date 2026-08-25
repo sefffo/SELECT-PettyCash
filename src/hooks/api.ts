@@ -42,6 +42,7 @@ import {
   addExpense,
   approveRequest,
   getEmployeeExpenses,
+  getEmployeeAllRequests,
   getEmployeeNotifications,
   getMyRequests,
   getPendingRequests,
@@ -64,6 +65,7 @@ import {
   getFinanceAllRequests,
   getFinanceEmployeeBalances,
   getFinanceEmployeeHistory,
+  getFinanceRequestDetails,
   getFinanceSafeBalances,
   getFinanceTransactions,
   processFinanceTransaction,
@@ -90,6 +92,7 @@ export const queryKeys = {
   departments: ['departments'] as const,
   pendingRequests: ['pending-requests'] as const,
   myRequests: ['my-requests'] as const,
+  employeeAllRequests: ['employee', 'all-requests'] as const,
   expenses: ['employee', 'expenses'] as const,
   managerPendingRequests: ['manager-requests', 'pending'] as const,
   managerApprovedRequests: ['manager-requests', 'approved'] as const,
@@ -101,6 +104,7 @@ export const queryKeys = {
   financeSafeBalances: ['finance', 'safe-balances'] as const,
   financeEmployeeBalances: ['finance', 'employee-balances'] as const,
   financeEmployeeHistory: ['finance', 'employee-history'] as const,
+  financeRequestDetails: ['finance', 'request-details'] as const,
 };
 
 export function useEmployeeDashboard() {
@@ -212,6 +216,17 @@ export function useMyRequests() {
   return useQuery({
     queryKey: queryKeys.myRequests,
     queryFn: getMyRequests,
+  });
+}
+
+/**
+ * Fetches ALL custody requests for the authenticated employee via
+ * `Employee/Requests/GetAll`, which includes requests initiated by Finance.
+ */
+export function useEmployeeAllRequests() {
+  return useQuery({
+    queryKey: queryKeys.employeeAllRequests,
+    queryFn: getEmployeeAllRequests,
   });
 }
 
@@ -355,6 +370,14 @@ export function useFinanceEmployeeHistory(employeeId: string | null | undefined)
   });
 }
 
+export function useFinanceRequestDetails(requestId: string | null | undefined) {
+  return useQuery({
+    queryKey: [...queryKeys.financeRequestDetails, requestId] as const,
+    queryFn: () => getFinanceRequestDetails(requestId as string),
+    enabled: !!requestId,
+  });
+}
+
 export function useProcessTransaction() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -371,6 +394,9 @@ export function useProcessTransaction() {
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
       queryClient.invalidateQueries({ queryKey: queryKeys.managerApprovedRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
+      // Invalidate notifications so the employee bell badge refreshes immediately.
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
     },
   });
 }
@@ -385,6 +411,9 @@ export function useSubmitDirectPayment() {
       queryClient.invalidateQueries({ queryKey: queryKeys.financeSafeBalances });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeEmployeeHistory });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
+      // Invalidate notifications so the employee bell badge refreshes immediately.
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
     },
   });
 }
@@ -403,7 +432,10 @@ export function useSubmitDirectGrant() {
       queryClient.invalidateQueries({ queryKey: queryKeys.financeEmployeeBalances });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeEmployeeHistory });
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
+      // Invalidate notifications so the employee bell badge refreshes immediately.
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
     },
   });
 }
@@ -433,6 +465,7 @@ export function useSubmitRequest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.pendingRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.managerPendingRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenseTrend });
       queryClient.invalidateQueries({ queryKey: queryKeys.budgetUsage });
       queryClient.invalidateQueries({ queryKey: queryKeys.topCategories });
@@ -447,6 +480,7 @@ export function useSubmitReimbursement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeDashboard });
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenseTrend });
       queryClient.invalidateQueries({ queryKey: queryKeys.budgetUsage });
       queryClient.invalidateQueries({ queryKey: queryKeys.topCategories });
@@ -461,6 +495,7 @@ export function useAddExpense() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeDashboard });
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenseTrend });
       queryClient.invalidateQueries({ queryKey: queryKeys.budgetUsage });
@@ -486,6 +521,7 @@ export function useApproveRequest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeTransactions });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
     },
   });
 }
@@ -503,6 +539,7 @@ export function useRejectRequest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
     },
   });
 }
@@ -591,6 +628,7 @@ export function useSubmitPayment() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.pendingRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
     },
   });
 }
@@ -602,6 +640,7 @@ export function useResubmitProof() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.pendingRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
     },
   });
 }
