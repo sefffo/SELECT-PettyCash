@@ -38,6 +38,13 @@ export const FINANCE_TRANSACTION_STATUSES = {
   Completed: 'Completed',
 } as const;
 
+/**
+ * Transaction types used to identify Finance-initiated direct payments.
+ * The backend returns this value in the `TransactionType` field of
+ * `FinanceTransactionItem` rows created via `Finance/Payments/Direct`.
+ */
+export const FINANCE_DIRECT_PAYMENT_TYPE = 'DirectPayment';
+
 /** Finance dashboard KPI values, computed from the finance-scoped APIs. */
 export interface FinanceDashboardData {
   totalDisbursed: number;
@@ -51,8 +58,23 @@ export function isFinancePendingPaymentStatus(status: string): boolean {
   return status === FINANCE_REQUEST_STATUSES.ApprovedByManagement;
 }
 
-export function isDisbursedTransactionStatus(status: string): boolean {
-  return status === FINANCE_TRANSACTION_STATUSES.Completed;
+/**
+ * Returns true for transactions that should count toward the "Total Disbursed"
+ * KPI on the Finance dashboard.
+ *
+ * A row is considered disbursed when EITHER:
+ *  - its Status is 'Completed' (normal request flow processed by Finance), OR
+ *  - its TransactionType is 'DirectPayment' (Finance/Payments/Direct), because
+ *    a direct payment immediately funds the employee's wallet and should always
+ *    be reflected in the disbursed total regardless of its lifecycle status.
+ */
+export function isDisbursedTransactionStatus(
+  status: string,
+  transactionType?: string,
+): boolean {
+  if (status === FINANCE_TRANSACTION_STATUSES.Completed) return true;
+  if (transactionType === FINANCE_DIRECT_PAYMENT_TYPE) return true;
+  return false;
 }
 
 export function isPendingPaymentTransactionStatus(status: string): boolean {
@@ -60,10 +82,17 @@ export function isPendingPaymentTransactionStatus(status: string): boolean {
 }
 
 /**
- * Transaction statuses that belong to the Finance workflow. Rows still with the
- * Manager (`PendingManager`) or rejected (`Rejected`) must never surface in the
- * Finance view.
+ * Transaction statuses/types that belong to the Finance workflow and should be
+ * visible in the employee history dialog and finance transaction lists.
+ *
+ * Rows still with the Manager (`PendingManager`) or rejected (`Rejected`) must
+ * never surface in the Finance view — EXCEPT direct payments, which are always
+ * visible since Finance initiated them.
  */
-export function isFinanceVisibleTransactionStatus(status: string): boolean {
+export function isFinanceVisibleTransactionStatus(
+  status: string,
+  transactionType?: string,
+): boolean {
+  if (transactionType === FINANCE_DIRECT_PAYMENT_TYPE) return true;
   return isDisbursedTransactionStatus(status) || isPendingPaymentTransactionStatus(status);
 }
