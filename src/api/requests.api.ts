@@ -51,6 +51,8 @@ export async function getMyRequests(): Promise<EmployeeRequestItem[]> {
 
 export async function getPendingRequests(): Promise<PendingRequest[]> {
   return execute<PendingRequest[]>({ action: 'Data/PendingRequests' });
+}
+
 /**
  * Returns ALL custody requests visible to the authenticated employee,
  * including requests initiated by Finance on their behalf.
@@ -58,10 +60,6 @@ export async function getPendingRequests(): Promise<PendingRequest[]> {
  */
 export async function getEmployeeAllRequests(): Promise<EmployeeAllRequestItem[]> {
   return execute<EmployeeAllRequestItem[]>({ action: 'Employee/Requests/GetAll' });
-}
-
-export async function getExpenses(): Promise<EmployeeExpenseItem[]> {
-  return execute<EmployeeExpenseItem[]>({ action: 'Employee/GetExpenses' });
 }
 
 export function getEmployeeNotifications(): Promise<ApiNotification[]> {
