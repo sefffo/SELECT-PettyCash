@@ -65,7 +65,8 @@ export function TopCategoryCard() {
     .sort((a, b) => b.amount - a.amount)
     .slice(0, MAX_CATEGORIES);
 
-  const isEmpty = chartData.length === 0;
+  // Treat all-zero amounts as empty — rendering zero-length bars is misleading
+  const isEmpty = chartData.length === 0 || chartData.every((item) => item.amount === 0);
 
   const barColors = chartData.map((_, index) =>
     alpha(theme.palette.primary.main, Math.max(0.35, 1 - index * 0.16)),

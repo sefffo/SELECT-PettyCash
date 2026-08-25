@@ -29,15 +29,16 @@ export function BudgetUsageCard() {
    * the usage percentage is always derived from them. The backend's separate
    * `Percentage` field is not trusted — the live API has returned `0` even
    * when `Used` was non-zero. When no budget is configured (`TotalBudget`
-   * is 0), the usage percentage is undefined and rendered as "—" instead of
-   * fabricating 0%.
+   * is 0), show the empty state — displaying negative Remaining or a broken
+   * donut is misleading to the user.
    */
   const percentage =
     totalBudget > 0
       ? Math.min(Math.round((used / totalBudget) * 100), 100)
       : null;
 
-  const isEmpty = totalBudget <= 0 && used <= 0;
+  // No budget configured → always show empty state, even if Used > 0
+  const isEmpty = totalBudget <= 0;
 
   const chartData = [
     { name: 'used', value: percentage ?? 0, color: COLORS.used },
