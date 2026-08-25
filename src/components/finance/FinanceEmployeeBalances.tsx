@@ -37,7 +37,7 @@ function HistoryDialog({ employeeId, email, onClose }: HistoryDialogProps) {
   const theme = useTheme();
   const { data, isLoading } = useFinanceEmployeeHistory(employeeId);
   const history: FinanceTransactionItem[] = useMemo(
-    () => (data ?? []).filter((tx) => isFinanceVisibleTransactionStatus(tx.Status)),
+    () => (data ?? []).filter((tx) => isFinanceVisibleTransactionStatus(tx.Status, tx.TransactionType)),
     [data],
   );
 
