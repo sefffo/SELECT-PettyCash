@@ -155,6 +155,9 @@
     "deleteEmployee": "حذف الموظف",
     "moreActions": "المزيد من الإجراءات",
     "employeeId": "معرّف الموظف",
+    "walletBalances": "أرصدة المحفظة",
+    "noWalletBalances": "لا توجد أرصدة محفظة متاحة.",
+    "walletBalancesLoadFailed": "تعذر تحميل أرصدة المحفظة.",
     "employeeTable": {
       "employee": "الموظف",
       "email": "البريد الإلكتروني",
@@ -552,6 +555,8 @@
     "other": "أخرى",
     "noExpenseData": "لا توجد بيانات مصروفات حتى الآن.",
     "noExpenseDataHint": "ستظهر الرسوم البيانية عند تسجيل مصروفاتك.",
+    "noBudgetData": "لم يتم تعيين ميزانية",
+    "noBudgetDataHint": "ستظهر الميزانية بمجرد تخصيصها من قبل المدير.",
     "chartLoadFailed": "تعذر تحميل بيانات الرسم البياني",
     "chartLoadFailedHint": "يرجى المحاولة مرة أخرى بعد قليل.",
     "retry": "إعادة المحاولة",

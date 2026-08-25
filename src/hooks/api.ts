@@ -31,6 +31,7 @@ import {
 } from '@/api/admin.api';
 import {
   getManagerApprovedRequests,
+  getManagerEmployeeBalances,
   getManagerExpenseOverview,
   getManagerNotifications,
   getManagerPendingRequests,
@@ -40,11 +41,13 @@ import {
 import {
   addExpense,
   approveRequest,
+  getEmployeeExpenses,
   getEmployeeAllRequests,
   getEmployeeNotifications,
-  getExpenses,
   getMyRequests,
   getPendingRequests,
+  markAllNotificationsAsRead,
+  markNotificationAsRead,
   rejectRequest,
   submitReimbursement,
   submitRequest,
@@ -68,7 +71,7 @@ import {
   processFinanceTransaction,
   submitDirectPayment,
 } from '@/api/finance.api';
-import type { DirectGrantParams, DirectPaymentParams } from '@/types/api';
+import type { ApiNotification, DirectGrantParams, DirectPaymentParams } from '@/types/api';
 import { changePassword, type ChangePasswordParams } from '@/api/auth.api';
 import { buildEmailNameMap, buildRequesterNameMap } from '@/utils/mappers';
 import { filterNotificationsForCurrentUser } from '@/utils/notifications';
@@ -94,6 +97,7 @@ export const queryKeys = {
   managerPendingRequests: ['manager-requests', 'pending'] as const,
   managerApprovedRequests: ['manager-requests', 'approved'] as const,
   managerRejectedRequests: ['manager-requests', 'rejected'] as const,
+  managerEmployeeBalances: ['manager', 'employee-balances'] as const,
   notifications: ['notifications'] as const,
   financeTransactions: ['finance', 'transactions'] as const,
   financeRequests: ['finance', 'requests'] as const,
@@ -118,16 +122,20 @@ export function useMyProfile() {
 }
 
 export function useManagerDashboard() {
+  const userId = useAuthStore((s) => s.user?.id ?? null);
   return useQuery({
-    queryKey: queryKeys.managerDashboard,
+    queryKey: [...queryKeys.managerDashboard, userId] as const,
     queryFn: getManagerDashboard,
+    enabled: Boolean(userId),
   });
 }
 
 export function useManagerExpenseOverview() {
+  const userId = useAuthStore((s) => s.user?.id ?? null);
   return useQuery({
-    queryKey: queryKeys.managerExpenseOverview,
+    queryKey: [...queryKeys.managerExpenseOverview, userId] as const,
     queryFn: getManagerExpenseOverview,
+    enabled: Boolean(userId),
   });
 }
 
@@ -225,28 +233,43 @@ export function useEmployeeAllRequests() {
 export function useExpenses() {
   return useQuery({
     queryKey: queryKeys.expenses,
-    queryFn: getExpenses,
+    queryFn: getEmployeeExpenses,
   });
 }
 
 export function useManagerPendingRequests() {
+  const userId = useAuthStore((s) => s.user?.id ?? null);
   return useQuery({
-    queryKey: queryKeys.managerPendingRequests,
+    queryKey: [...queryKeys.managerPendingRequests, userId] as const,
     queryFn: getManagerPendingRequests,
+    enabled: Boolean(userId),
   });
 }
 
 export function useManagerApprovedRequests() {
+  const userId = useAuthStore((s) => s.user?.id ?? null);
   return useQuery({
-    queryKey: queryKeys.managerApprovedRequests,
+    queryKey: [...queryKeys.managerApprovedRequests, userId] as const,
     queryFn: getManagerApprovedRequests,
+    enabled: Boolean(userId),
   });
 }
 
 export function useManagerRejectedRequests() {
+  const userId = useAuthStore((s) => s.user?.id ?? null);
   return useQuery({
-    queryKey: queryKeys.managerRejectedRequests,
+    queryKey: [...queryKeys.managerRejectedRequests, userId] as const,
     queryFn: getManagerRejectedRequests,
+    enabled: Boolean(userId),
+  });
+}
+
+export function useManagerEmployeeBalances() {
+  const userId = useAuthStore((s) => s.user?.id ?? null);
+  return useQuery({
+    queryKey: [...queryKeys.managerEmployeeBalances, userId] as const,
+    queryFn: getManagerEmployeeBalances,
+    enabled: Boolean(userId),
   });
 }
 
@@ -262,6 +285,52 @@ export function useNotifications() {
     },
     select: (data) => filterNotificationsForCurrentUser(data ?? [], userId),
     enabled: role === 'admin' || role === 'manager' || role === 'finance' || role === 'employee',
+  });
+}
+
+export function useMarkNotificationAsRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (notificationId: string) => markNotificationAsRead(notificationId),
+    onMutate: async (notificationId: string) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.notifications });
+      const snapshots = queryClient.getQueriesData<ApiNotification[]>({ queryKey: queryKeys.notifications });
+      queryClient.setQueriesData<ApiNotification[]>({ queryKey: queryKeys.notifications }, (old) =>
+        (old ?? []).map((notification) =>
+          (notification.Id ?? notification.NotificationId) === notificationId
+            ? { ...notification, IsRead: true }
+            : notification,
+        ),
+      );
+      return { snapshots };
+    },
+    onError: (_error, _notificationId, context) => {
+      context?.snapshots.forEach(([key, value]) => queryClient.setQueryData(key, value));
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
+    },
+  });
+}
+
+export function useMarkAllNotificationsAsRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => markAllNotificationsAsRead(),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.notifications });
+      const snapshots = queryClient.getQueriesData<ApiNotification[]>({ queryKey: queryKeys.notifications });
+      queryClient.setQueriesData<ApiNotification[]>({ queryKey: queryKeys.notifications }, (old) =>
+        (old ?? []).map((notification) => ({ ...notification, IsRead: true })),
+      );
+      return { snapshots };
+    },
+    onError: (_error, _variables, context) => {
+      context?.snapshots.forEach(([key, value]) => queryClient.setQueryData(key, value));
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
+    },
   });
 }
 
@@ -320,6 +389,11 @@ export function useProcessTransaction() {
       queryClient.invalidateQueries({ queryKey: queryKeys.financeEmployeeBalances });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeEmployeeHistory });
       queryClient.invalidateQueries({ queryKey: queryKeys.pendingRequests });
+      // The processed record reaches its final backend status ("Completed"),
+      // which the employee sees in both of their lists.
+      queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
+      queryClient.invalidateQueries({ queryKey: queryKeys.managerApprovedRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       // Invalidate notifications so the employee bell badge refreshes immediately.
       queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
@@ -440,7 +514,13 @@ export function useApproveRequest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.adminDashboard });
       queryClient.invalidateQueries({ queryKey: queryKeys.managerPendingRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.managerApprovedRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.managerRejectedRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
+      // Approved expenses surface in Finance's queue ("Approved by Management")
+      // and the employee's own lists must show the new backend status.
+      queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
+      queryClient.invalidateQueries({ queryKey: queryKeys.financeRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.financeTransactions });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
     },
   });
@@ -455,7 +535,10 @@ export function useRejectRequest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.managerDashboard });
       queryClient.invalidateQueries({ queryKey: queryKeys.managerPendingRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.managerRejectedRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.managerApprovedRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
+      queryClient.invalidateQueries({ queryKey: queryKeys.financeRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
     },
   });

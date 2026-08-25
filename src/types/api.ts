@@ -51,16 +51,15 @@ export interface PendingRequest {
 }
 
 /**
- * A request row returned by `Employee/GetMyRequests`. Note that this payload
- * differs from `PendingRequest`: the reason is exposed as `Description` and the
- * request date as `SubmittedAt`.
+ * A request row returned by `Employee/GetMyRequests` (verified against the live API):
+ * `{ RequestId, Amount, Currency, Description, Status, SubmittedAt }`.
  */
 export interface EmployeeRequestItem {
   RequestId: string;
   Amount: number;
   Currency?: string | null;
   Description?: string | null;
-  Status: PendingRequestStatus;
+  Status?: PendingRequestStatus;
   SubmittedAt?: string | null;
 }
 
@@ -135,6 +134,18 @@ export interface FinanceEmployeeBalance {
   EGP: number;
   USD: number;
   SAR: number;
+}
+
+/** An employee wallet-balance row returned by `Manager/Employees/Balances`. */
+export interface ManagerEmployeeBalance {
+  EmployeeId?: string;
+  UserId?: string;
+  Id?: string;
+  Email?: string | null;
+  DepartmentId?: string | null;
+  EGP?: number | null;
+  USD?: number | null;
+  SAR?: number | null;
 }
 
 /** A custody request row returned by `Finance/GetAllRequests`. */
@@ -242,29 +253,16 @@ export interface TopCategoryItem {
 }
 
 /**
- * An expense row returned by `Employee/GetExpenses`.
- * The endpoint response is not documented, so field names are loose and
- * consumers fall back to the first present alternative.
+ * An expense row returned by `Employee/Expenses/Get` (verified against the live API):
+ * `{ ExpenseId, Amount, Currency, Reason, Status, DateSubmitted }`.
  */
 export interface EmployeeExpenseItem {
-  Id?: string;
-  ExpenseId?: string;
-  Title?: string;
-  Description?: string;
-  Name?: string;
-  Reason?: string;
-  Category?: string;
-  Amount?: number;
+  ExpenseId: string;
+  Amount: number;
+  Currency?: string | null;
+  Reason?: string | null;
   Status?: string;
-  Currency?: string;
-  CurrencyCode?: string;
-  ExpenseDate?: string;
-  Date?: string;
-  DateRequested?: string;
-  SubmittedAt?: string;
-  BalanceAfter?: number;
-  RemainingBalance?: number;
-  Balance?: number;
+  DateSubmitted?: string | null;
 }
 
 export interface CreateUserResult {

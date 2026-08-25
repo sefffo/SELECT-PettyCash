@@ -9,38 +9,17 @@ import type { EmployeeExpenseItem } from '@/types/api';
 import type { ExpenseStatus } from '@/types/vertex';
 import { StatusBadge } from '@/components/feature/StatusBadge';
 import { DashboardCardHeader, DashboardCardFooter, DashboardTimeline, DashboardTimelineCard, SkeletonLoader, type TimelineTone } from '@/components/shared';
-import { formatCurrency, formatDate } from '@/utils/format';
+import { formatCurrencyByCode, formatDate } from '@/utils/format';
 import { mapExpenseStatus } from '@/utils/mappers';
 import { ROUTES } from '@/utils/constants';
 import { AddExpenseDialog } from './AddExpenseDialog';
 
 const ROWS_PER_PAGE_OPTIONS = [6, 12, 24];
 
-function toFiniteNumber(value: unknown): number | null {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (typeof value === 'string' && value.trim() !== '') {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-  return null;
-}
-
-function expenseDateOf(item: EmployeeExpenseItem): string {
-  return item.ExpenseDate ?? item.Date ?? item.DateRequested ?? item.SubmittedAt ?? '';
-}
-
-function expenseLabelOf(item: EmployeeExpenseItem): string {
-  return item.Description ?? item.Title ?? item.Name ?? item.Reason ?? '—';
-}
-
-function expenseAmountOf(item: EmployeeExpenseItem): number | null {
-  return toFiniteNumber(item.Amount);
-}
-
 function sortByExpenseDateDesc(items: EmployeeExpenseItem[]): EmployeeExpenseItem[] {
   return [...items].sort((a, b) => {
-    const timeA = new Date(expenseDateOf(a)).getTime();
-    const timeB = new Date(expenseDateOf(b)).getTime();
+    const timeA = new Date(a.DateSubmitted ?? '').getTime();
+    const timeB = new Date(b.DateSubmitted ?? '').getTime();
     if (!Number.isNaN(timeA) && !Number.isNaN(timeB)) return timeB - timeA;
     if (!Number.isNaN(timeA)) return -1;
     if (!Number.isNaN(timeB)) return 1;
@@ -188,22 +167,19 @@ export function RecentExpensesCard() {
 
       {hasData && (
         <DashboardTimeline>
-          {pagedExpenses.map((expense, index) => {
-            const amount = expenseAmountOf(expense);
-            const label = expenseLabelOf(expense);
-            const category = expense.Category ?? '';
+          {pagedExpenses.map((expense) => {
+            const label = expense.Reason || '—';
             const status = mapExpenseStatus(expense.Status);
             const config = expenseTimelineConfig(status);
             return (
               <DashboardTimelineCard
-                key={expense.Id ?? expense.ExpenseId ?? `expense-${index}`}
+                key={expense.ExpenseId}
                 icon={config.icon}
                 tone={config.tone}
                 title={label}
-                subtitle={category || undefined}
                 badge={<StatusBadge status={status} />}
-                dateText={formatDate(expenseDateOf(expense) || null)}
-                amountText={amount !== null ? formatCurrency(amount) : '—'}
+                dateText={formatDate(expense.DateSubmitted ?? null)}
+                amountText={formatCurrencyByCode(expense.Amount, expense.Currency ?? 'EGP')}
               />
             );
           })}

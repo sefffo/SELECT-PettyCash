@@ -184,7 +184,7 @@ export function BudgetUsageCard() {
               <Box sx={{ height: 6, borderRadius: 3, backgroundColor: COLORS.remaining, overflow: 'hidden' }}>
                 <Box
                   sx={{
-                    width: `${percentage}%`,
+                    width: `${percentage != null ? percentage : 0}%`,
                     height: '100%',
                     borderRadius: 3,
                     backgroundColor: COLORS.used,

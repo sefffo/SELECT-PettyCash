@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Box, Typography, TextField, InputAdornment, Button } from '@mui/material';
 import { Search, PaidOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useManagerApprovedRequests, useManagerPendingRequests, useManagerRejectedRequests, useMyProfile, useUsers, useDepartments, useSubmitDirectGrant } from '@/hooks/api';
+import { useManagerApprovedRequests, useManagerEmployeeBalances, useManagerPendingRequests, useManagerRejectedRequests, useMyProfile, useUsers, useDepartments, useSubmitDirectGrant } from '@/hooks/api';
 import { EmployeeTable } from '@/components/admin/EmployeeTable';
 import { EmployeeDetailModal } from '@/components/admin/EmployeeDetailModal';
 import { DirectMoneyRequestDialog, EmptyState, SkeletonLoader } from '@/components/shared';
@@ -20,6 +20,7 @@ export default function ManagerEmployees() {
   const { data: pending = [], isLoading: pendingLoading } = useManagerPendingRequests();
   const { data: approved = [], isLoading: approvedLoading } = useManagerApprovedRequests();
   const { data: rejected = [], isLoading: rejectedLoading } = useManagerRejectedRequests();
+  const { data: balances = [], isLoading: balancesLoading, isError: balancesError } = useManagerEmployeeBalances();
   const submitDirectGrant = useSubmitDirectGrant();
 
   const [search, setSearch] = useState('');
@@ -34,7 +35,10 @@ export default function ManagerEmployees() {
     if (!managerDepartment) return [];
     const dept = managerDepartment.trim().toLowerCase();
     return users
-      .filter((u) => (u.DepartmentId ?? '').trim().toLowerCase() === dept)
+      .filter((u) =>
+        u.Role === 'Employee' &&
+        (u.DepartmentId ?? '').trim().toLowerCase() === dept,
+      )
       .map((u) => mapApiUserToEmployee(u, []));
   }, [users, myProfile?.DepartmentId]);
 
@@ -69,6 +73,15 @@ export default function ManagerEmployees() {
     if (!detailUser) return null;
     return { Id: String(detailUser.Id), Name: detailUser.Name, Email: detailUser.Email, Role: detailUser.Role };
   }, [detailUser]);
+
+  const walletBalances = useMemo(() => {
+    if (!detailUser) return [];
+    const selectedId = String(detailUser.Id).trim().toLowerCase();
+    return balances.filter((balance) =>
+      [balance.EmployeeId, balance.UserId, balance.Id]
+        .some((candidate) => (candidate ?? '').trim().toLowerCase() === selectedId),
+    );
+  }, [balances, detailUser]);
 
   const isLoading = usersLoading || profileLoading || pendingLoading || approvedLoading || rejectedLoading;
 
@@ -124,6 +137,9 @@ export default function ManagerEmployees() {
         profile={profile}
         transactions={transactions as ManagerRequestItem[]}
         transactionsLoading={pendingLoading || approvedLoading || rejectedLoading}
+        balances={walletBalances}
+        balancesLoading={balancesLoading}
+        balancesError={balancesError}
         showDepartment={false}
         showEmployeeId={false}
         open={detailOpen}

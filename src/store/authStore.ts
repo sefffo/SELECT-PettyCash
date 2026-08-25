@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { STORAGE_KEYS } from '@/utils/constants';
+import { queryClient } from '@/services/queryClient';
 import { loginRequest } from '@/api/auth.api';
 import type { ApiRole } from '@/types/api';
 import type { Employee, UserRole } from '@/types/vertex';
@@ -118,6 +119,7 @@ export const useAuthStore = create<AuthState>()(
         const { token, role } = result;
         localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
         const user = buildUser(token, email, role);
+        queryClient.clear();
         set({
           user,
           isAuthenticated: true,
@@ -129,6 +131,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         clearToken();
+        queryClient.clear();
         set({ ...initialState });
       },
 
