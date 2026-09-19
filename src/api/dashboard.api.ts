@@ -1,7 +1,6 @@
 import { execute } from './axios';
 import type {
   AdminDashboardData,
-  BudgetUsageData,
   CompletedTransferPoint,
   CompletedTransfersParams,
   EmployeeDashboardData,
@@ -45,13 +44,6 @@ export async function getExpenseTrend(months = 6, currency = 'EGP'): Promise<Exp
   });
   const rows = payload?.ChartData;
   return Array.isArray(rows) ? rows : [];
-}
-
-export function getBudgetUsage(currency = 'EGP'): Promise<BudgetUsageData> {
-  return execute<BudgetUsageData>({
-    action: 'Employee/BudgetUsage',
-    parameters: { Currency: currency },
-  });
 }
 
 export async function getTopCategories(currency = 'EGP'): Promise<TopCategoryItem[]> {

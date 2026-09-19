@@ -7,7 +7,6 @@ import { EmployeeSummaryCards } from '@/components/employee/EmployeeSummaryCards
 import { AddExpenseDialog } from '@/components/employee/AddExpenseDialog';
 import { NewCashRequestDialog } from '@/components/employee/NewCashRequestDialog';
 import { ExpenseTrendCard } from '@/components/employee/ExpenseTrendCard';
-import { BudgetUsageCard } from '@/components/employee/BudgetUsageCard';
 import { TopCategoryCard } from '@/components/employee/TopCategoryCard';
 import { RecentExpensesCard } from '@/components/employee/RecentExpensesCard';
 import { BudgetRequestsCard } from '@/components/employee/BudgetRequestsCard';
@@ -89,13 +88,12 @@ export default function EmployeeDashboard() {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
           gap: 2,
           alignItems: 'stretch',
         }}
       >
         <ExpenseTrendCard currency={currency} />
-        <BudgetUsageCard currency={currency} />
         <TopCategoryCard currency={currency} />
       </Box>
 

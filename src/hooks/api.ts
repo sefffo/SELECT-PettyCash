@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useMutation, useQuery, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  getBudgetUsage,
   getCompletedTransfers,
   getEmployeeDashboard,
   getExpenseTrend,
@@ -89,7 +88,6 @@ export const queryKeys = {
   adminDashboardBalances: ['dashboard', 'admin', 'balances'] as const,
   monthlySpend: ['dashboard', 'monthly-spend'] as const,
   expenseTrend: ['employee', 'expense-trend'] as const,
-  budgetUsage: ['employee', 'budget-usage'] as const,
   topCategories: ['employee', 'top-categories'] as const,
   walletCurrencies: ['employee', 'wallet-currencies'] as const,
   users: ['users'] as const,
@@ -183,13 +181,6 @@ export function useExpenseTrend(currency = 'EGP') {
   return useQuery({
     queryKey: [...queryKeys.expenseTrend, currency] as const,
     queryFn: () => getExpenseTrend(6, currency),
-  });
-}
-
-export function useBudgetUsage(currency = 'EGP') {
-  return useQuery({
-    queryKey: [...queryKeys.budgetUsage, currency] as const,
-    queryFn: () => getBudgetUsage(currency),
   });
 }
 
@@ -603,7 +594,6 @@ export function useSubmitRequest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenseTrend });
-      queryClient.invalidateQueries({ queryKey: queryKeys.budgetUsage });
       queryClient.invalidateQueries({ queryKey: queryKeys.topCategories });
       queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
@@ -619,7 +609,6 @@ export function useSubmitReimbursement() {
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenseTrend });
-      queryClient.invalidateQueries({ queryKey: queryKeys.budgetUsage });
       queryClient.invalidateQueries({ queryKey: queryKeys.topCategories });
       queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
@@ -636,7 +625,6 @@ export function useAddExpense() {
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
       queryClient.invalidateQueries({ queryKey: queryKeys.expenseTrend });
-      queryClient.invalidateQueries({ queryKey: queryKeys.budgetUsage });
       queryClient.invalidateQueries({ queryKey: queryKeys.topCategories });
       queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },

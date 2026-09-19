@@ -302,22 +302,6 @@ export interface ExpenseTrendPoint {
 }
 
 /**
- * Budget consumption returned by `Employee/BudgetUsage`.
- * `Percentage` may be absent, stale, or `null` — the live API returns `null`
- * when `TotalBudget` is `0` (no budget configured), and has historically
- * returned `0` while `Used` was non-zero. Consumers MUST derive the usage
- * percentage from `Used` / `TotalBudget` themselves and never invoke number
- * methods (e.g. `toFixed()`) on `Percentage`.
- */
-export interface BudgetUsageData {
-  TotalBudget: number;
-  Used: number;
-  Remaining: number;
-  Percentage: number | null;
-  Currency?: string;
-}
-
-/**
  * The `Employee/TopCategories` response payload.
  * Verified against the live API: `Data` is an object carrying the ranked
  * categories under `ChartData` plus the `Currency` the totals were reported in.
