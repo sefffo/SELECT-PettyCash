@@ -26,6 +26,7 @@ export { AppHeader } from './AppHeader';
 export { RejectRequestDialog } from './RejectRequestDialog';
 export { AppSidebar } from './AppSidebar';
 export type { AppSidebarNavItem } from './AppSidebar';
+export { ScrollToTop } from './ScrollToTop';
 export { WelcomeHeader } from './WelcomeHeader';
 export { PrimaryAction } from './PrimaryAction';
 export type { PrimaryActionButton } from './PrimaryAction';
