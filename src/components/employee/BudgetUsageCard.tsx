@@ -7,17 +7,17 @@ import { useTranslation } from 'react-i18next';
 import { DashboardCardHeader } from '@/components/shared';
 import { ChartCardState } from './ChartCardState';
 import { useBudgetUsage } from '@/hooks/api';
-import { formatCurrency } from '@/utils/format';
+import { formatCurrencyByCode } from '@/utils/format';
 
 const COLORS = {
   used: '#145DB8',
   remaining: 'rgba(20, 93, 184, 0.12)',
 };
 
-export function BudgetUsageCard() {
+export function BudgetUsageCard({ currency = 'EGP' }: { currency?: string }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { data, isLoading, isError, refetch } = useBudgetUsage();
+  const { data, isLoading, isError, refetch } = useBudgetUsage(currency);
 
   const totalBudget = Number(data?.TotalBudget ?? 0);
   const used = Number(data?.Used ?? 0);
@@ -25,13 +25,15 @@ export function BudgetUsageCard() {
 
   /*
    * Derive usage percentage from TotalBudget + Used rather than trusting the
-   * backend Percentage field (the live API returns 0 even when Used > 0).
+   * backend Percentage field (the live API returns `null` when TotalBudget is
+   * 0, and historically returned stale values).
    *
-   * When TotalBudget = 0 (no budget configured) we always show 0% — it is
-   * meaningless to show 100% or a negative Remaining in that state.
+   * When TotalBudget = 0 / invalid (no budget configured) we always show 0% —
+   * it is meaningless to show 100% or a negative Remaining in that state.
    * The donut renders a full grey ring and the Remaining row shows "N/A".
    */
-  const noBudget = totalBudget <= 0;
+  const validAmounts = [totalBudget, used, remaining].every((value) => Number.isFinite(value));
+  const noBudget = !validAmounts || totalBudget <= 0;
   const percentage = noBudget
     ? 0
     : Math.min(Math.round((used / totalBudget) * 100), 100);
@@ -159,7 +161,7 @@ export function BudgetUsageCard() {
                   {t('employee.totalBudget')}
                 </Typography>
                 <Typography variant="body2" fontWeight={700} sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>
-                  {noBudget ? t('employee.noBudgetSet', 'Not set') : formatCurrency(totalBudget)}
+                  {noBudget ? t('employee.noBudgetSet', 'Not set') : formatCurrencyByCode(totalBudget, currency)}
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
@@ -167,7 +169,7 @@ export function BudgetUsageCard() {
                   {t('employee.used')}
                 </Typography>
                 <Typography variant="body2" fontWeight={700} color="primary.main" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>
-                  {formatCurrency(used)}
+                  {formatCurrencyByCode(used, currency)}
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
@@ -175,7 +177,7 @@ export function BudgetUsageCard() {
                   {t('employee.remaining')}
                 </Typography>
                 <Typography variant="body2" fontWeight={700} color={remaining < 0 ? 'error.main' : 'text.primary'} sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>
-                  {noBudget ? '—' : formatCurrency(remaining)}
+                  {noBudget ? '—' : formatCurrencyByCode(remaining, currency)}
                 </Typography>
               </Box>
             </Box>

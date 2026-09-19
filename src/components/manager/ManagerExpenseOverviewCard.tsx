@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { DashboardCardHeader, SkeletonLoader } from '@/components/shared';
 import { useManagerExpenseOverview } from '@/hooks/api';
 import type { ManagerExpenseOverviewPoint } from '@/types/api';
-import { formatCurrency, formatTooltipCurrency } from '@/utils/format';
+import { formatCurrencyByCode, formatTooltipCurrency } from '@/utils/format';
 
 interface TrendDatum {
   label: string;
@@ -35,7 +35,7 @@ function monthTimeOf(point: ManagerExpenseOverviewPoint): number {
 }
 
 function labelOf(point: ManagerExpenseOverviewPoint, index: number): string {
-  const raw = point.Month ?? point.MonthName;
+  const raw = point.Month;
   if (!raw || raw.trim() === '') return `#${index + 1}`;
   const match = /^(\d{4})-(\d{2})/.exec(raw.trim());
   if (match) {
@@ -50,14 +50,14 @@ function buildChartData(points: ManagerExpenseOverviewPoint[]): TrendDatum[] {
     .sort((a, b) => monthTimeOf(a) - monthTimeOf(b))
     .map((point, index) => ({
       label: labelOf(point, index),
-      amount: Number(point.Amount ?? point.Total ?? 0),
+      amount: Number(point.TotalSpent ?? 0),
     }));
 }
 
-export function ManagerExpenseOverviewCard() {
+export function ManagerExpenseOverviewCard({ currency = 'EGP' }: { currency?: string }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { data, isLoading, isError, refetch } = useManagerExpenseOverview();
+  const { data, isLoading, isError, refetch } = useManagerExpenseOverview(currency);
 
   const chartData = buildChartData(data ?? []);
   const isEmpty = chartData.length === 0;
@@ -211,7 +211,7 @@ export function ManagerExpenseOverviewCard() {
                 <Tooltip
                   cursor={{ stroke: alpha(theme.palette.primary.main, 0.35), strokeWidth: 1.5, strokeDasharray: '4 4' }}
                   labelFormatter={(label) => String(label)}
-                  formatter={(value) => formatTooltipCurrency(value)}
+                  formatter={(value) => formatTooltipCurrency(value, currency)}
                   contentStyle={{
                     backgroundColor: theme.palette.background.paper,
                     border: `1px solid ${theme.palette.divider}`,
@@ -238,7 +238,7 @@ export function ManagerExpenseOverviewCard() {
       {!isEmpty && !isLoading && !isError && (
         <Box sx={{ mt: 1, display: 'flex', alignItems: 'baseline', gap: 1, flexWrap: 'wrap', rowGap: 0.25, minWidth: 0 }}>
           <Typography sx={{ fontSize: 20, fontWeight: 700, color: 'text.primary' }}>
-            {formatCurrency(chartData.reduce((sum, point) => sum + point.amount, 0))}
+            {formatCurrencyByCode(chartData.reduce((sum, point) => sum + point.amount, 0), currency)}
           </Typography>
           <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{t('manager.monthlyTrendTotal')}</Typography>
         </Box>

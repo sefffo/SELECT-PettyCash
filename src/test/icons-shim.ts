@@ -70,5 +70,6 @@ export { default as StoreOutlined } from '@mui/icons-material/StoreOutlined';
 export { default as SupervisorAccountOutlined } from '@mui/icons-material/SupervisorAccountOutlined';
 export { default as SwapHorizOutlined } from '@mui/icons-material/SwapHorizOutlined';
 export { default as TranslateOutlined } from '@mui/icons-material/TranslateOutlined';
+export { default as UploadOutlined } from '@mui/icons-material/UploadOutlined';
 export { default as VisibilityOutlined } from '@mui/icons-material/VisibilityOutlined';
 export { default as Warning } from '@mui/icons-material/Warning';

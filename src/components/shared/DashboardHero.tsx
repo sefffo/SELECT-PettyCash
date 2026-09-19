@@ -42,11 +42,11 @@ function greeting(): string {
 
 function HeroStat({ label, sublabel, icon, value, loading, isCurrency }: DashboardHeroStat) {
   return (
-    <Box sx={{ minWidth: { xs: 100, sm: 132 }, minHeight: 0 }}>
+    <Box sx={{ minWidth: 'fit-content', maxWidth: '100%' }}>
       <Typography sx={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.7)', mb: 0.25 }}>
         {label}
       </Typography>
-      <Typography sx={{ fontSize: { xs: 22, sm: 26 }, fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <Typography sx={{ fontSize: { xs: 22, sm: 26 }, fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1.1, whiteSpace: 'normal' }}>
         {loading ? '—' : isCurrency ? (
           <AnimatedNumber value={value} formatFn={(n) => formatCurrency(Math.round(n))} />
         ) : (
@@ -93,7 +93,7 @@ export function DashboardHero({ badgeIcon, badgeLabel, title, subtitle, showGree
       <Box sx={{ position: 'absolute', top: -80, insetInlineEnd: -40, width: 280, height: 280, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.14), transparent 70%)', pointerEvents: 'none' }} />
       <Box sx={{ position: 'absolute', bottom: -100, insetInlineStart: '30%', width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle, rgba(56,189,248,0.22), transparent 70%)', pointerEvents: 'none' }} />
 
-      <Box sx={{ position: 'relative', display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 2.5, alignItems: { lg: 'center' }, justifyContent: 'space-between' }}>
+      <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 2.5, alignItems: { lg: 'center' }, justifyContent: 'space-between' }}>
         <Box minWidth={0} flex={1}>
           <Box
             sx={{
@@ -168,9 +168,9 @@ export function DashboardHero({ badgeIcon, badgeLabel, title, subtitle, showGree
         </Box>
 
         {stats && stats.length > 0 && (
-          <Box display="flex" gap={2.5} flexWrap="wrap" sx={{ position: 'relative', flexShrink: 0 }}>
+          <Box display="flex" gap={2.5} flexWrap="wrap" sx={{ position: 'relative', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
             {stats.map((stat, index) => (
-              <Box key={stat.label} display="flex" gap={2.5} alignItems="center">
+              <Box key={stat.label} display="flex" gap={2.5} alignItems="center" sx={{ flexShrink: 0, minWidth: 'fit-content', maxWidth: '100%' }}>
                 {index > 0 && (
                   <Box sx={{ width: 1, alignSelf: 'stretch', backgroundColor: 'rgba(255,255,255,0.18)', display: { xs: 'none', sm: 'block' } }} />
                 )}

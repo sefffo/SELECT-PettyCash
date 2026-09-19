@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Box, Button } from '@mui/material';
 import { Add, Check, ChecklistOutlined, Close, PaymentOutlined, PersonOutline, ScheduleOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,8 @@ import { useMyRequests } from '@/hooks/api';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
 import { DashboardCardHeader, DashboardCardFooter, DashboardTimeline, DashboardTimelineCard, EmptyState, SkeletonLoader, type TimelineTone } from '@/components/shared';
 import { StatusBadge } from '@/components/feature/StatusBadge';
+import { NewCashRequestDialog } from '@/components/employee/NewCashRequestDialog';
+import { RequestDetailsDialog } from '@/components/employee/RequestDetailsDialog';
 import { ROUTES } from '@/utils/constants';
 import type { PendingRequestStatus } from '@/types/api';
 import type { ExpenseStatus } from '@/types/vertex';
@@ -60,6 +62,8 @@ export function BudgetRequestsCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data, isLoading, isError } = useMyRequests();
+  const [newRequestOpen, setNewRequestOpen] = useState(false);
+  const [detailsId, setDetailsId] = useState<string | null>(null);
 
   const requests = useMemo(
     () =>
@@ -84,7 +88,7 @@ export function BudgetRequestsCard() {
             size="small"
             variant="contained"
             startIcon={<Add sx={{ fontSize: 15 }} />}
-            onClick={() => navigate(ROUTES.EMPLOYEE_NEW_REQUEST)}
+            onClick={() => setNewRequestOpen(true)}
             sx={{ borderRadius: 2, py: 0.35, px: 1.15, fontSize: 12.5 }}
           >
             {t('employee.newRequest')}
@@ -118,8 +122,8 @@ export function BudgetRequestsCard() {
                 badge={<StatusBadge status={statusBadgeValue(request.Status)} />}
                 dateText={t('employee.requestedOn', { date: formatDate(request.SubmittedAt) })}
                 amountText={formatCurrencyByCode(request.Amount, request.Currency)}
-                onClick={() => navigate(ROUTES.EMPLOYEE_REQUEST_DETAIL.replace(':id', request.RequestId))}
-                ariaLabel={t('employee.openRequestDetails', { title: description || request.RequestId })}
+                onClick={() => setDetailsId(request.RequestId)}
+                ariaLabel={t('employee.openRequestDetails', { title: description })}
               />
             );
           })}
@@ -133,6 +137,9 @@ export function BudgetRequestsCard() {
           viewAllLabel={t('employee.viewAll')}
         />
       )}
+
+      <NewCashRequestDialog open={newRequestOpen} onClose={() => setNewRequestOpen(false)} />
+      <RequestDetailsDialog requestId={detailsId} onClose={() => setDetailsId(null)} />
     </Box>
   );
 }

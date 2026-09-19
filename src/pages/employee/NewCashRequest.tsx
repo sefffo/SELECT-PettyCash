@@ -8,7 +8,7 @@ import { requestSchema, type RequestFormData } from '@/schemas/vertex';
 import { useSubmitRequest } from '@/hooks/api';
 import { CurrencyInput } from '@/components/feature/CurrencyInput';
 import { Toast } from '@/components/shared';
-import { requestTypes } from '@/utils/categories';
+import { requestCategories, requestTypes } from '@/utils/categories';
 
 const CURRENCY_OPTIONS = ['EGP', 'USD', 'SAR'];
 
@@ -30,6 +30,7 @@ export default function EmployeeNewCashRequest() {
     resolver: zodResolver(requestSchema),
     defaultValues: {
       currency: 'EGP',
+      category: '',
     },
   });
   const selectedCurrency = watch('currency');
@@ -42,6 +43,7 @@ export default function EmployeeNewCashRequest() {
         Amount: data.amount,
         Currency: data.currency,
         Reason: data.reason,
+        Category: data.category,
       });
       setToast({ open: true, message: 'Request submitted for approval', severity: 'success' });
       setTimeout(() => navigate('/employee/requests'), 1000);
@@ -92,6 +94,22 @@ export default function EmployeeNewCashRequest() {
             {requestTypes.map((rt) => (
               <MenuItem key={rt.value} value={rt.value}>
                 {rt.emoji} {rt.label}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            {...register('category')}
+            label="Category"
+            select
+            fullWidth
+            defaultValue=""
+            error={!!errors.category}
+            helperText={errors.category?.message}
+          >
+            {requestCategories.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
               </MenuItem>
             ))}
           </TextField>

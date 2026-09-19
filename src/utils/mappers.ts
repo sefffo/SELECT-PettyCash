@@ -90,6 +90,7 @@ export function mapPendingRequestToRequest(r: PendingRequest): Request {
     employeeName: r.EmployeeName ?? '',
     requestType: mapCategoryToRequestType(r.Reason),
     amount: r.Amount,
+    currency: r.CurrencyCode ?? undefined,
     department: '',
     reason: r.Reason,
     status: mapPendingRequestStatus(r.Status),
@@ -148,7 +149,7 @@ export function mapManagerRequestStatus(status: string): RequestStatus {
 export function mapManagerRequestToRequest(r: ManagerRequestItem): Request {
   return {
     id: r.RequestId,
-    employeeId: '',
+    employeeId: r.EmployeeId ?? '',
     employeeName: r.EmployeeName ?? '',
     requestType: mapCategoryToRequestType(r.Reason),
     amount: r.Amount,
@@ -159,6 +160,20 @@ export function mapManagerRequestToRequest(r: ManagerRequestItem): Request {
     createdAt: r.DateRequested,
     updatedAt: r.DateRequested,
   };
+}
+
+/**
+ * Fills in missing employee names on requests using an `EmployeeId -> Name`
+ * map. The manager PENDING queue returns only `EmployeeId` (no name),
+ * so rows are resolved against the department roster (`Data/Users`).
+ * Rows that already carry a name are left untouched.
+ */
+export function resolveRequestEmployeeNames(requests: Request[], nameById: Record<string, string>): Request[] {
+  return requests.map((r) => {
+    if (r.employeeName) return r;
+    const name = r.employeeId ? (nameById[r.employeeId] ?? '') : '';
+    return name ? { ...r, employeeName: name } : r;
+  });
 }
 
 const FINANCE_STAGE_STATUSES = ['PendingFinance', 'PendingApproval'] as const;

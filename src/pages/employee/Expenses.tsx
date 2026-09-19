@@ -1,10 +1,13 @@
-import { Box, Typography } from '@mui/material';
+import { useState } from 'react';
+import { Box, Fab, Typography } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useExpenses } from '@/hooks/api';
 import { StatusBadge } from '@/components/feature/StatusBadge';
 import { EmptyState, SkeletonLoader } from '@/components/shared';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
 import { mapExpenseStatus } from '@/utils/mappers';
+import { AddExpenseDialog } from '@/components/employee/AddExpenseDialog';
 import type { EmployeeExpenseItem } from '@/types/api';
 
 function sortByExpenseDateDesc(items: EmployeeExpenseItem[]): EmployeeExpenseItem[] {
@@ -20,6 +23,7 @@ function sortByExpenseDateDesc(items: EmployeeExpenseItem[]): EmployeeExpenseIte
 
 export default function EmployeeExpenses() {
   const { t } = useTranslation();
+  const [addExpenseOpen, setAddExpenseOpen] = useState(false);
   const { data, isLoading } = useExpenses();
 
   const expenses = sortByExpenseDateDesc(data ?? []);
@@ -63,6 +67,13 @@ export default function EmployeeExpenses() {
           <EmptyState icon="🧾" title={t('employee.noExpenses')} description={t('employee.noExpensesHint')} />
         </Box>
       )}
+
+      <Fab color="primary" size="small" onClick={() => setAddExpenseOpen(true)}
+        sx={{ position: 'fixed', bottom: 24, right: 24, backgroundColor: '#145DB8', '&:hover': { backgroundColor: '#1E7AE6' } }}>
+        <Add />
+      </Fab>
+
+      <AddExpenseDialog open={addExpenseOpen} onClose={() => setAddExpenseOpen(false)} />
     </Box>
   );
 }

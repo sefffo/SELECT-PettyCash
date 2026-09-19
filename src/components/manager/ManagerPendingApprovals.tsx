@@ -17,17 +17,24 @@ interface ManagerPendingApprovalsProps {
 }
 
 function ApprovalRow({
-  id, employeeName, amount, currency, reason, createdAt, status,
+  id, employeeName, amount, currency, reason, createdAt, status, requestType,
   onApprove, onReject,
 }: {
   id: string; employeeName: string; amount: number; currency?: string; reason: string;
-  createdAt: string; status: string;
+  createdAt: string; status: string; requestType?: string;
   onApprove?: (id: string) => void; onReject?: (id: string) => void;
 }) {
   const { t } = useTranslation();
   const isPending = status === 'pending' || status === 'draft';
   const initials = employeeName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase();
   const accentColor = '#145DB8';
+  const TYPE_KEYS: Record<string, string> = {
+    'cash-advance': 'request.type.cashAdvance',
+    budget: 'request.type.budget',
+    purchase: 'request.type.purchase',
+    travel: 'request.type.travel',
+  };
+  const typeLabel = requestType && TYPE_KEYS[requestType] ? t(TYPE_KEYS[requestType]) : t('manager.requestTypeCash');
 
   return (
     <Box
@@ -63,24 +70,24 @@ function ApprovalRow({
         flex: '1 1 0%', minWidth: 0,
         [ROW_BREAKPOINT]: { flex: '0 1 180px' },
       }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 600, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%', mb: 0.25 }}>
+          {employeeName}
+        </Typography>
         <Box display="flex" alignItems="center" gap={0.5} flexWrap="wrap">
-          <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
-            {employeeName}
-          </Typography>
           <Box sx={{
             px: 0.5, py: 0.125, borderRadius: 0.75,
             backgroundColor: `${accentColor}12`, color: accentColor,
             fontSize: 10, fontWeight: 600, lineHeight: 1.4, textTransform: 'capitalize', flexShrink: 0,
           }}>
-            {t('manager.requestTypeCash')}
+            {typeLabel}
           </Box>
+          <Typography sx={{
+            fontSize: 11, color: 'text.disabled',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          }}>
+            {formatDate(createdAt)}
+          </Typography>
         </Box>
-        <Typography sx={{
-          fontSize: 11, color: 'text.disabled',
-          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-        }}>
-          {formatDate(createdAt)}
-        </Typography>
         <Typography sx={{
           fontSize: 12, color: 'text.secondary',
           overflow: 'hidden',
@@ -187,8 +194,8 @@ export function ManagerPendingApprovals({
 
       <Box display="flex" flexDirection="column" gap={1}>
         {pendingRequests.slice(0, 5).map((req) => (
-          <ApprovalRow key={req.id} id={req.id} employeeName={req.employeeName ?? req.employeeId}
-            amount={req.amount} currency={req.currency} reason={req.reason} createdAt={req.createdAt} status={req.status}
+          <ApprovalRow key={req.id} id={req.id} employeeName={req.employeeName || ''}
+            amount={req.amount} currency={req.currency} reason={req.reason} createdAt={req.createdAt} status={req.status} requestType={req.requestType}
             onApprove={onApproveRequest} onReject={onRejectRequest} />
         ))}
       </Box>

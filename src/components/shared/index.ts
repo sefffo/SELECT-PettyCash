@@ -14,6 +14,7 @@ export type { DashboardHeroAction, DashboardHeroStat } from './DashboardHero';
 export { DashboardCardHeader } from './DashboardCardHeader';
 export { DashboardCardFooter } from './DashboardCardFooter';
 export { DashboardTimeline } from './DashboardTimeline';
+export { CompletedTransfersChartCard } from './CompletedTransfersChartCard';
 export { DashboardTimelineCard } from './DashboardTimelineCard';
 export type { TimelineTone } from './DashboardTimelineCard';
 export { DirectMoneyRequestDialog } from './DirectMoneyRequestDialog';

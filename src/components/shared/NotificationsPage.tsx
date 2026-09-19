@@ -4,6 +4,7 @@ import { NotificationsNoneOutlined } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useMarkAllNotificationsAsRead, useMarkNotificationAsRead, useNotifications } from '@/hooks/api';
+import { useLoadMoreSentinel } from '@/hooks/useLoadMoreSentinel';
 import { useNotificationStore } from '@/store/notificationStore';
 import { formatDate } from '@/utils/format';
 import {
@@ -25,10 +26,14 @@ interface NotificationsPageProps {
 
 export function NotificationsPage({ titleKey, subtitleKey }: NotificationsPageProps) {
   const { t } = useTranslation();
-  const { data, isLoading, isError } = useNotifications();
+  const { data, isLoading, isError, hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage } = useNotifications();
   const viewedIds = useNotificationStore((s) => s.viewedIds);
   const markAsRead = useNotificationStore((s) => s.markAsRead);
   const [selected, setSelected] = useState<ApiNotification | null>(null);
+  const { sentinelRef } = useLoadMoreSentinel({
+    enabled: Boolean(hasNextPage && !isFetchingNextPage && !isFetchNextPageError),
+    onLoadMore: () => void fetchNextPage(),
+  });
 
   const notifications = data ?? [];
   const unreadCount = notifications.filter(
@@ -219,9 +224,24 @@ export function NotificationsPage({ titleKey, subtitleKey }: NotificationsPagePr
                   </Box>
                 </Box>
               );
-            })}
-          </Box>
-        )}
+              })}
+              {(hasNextPage || isFetchingNextPage || isFetchNextPageError) && (
+                <Box ref={sentinelRef} sx={{ py: 2, display: 'flex', justifyContent: 'center' }}>
+                  {isFetchNextPageError ? (
+                    <Button
+                      size="small"
+                      onClick={() => void fetchNextPage()}
+                      sx={{ fontSize: 12.5, textTransform: 'none', borderRadius: 1.5 }}
+                    >
+                      {t('notification.retry')}
+                    </Button>
+                  ) : isFetchingNextPage ? (
+                    <CircularProgress size={20} color="primary" />
+                  ) : null}
+                </Box>
+              )}
+            </Box>
+          )}
       </Box>
 
       <NotificationDetailsDialog notification={selected} onClose={() => setSelected(null)} />

@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { Box, Typography, Fab, Button, Chip } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useEmployeeAllRequests } from '@/hooks/api';
 import { StatusBadge } from '@/components/feature/StatusBadge';
 import { EmptyState, SkeletonLoader } from '@/components/shared';
+import { NewCashRequestDialog } from '@/components/employee/NewCashRequestDialog';
+import { RequestDetailsDialog } from '@/components/employee/RequestDetailsDialog';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
 import { mapEmployeeAllRequestToRequest, sortByDateDesc } from '@/utils/mappers';
 
@@ -17,8 +19,9 @@ const REQUEST_TYPE_LABELS: Record<string, string> = {
 
 export default function EmployeeCashRequests() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { data: requestsData, isLoading: requestsLoading } = useEmployeeAllRequests();
+  const [newRequestOpen, setNewRequestOpen] = useState(false);
+  const [detailsId, setDetailsId] = useState<string | null>(null);
 
   const requests = sortByDateDesc((requestsData ?? []).map(mapEmployeeAllRequestToRequest));
 
@@ -35,7 +38,7 @@ export default function EmployeeCashRequests() {
           {requests.map((req) => (
             <Box
               key={req.id}
-              onClick={() => navigate(`/employee/requests/${req.id}`)}
+              onClick={() => setDetailsId(req.id)}
               sx={{
                 p: { xs: 1.5, sm: 2 }, borderRadius: 3, backgroundColor: 'background.paper',
                 border: '1px solid', borderColor: 'divider', cursor: 'pointer',
@@ -70,14 +73,17 @@ export default function EmployeeCashRequests() {
       ) : (
         <Box mt={2}>
           <EmptyState icon="📋" title="No requests yet" description="Create your first cash request to get started."
-            action={<Button variant="contained" startIcon={<Add />} onClick={() => navigate('/employee/requests/new')}>New Request</Button>} />
+            action={<Button variant="contained" startIcon={<Add />} onClick={() => setNewRequestOpen(true)}>New Request</Button>} />
         </Box>
       )}
 
-      <Fab color="primary" size="small" onClick={() => navigate('/employee/requests/new')}
+      <Fab color="primary" size="small" onClick={() => setNewRequestOpen(true)}
         sx={{ position: 'fixed', bottom: 24, right: 24, backgroundColor: '#145DB8', '&:hover': { backgroundColor: '#1E7AE6' } }}>
         <Add />
       </Fab>
+
+      <NewCashRequestDialog open={newRequestOpen} onClose={() => setNewRequestOpen(false)} />
+      <RequestDetailsDialog requestId={detailsId} onClose={() => setDetailsId(null)} />
     </Box>
   );
 }

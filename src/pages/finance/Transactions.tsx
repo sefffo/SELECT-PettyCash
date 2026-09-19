@@ -336,7 +336,7 @@ export default function FinanceTransactions() {
                               {tx.Employee}
                             </Typography>
                             <Typography sx={{ fontSize: 10.5, color: 'text.disabled', fontVariantNumeric: 'tabular-nums' }}>
-                              #{tx.TransactionNumber}
+                              {formatDate(tx.Date)}
                             </Typography>
                           </Box>
                         </Box>

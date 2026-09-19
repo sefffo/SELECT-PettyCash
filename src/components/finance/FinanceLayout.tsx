@@ -47,7 +47,7 @@ export function FinanceLayout() {
 
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
-      <AppHeader panelLabel="finance.financePanel" onMenuClick={() => setDrawerOpen(true)} />
+      <AppHeader panelLabel="finance.financePanel" onMenuClick={() => setDrawerOpen(true)} showNotifications />
 
       <Box display="flex" flex={1}>
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>

@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { directMoneyRequestSchema, type DirectMoneyRequestFormData } from '@/schemas/vertex';
 import { Toast } from '@/components/shared';
 import { avatarColor, initialsOf } from '@/utils/avatar';
+import { requestCategories } from '@/utils/categories';
 
 const CURRENCY_OPTIONS = ['EGP', 'USD', 'SAR'];
 
@@ -36,6 +37,7 @@ export interface DirectMoneyRequestParams {
   Amount: number;
   Currency: string;
   Notes: string;
+  Category: string;
 }
 
 interface DirectMoneyRequestDialogProps {
@@ -83,6 +85,7 @@ export function DirectMoneyRequestDialog({
     resolver: zodResolver(directMoneyRequestSchema),
     defaultValues: {
       employeeId: '',
+      category: '',
       amount: undefined,
       currency: 'EGP',
       notes: '',
@@ -94,7 +97,7 @@ export function DirectMoneyRequestDialog({
 
   useEffect(() => {
     if (open) {
-      reset({ employeeId: initialEmployeeId ?? '', amount: undefined, currency: 'EGP', notes: '' });
+      reset({ employeeId: initialEmployeeId ?? '', category: '', amount: undefined, currency: 'EGP', notes: '' });
     }
   }, [open, initialEmployeeId, reset]);
 
@@ -115,6 +118,7 @@ export function DirectMoneyRequestDialog({
         Amount: data.amount,
         Currency: data.currency,
         Notes: data.notes.trim(),
+        Category: data.category,
       });
       reset();
       onClose();
@@ -215,6 +219,21 @@ export function DirectMoneyRequestDialog({
                 );
               }}
             />
+
+            <TextField
+              {...register('category')}
+              label={t('directMoney.category')}
+              select
+              fullWidth
+              error={!!errors.category}
+              helperText={errors.category?.message}
+            >
+              {requestCategories.map((option) => (
+                <MenuItem key={option} value={option} sx={{ fontSize: 14, py: 1.1 }}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
 
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
               <TextField

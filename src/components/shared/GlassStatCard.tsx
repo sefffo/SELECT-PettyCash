@@ -49,7 +49,7 @@ export function GlassStatCard({
       sx={[
         {
           borderRadius: 3,
-          p: { xs: 1.5, sm: 2 },
+          p: { xs: 1.25, sm: 1.5 },
           backgroundColor: 'background.paper',
           border: '1px solid',
           borderColor: 'divider',
@@ -78,7 +78,7 @@ export function GlassStatCard({
         }}
       />
 
-      <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1.5} gap={1}>
+      <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1} gap={1}>
         <Box
           sx={{
             width: 42,

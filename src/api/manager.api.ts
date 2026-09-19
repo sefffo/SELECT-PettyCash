@@ -1,12 +1,18 @@
 import { execute } from './axios';
-import type { ApiNotification, DirectGrantParams, ManagerEmployeeBalance, ManagerExpenseOverviewPoint, ManagerRequestItem } from '@/types/api';
+import type { DirectGrantParams, GetNotificationsParams, ManagerEmployeeBalance, ManagerExpenseOverviewData, ManagerExpenseOverviewPoint, ManagerRequestItem, NotificationPageResult } from '@/types/api';
+import { normalizeNotificationsPage } from '@/utils/notifications';
 
 export function getManagerPendingRequests(): Promise<ManagerRequestItem[]> {
   return execute<ManagerRequestItem[]>({ action: 'Manager/GetPendingRequests' });
 }
 
-export function getManagerExpenseOverview(): Promise<ManagerExpenseOverviewPoint[]> {
-  return execute<ManagerExpenseOverviewPoint[]>({ action: 'Manager/ExpenseOverview' });
+export async function getManagerExpenseOverview(currency?: string): Promise<ManagerExpenseOverviewPoint[]> {
+  const payload = await execute<ManagerExpenseOverviewData | null>({
+    action: 'Manager/ExpenseOverview',
+    parameters: currency ? { Currency: currency } : undefined,
+  });
+  const rows = payload?.ChartData;
+  return Array.isArray(rows) ? rows : [];
 }
 
 export function getManagerApprovedRequests(): Promise<ManagerRequestItem[]> {
@@ -17,8 +23,12 @@ export function getManagerRejectedRequests(): Promise<ManagerRequestItem[]> {
   return execute<ManagerRequestItem[]>({ action: 'Manager/GetRejectedRequests' });
 }
 
-export function getManagerNotifications(): Promise<ApiNotification[]> {
-  return execute<ApiNotification[]>({ action: 'Manager/GetNotifications' });
+export async function getManagerNotifications({ page, pageSize }: GetNotificationsParams): Promise<NotificationPageResult> {
+  const payload = await execute<unknown>({
+    action: 'Manager/GetNotifications',
+    parameters: { Page: page, PageSize: pageSize },
+  });
+  return normalizeNotificationsPage(payload, pageSize);
 }
 
 export function getManagerEmployeeBalances(): Promise<ManagerEmployeeBalance[]> {
@@ -33,6 +43,7 @@ export function submitDirectGrant(params: DirectGrantParams): Promise<null> {
       Amount: params.Amount,
       Currency: params.Currency,
       Notes: params.Notes,
+      Category: params.Category,
     },
   });
 }

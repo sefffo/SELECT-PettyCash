@@ -1,5 +1,13 @@
 import { execute } from './axios';
-import type { ApiNotification, EmployeeAllRequestItem, EmployeeExpenseItem, EmployeeRequestItem, PendingRequest } from '@/types/api';
+import type {
+  EmployeeAllRequestItem,
+  EmployeeExpenseItem,
+  EmployeeRequestItem,
+  GetNotificationsParams,
+  NotificationPageResult,
+  PendingRequest,
+} from '@/types/api';
+import { normalizeNotificationsPage } from '@/utils/notifications';
 
 /**
  * Live API contracts (verified against https://pcapi.selecteg.com on 2026-08-24):
@@ -62,8 +70,12 @@ export async function getEmployeeAllRequests(): Promise<EmployeeAllRequestItem[]
   return execute<EmployeeAllRequestItem[]>({ action: 'Employee/Requests/GetAll' });
 }
 
-export function getEmployeeNotifications(): Promise<ApiNotification[]> {
-  return execute<ApiNotification[]>({ action: 'Employee/GetNotifications' });
+export async function getEmployeeNotifications({ page, pageSize }: GetNotificationsParams): Promise<NotificationPageResult> {
+  const payload = await execute<unknown>({
+    action: 'Employee/GetNotifications',
+    parameters: { Page: page, PageSize: pageSize },
+  });
+  return normalizeNotificationsPage(payload, pageSize);
 }
 
 export function markNotificationAsRead(notificationId: string): Promise<void> {
@@ -81,6 +93,7 @@ export interface SubmitRequestParams {
   Amount: number;
   Currency: string;
   Reason: string;
+  Category: string;
 }
 
 export async function submitRequest(params: SubmitRequestParams): Promise<{ RequestId: string }> {
@@ -90,6 +103,7 @@ export async function submitRequest(params: SubmitRequestParams): Promise<{ Requ
       Amount: params.Amount,
       CurrencyCode: params.Currency,
       Reason: params.Reason,
+      Category: params.Category,
     },
   });
 }

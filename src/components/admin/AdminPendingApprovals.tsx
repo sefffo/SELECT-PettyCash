@@ -24,7 +24,7 @@ export function AdminPendingApprovals({ requests, loading, onApprove, onReject }
       ) : (
         <Box display="flex" flexDirection="column" gap={1}>
           {pending.slice(0, 5).map((req, i) => (
-            <PendingApprovalItem key={req.id} id={req.id} employeeName={req.employeeName ?? req.employeeId}
+            <PendingApprovalItem key={req.id} id={req.id} employeeName={req.employeeName || ''}
               amount={req.amount} reason={req.reason} createdAt={req.createdAt} status={req.status}
               onApprove={onApprove} onReject={onReject} index={i} />
           ))}

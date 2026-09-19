@@ -53,6 +53,7 @@ export function submitDirectPayment(params: DirectPaymentParams): Promise<null> 
       Amount: params.Amount,
       Currency: params.Currency,
       Notes: params.Notes,
+      ...(params.Category ? { Category: params.Category } : {}),
     },
   });
 }

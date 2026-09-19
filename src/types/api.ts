@@ -92,6 +92,7 @@ export interface MyProfileInfo {
   Email: string;
   Role: ApiRole;
   DepartmentId: string | null;
+  DepartmentName?: string | null;
   WalletEGP: number;
   WalletUSD: number;
   WalletSAR: number;
@@ -136,13 +137,22 @@ export interface FinanceEmployeeBalance {
   SAR: number;
 }
 
-/** An employee wallet-balance row returned by `Manager/Employees/Balances`. */
+/**
+ * An employee wallet-balance row returned by `Manager/Employees/Balances`.
+ * Verified against the live API: `{ EmployeeId, Name, Email, BalanceEGP,
+ * BalanceUSD, BalanceSAR }`. The legacy `EGP/USD/SAR` aliases are kept loose
+ * for consumers that match by `EmployeeId`/`UserId`/`Id`.
+ */
 export interface ManagerEmployeeBalance {
   EmployeeId?: string;
   UserId?: string;
   Id?: string;
+  Name?: string | null;
   Email?: string | null;
   DepartmentId?: string | null;
+  BalanceEGP?: number | null;
+  BalanceUSD?: number | null;
+  BalanceSAR?: number | null;
   EGP?: number | null;
   USD?: number | null;
   SAR?: number | null;
@@ -181,6 +191,7 @@ export interface DirectPaymentParams {
   Amount: number;
   Currency: string;
   Notes?: string;
+  Category?: string;
 }
 
 /** Params for the manager direct grant action `Manager/DirectGrant`. */
@@ -189,23 +200,67 @@ export interface DirectGrantParams {
   Amount: number;
   Currency: string;
   Notes?: string;
+  Category: string;
 }
 
+/**
+ * Manager dashboard statistics returned by `Dashboard/Manager`.
+ * Verified against the live API: `{ DepartmentPendingCount,
+ * DepartmentTotalSpentEGP, DepartmentTotalSpentUSD, DepartmentTotalSpentSAR }`.
+ */
 export interface ManagerDashboardData {
-  DepartmentId: string;
-  DepartmentBudget: number;
-  PendingRequestCount: number;
+  DepartmentPendingCount: number;
+  DepartmentTotalSpentEGP: number;
+  DepartmentTotalSpentUSD: number;
+  DepartmentTotalSpentSAR: number;
+}
+
+/**
+ * The `Manager/ExpenseOverview` response payload.
+ * Verified against the live API (2026-09-14): `Data` is an object carrying the
+ * series under `ChartData` (a fixed 12-row monthly array of
+ * `{ Month, TotalSpent }`) plus the `Currency` the totals were reported in.
+ */
+export interface ManagerExpenseOverviewData {
+  Currency?: string;
+  ChartData?: ManagerExpenseOverviewPoint[];
 }
 
 /**
  * A monthly expense datapoint returned by `Manager/ExpenseOverview`.
- * Field names are loose because the endpoint response is not documented.
+ * Verified against the live API (2026-09-14): `Month` is a short month label
+ * (`Jan`..`Dec`), `TotalSpent` is the sum for that month.
  */
 export interface ManagerExpenseOverviewPoint {
   Month?: string;
-  MonthName?: string;
-  Amount?: number;
-  Total?: number;
+  TotalSpent?: number;
+}
+
+/**
+ * A monthly completed-transfers datapoint returned by the shared Manager/Admin
+ * chart endpoint `Manager/CompletedTransfers`.
+ *
+ * Verified against the live API (2026-09-15): the response is an array, one row
+ * per month of the target period — 12 rows (Jan..Dec) when only `TargetYear` is
+ * sent (or no params), or a single row when `TargetMonth` + `TargetYear` are
+ * sent. Data is scoped server-side by the caller's role: Company-wide for
+ * Admin, department-shared for Manager. Amounts preserve the backend's raw
+ * units per currency and are never converted.
+ */
+export interface CompletedTransferPoint {
+  Month?: string;
+  EGP_Amount?: number;
+  EGP_Count?: number;
+  USD_Amount?: number;
+  USD_Count?: number;
+  SAR_Amount?: number;
+  SAR_Count?: number;
+}
+
+/** Request parameters for the `Manager/CompletedTransfers` chart endpoint. */
+export interface CompletedTransfersParams {
+  TargetMonth?: number;
+  TargetYear?: number;
 }
 
 export interface AdminDashboardData {
@@ -214,41 +269,68 @@ export interface AdminDashboardData {
   TotalCompanyPendingAmount: number;
 }
 
-/** A monthly spend datapoint returned by `Dashboard/MonthlySpend`. */
+/**
+ * A monthly spend datapoint returned by `Dashboard/MonthlySpend`.
+ * Verified against the live API (2026-09-17): `{ Month, TotalSpent }`, where
+ * `Month` is a `YYYY-MM` label (e.g. `2026-09`). The endpoint is
+ * Administrator-only; `Months`/`TargetMonth`/`TargetYear` do not change the
+ * returned rows as of this verification.
+ */
 export interface MonthlySpendPoint {
   Month?: string;
-  Amount?: number;
-  Total?: number;
+  TotalSpent?: number;
+}
+
+/**
+ * The `Employee/ExpenseTrend` response payload.
+ * Verified against the live API: `Data` is an object carrying the monthly
+ * series under `ChartData` plus the `Currency` the totals were reported in.
+ */
+export interface ExpenseTrendData {
+  Currency?: string;
+  ChartData?: ExpenseTrendPoint[];
 }
 
 /**
  * A monthly expense datapoint returned by `Employee/ExpenseTrend`.
- * Field names are loose because the endpoint response is not documented.
+ * Verified against the live API (2026-09-14): `{ Month, TotalSpent }`, where
+ * `Months` is a count of trailing months and `Currency` is a supported filter.
  */
 export interface ExpenseTrendPoint {
   Month?: string;
-  Amount?: number;
-  Total?: number;
+  TotalSpent?: number;
 }
 
 /**
  * Budget consumption returned by `Employee/BudgetUsage`.
- * `Percentage` may be absent or stale (the live API has returned `0` while
- * `Used` was non-zero), so consumers derive it from `Used` / `TotalBudget`
- * instead of trusting it blindly.
+ * `Percentage` may be absent, stale, or `null` — the live API returns `null`
+ * when `TotalBudget` is `0` (no budget configured), and has historically
+ * returned `0` while `Used` was non-zero. Consumers MUST derive the usage
+ * percentage from `Used` / `TotalBudget` themselves and never invoke number
+ * methods (e.g. `toFixed()`) on `Percentage`.
  */
 export interface BudgetUsageData {
   TotalBudget: number;
   Used: number;
   Remaining: number;
-  Percentage: number;
+  Percentage: number | null;
   Currency?: string;
+}
+
+/**
+ * The `Employee/TopCategories` response payload.
+ * Verified against the live API: `Data` is an object carrying the ranked
+ * categories under `ChartData` plus the `Currency` the totals were reported in.
+ */
+export interface TopCategoriesData {
+  Currency?: string;
+  ChartData?: TopCategoryItem[];
 }
 
 /** A ranked expense category returned by `Employee/TopCategories`. */
 export interface TopCategoryItem {
   Category: string;
-  Amount: number;
+  TotalAmount: number;
   Percentage?: number;
 }
 
@@ -276,14 +358,22 @@ export interface CreateUserResult {
  * (`Manager/GetPendingRequests`, `Manager/GetApprovedRequests`,
  * `Manager/GetRejectedRequests`) and by the `Admin/GetEmployeeProfile`
  * transaction history.
+ *
+ * Verified against the live API: the PENDING queue returns
+ * `{ RequestId, EmployeeId, Amount, Currency, Reason, Status, RequestType,
+ * DateRequested }` and does NOT include `EmployeeName`; the approved/rejected
+ * queues return `EmployeeName` instead and omit `EmployeeId`. Consumers must
+ * resolve pending rows through the `EmployeeId -> Name` map (e.g. `Data/Users`).
  */
 export interface ManagerRequestItem {
   RequestId: string;
   EmployeeName?: string;
+  EmployeeId?: string;
   Amount: number;
   Currency?: string | null;
   Reason: string;
   Status: string;
+  RequestType?: string;
   DateRequested: string;
 }
 
@@ -333,4 +423,28 @@ export interface ApiError {
   message: string;
   status: number;
   errors?: Record<string, string[]>;
+}
+
+/** Request parameters for the lazy-loaded role notification endpoints. */
+export interface GetNotificationsParams {
+  page: number;
+  pageSize: number;
+}
+
+/**
+ * Normalized page of notifications produced by the frontend adapter around
+ * the lazy-loaded notification endpoints (`Employee/GetNotifications`,
+ * `Manager/GetNotifications`).
+ *
+ * The endpoints now accept `Page` (1-based) and `PageSize` parameters. Their
+ * response may be a bare array (unpaged) or an envelope object carrying the
+ * page plus pagination metadata. All consumers normalize to this shape; fields
+ * the backend does not provide fall back to a safe default (`hasMore: false`,
+ * `nextPage: null`, `totalUnread: null`).
+ */
+export interface NotificationPageResult {
+  items: ApiNotification[];
+  hasMore: boolean;
+  nextPage: number | null;
+  totalUnread: number | null;
 }

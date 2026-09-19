@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { DashboardCardHeader } from '@/components/shared';
 import { ChartCardState } from './ChartCardState';
 import { useTopCategories } from '@/hooks/api';
-import { formatCurrency } from '@/utils/format';
+import { formatCurrencyByCode } from '@/utils/format';
 
 interface CategoryDatum {
   label: string;
@@ -28,9 +28,10 @@ const PLACEHOLDER_CATEGORIES = [
 interface TopCategoryTooltipProps {
   active?: boolean;
   payload?: ReadonlyArray<{ payload?: CategoryDatum }>;
+  currency: string;
 }
 
-function TopCategoryTooltip({ active, payload }: TopCategoryTooltipProps) {
+function TopCategoryTooltip({ active, payload, currency }: TopCategoryTooltipProps) {
   const datum = payload?.[0]?.payload;
   if (!active || !datum) return null;
 
@@ -48,32 +49,38 @@ function TopCategoryTooltip({ active, payload }: TopCategoryTooltipProps) {
     >
       <Typography sx={{ fontSize: 12, fontWeight: 700, color: 'text.primary' }}>{datum.label}</Typography>
       <Typography sx={{ fontSize: 12, color: 'text.secondary', mt: 0.25 }}>
-        {formatCurrency(datum.amount)} · {datum.percentage.toFixed(0)}%
+        {formatCurrencyByCode(datum.amount, currency)} · {datum.percentage.toFixed(0)}%
       </Typography>
     </Box>
   );
 }
 
-export function TopCategoryCard() {
+export function TopCategoryCard({ currency = 'EGP' }: { currency?: string }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { data, isLoading, isError, refetch } = useTopCategories();
+  const { data, isLoading, isError, refetch } = useTopCategories(currency);
 
-  const total = (data ?? []).reduce((sum, item) => sum + Number(item.Amount ?? 0), 0);
+  /*
+   * Percentages are derived from the raw TotalAmount values on the frontend so
+   * the chart never relies on a rounded/backend-supplied Percentage. Zero and
+   * empty totals are guarded so the math can never produce NaN or Infinity.
+   */
+  const safeAmount = (value: number | null | undefined): number => {
+    const parsed = Number(value ?? 0);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
 
-  const rawData: CategoryDatum[] = (data ?? [])
-    .map((item) => {
-      const amount = Number(item.Amount ?? 0);
-      return {
-        label: item.Category || t('employee.other'),
-        amount,
-        percentage: Number(item.Percentage ?? 0) > 0
-          ? Number(item.Percentage ?? 0)
-          : total > 0
-          ? (amount / total) * 100
-          : 0,
-      };
-    })
+  const rawItems = (data ?? []).map((item) => ({
+    label: item.Category || t('employee.other'),
+    amount: safeAmount(item.TotalAmount),
+  }));
+  const total = rawItems.reduce((sum, item) => sum + item.amount, 0);
+
+  const rawData: CategoryDatum[] = rawItems
+    .map((item) => ({
+      ...item,
+      percentage: total > 0 ? (item.amount / total) * 100 : 0,
+    }))
     .sort((a, b) => b.amount - a.amount)
     .slice(0, MAX_CATEGORIES);
 
@@ -154,7 +161,7 @@ export function TopCategoryCard() {
                   tick={{ fontSize: 11, fill: theme.palette.text.secondary }}
                 />
                 <Tooltip
-                  content={allZero || !hasRealData ? <></> : <TopCategoryTooltip />}
+                  content={allZero || !hasRealData ? <></> : <TopCategoryTooltip currency={currency} />}
                   cursor={{ fill: alpha(theme.palette.primary.main, 0.06) }}
                 />
                 <Bar dataKey="displayAmount" radius={[0, 6, 6, 0]} barSize={14}>
@@ -170,7 +177,7 @@ export function TopCategoryCard() {
 
       <Box sx={{ mt: 1, display: 'flex', alignItems: 'baseline', gap: 1, flexWrap: 'wrap', rowGap: 0.25, minWidth: 0 }}>
         <Typography sx={{ fontSize: 20, fontWeight: 700, color: 'text.primary' }}>
-          {formatCurrency(total)}
+          {formatCurrencyByCode(total, currency)}
         </Typography>
         <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{t('employee.topCategoryTotal')}</Typography>
       </Box>

@@ -4,6 +4,7 @@ import { NotificationsNoneOutlined, NotificationsOutlined } from '@mui/icons-mat
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useMarkAllNotificationsAsRead, useMarkNotificationAsRead, useNotifications } from '@/hooks/api';
+import { useLoadMoreSentinel } from '@/hooks/useLoadMoreSentinel';
 import { useUnreadNotifications } from '@/hooks/unreadNotifications';
 import { useNotificationStore } from '@/store/notificationStore';
 import { formatDate } from '@/utils/format';
@@ -31,11 +32,15 @@ export function NotificationsMenu({ trigger }: NotificationsMenuProps) {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [selected, setSelected] = useState<ApiNotification | null>(null);
-  const { data, isLoading, isError } = useNotifications();
+  const { data, isLoading, isError, hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage } = useNotifications();
   const markAsRead = useNotificationStore((s) => s.markAsRead);
   const viewedIds = useNotificationStore((s) => s.viewedIds);
   const markOneAsRead = useMarkNotificationAsRead();
   const markAllAsRead = useMarkAllNotificationsAsRead();
+  const { sentinelRef } = useLoadMoreSentinel({
+    enabled: Boolean(hasNextPage && !isFetchingNextPage && !isFetchNextPageError),
+    onLoadMore: () => void fetchNextPage(),
+  });
 
   const open = Boolean(anchorEl);
   const notifications = data ?? [];
@@ -208,7 +213,8 @@ export function NotificationsMenu({ trigger }: NotificationsMenuProps) {
               </Typography>
             </Box>
           ) : (
-            notifications.map((notification, index) => {
+            <>
+              {notifications.map((notification, index) => {
               const read = isNotificationRead(notification);
               const title = getNotificationTitle(notification);
               const subtitle = getNotificationMessage(notification);
@@ -294,7 +300,23 @@ export function NotificationsMenu({ trigger }: NotificationsMenuProps) {
                   </Box>
                 </Box>
               );
-            })
+              })}
+              {(hasNextPage || isFetchingNextPage || isFetchNextPageError) && (
+                <Box ref={sentinelRef} px={1.5} py={1} display="flex" justifyContent="center">
+                  {isFetchNextPageError ? (
+                    <Button
+                      size="small"
+                      onClick={() => void fetchNextPage()}
+                      sx={{ fontSize: 12, textTransform: 'none', borderRadius: 1.5 }}
+                    >
+                      {t('notification.retry')}
+                    </Button>
+                  ) : isFetchingNextPage ? (
+                    <CircularProgress size={16} color="primary" />
+                  ) : null}
+                </Box>
+              )}
+            </>
           )}
         </Box>
       </Popover>

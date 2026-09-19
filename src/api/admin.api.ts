@@ -8,6 +8,7 @@ import type {
   ApiUser,
   ApiUserStatus,
   CreateUserResult,
+  FinanceSafeBalances,
 } from '@/types/api';
 
 export async function getUsers(): Promise<ApiUser[]> {
@@ -118,4 +119,9 @@ export async function getEmployeeProfile(targetUserId: string): Promise<AdminEmp
 
 export function getAdminNotifications(): Promise<ApiNotification[]> {
   return execute<ApiNotification[]>({ action: 'Admin/GetAllNotifications' });
+}
+
+/** Company wallet balances returned by `Admin/Dashboard/Balances` (per currency). */
+export function getAdminDashboardBalances(): Promise<FinanceSafeBalances> {
+  return execute<FinanceSafeBalances>({ action: 'Admin/Dashboard/Balances' });
 }

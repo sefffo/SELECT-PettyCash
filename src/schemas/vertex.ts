@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const requestSchema = z.object({
   requestType: z.string({ required_error: 'Select a request type' }),
+  category: z.string().min(1, 'Select a category'),
   amount: z.number({ required_error: 'Amount is required' }).min(1, 'Minimum amount is EGP 1'),
   currency: z.string().min(1, 'Select a currency'),
   reason: z.string().min(10, 'Please provide at least 10 characters'),
@@ -38,6 +39,7 @@ export type AddExpenseFormData = z.infer<typeof addExpenseSchema>;
 
 export const directMoneyRequestSchema = z.object({
   employeeId: z.string().min(1, 'Select an employee'),
+  category: z.string().min(1, 'Select a category'),
   amount: z
     .number({ required_error: 'Amount is required', invalid_type_error: 'Amount is required' })
     .positive('Amount must be greater than 0'),

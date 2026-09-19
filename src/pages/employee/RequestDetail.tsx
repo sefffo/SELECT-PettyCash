@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Box, Typography, Button, TextField } from '@mui/material';
-import { ArrowBack, UploadOutlined, Replay } from '@mui/icons-material';
+import { Box, Typography, Button, IconButton, TextField, useTheme } from '@mui/material';
+import { ArrowBack, ReceiptLongOutlined, Replay, UploadOutlined } from '@mui/icons-material';
+import { alpha } from '@mui/material/styles';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMyRequests, useSubmitPayment, useResubmitProof } from '@/hooks/api';
@@ -9,8 +10,48 @@ import { Toast } from '@/components/shared';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
 import { isFinanceStage, mapEmployeeRequestToRequest, statusLabelKey } from '@/utils/mappers';
 
+const REQUEST_TYPE_KEYS: Record<string, string> = {
+  'cash-advance': 'request.type.cashAdvance',
+  budget: 'request.type.budget',
+  purchase: 'request.type.purchase',
+  travel: 'request.type.travel',
+};
+
+function DetailRow({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        gap: 2,
+        py: 1.1,
+        px: 1.5,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        '&:last-of-type': { borderBottom: 'none' },
+      }}
+    >
+      <Typography sx={{ fontSize: 12.5, fontWeight: 600, color: 'text.secondary', flexShrink: 0 }}>{label}</Typography>
+      <Typography
+        sx={{
+          fontSize: 13,
+          fontWeight: strong ? 700 : 500,
+          color: 'text.primary',
+          textAlign: 'end',
+          wordBreak: 'break-word',
+          minWidth: 0,
+        }}
+      >
+        {value}
+      </Typography>
+    </Box>
+  );
+}
+
 export default function EmployeeRequestDetail() {
   const navigate = useNavigate();
+  const theme = useTheme();
   const { t } = useTranslation();
   const { id } = useParams();
   const { data: pendingData } = useMyRequests();
@@ -28,8 +69,10 @@ export default function EmployeeRequestDetail() {
   if (!request) {
     return (
       <Box textAlign="center" py={8}>
-        <Typography sx={{ fontSize: 16, color: 'text.secondary' }}>Request not found</Typography>
-        <Button onClick={() => navigate('/employee/requests')} sx={{ mt: 1, borderRadius: 2, fontSize: 13 }}>Back to requests</Button>
+        <Typography sx={{ fontSize: 16, color: 'text.secondary' }}>{t('employee.requestNotFound')}</Typography>
+        <Button onClick={() => navigate('/employee/requests')} sx={{ mt: 1, borderRadius: 2, fontSize: 13 }}>
+          {t('employee.backToRequests')}
+        </Button>
       </Box>
     );
   }
@@ -46,9 +89,9 @@ export default function EmployeeRequestDetail() {
         ReceiptUrl: receiptUrl.trim(),
         Notes: notes.trim() || undefined,
       });
-      showToast('Proof of payment submitted.', 'success');
+      showToast(t('employee.proofSubmitted'), 'success');
     } catch (err) {
-      showToast((err as { message?: string } | null)?.message ?? 'Failed to submit proof.', 'error');
+      showToast((err as { message?: string } | null)?.message ?? t('employee.proofSubmitFailed'), 'error');
     }
   };
 
@@ -60,74 +103,89 @@ export default function EmployeeRequestDetail() {
         ReceiptUrl: receiptUrl.trim(),
         Notes: notes.trim() || undefined,
       });
-      showToast('Proof of payment resubmitted.', 'success');
+      showToast(t('employee.proofResubmitted'), 'success');
     } catch (err) {
-      showToast((err as { message?: string } | null)?.message ?? 'Failed to resubmit proof.', 'error');
+      showToast((err as { message?: string } | null)?.message ?? t('employee.proofResubmitFailed'), 'error');
     }
   };
 
+  const requestTypeKey = REQUEST_TYPE_KEYS[request.requestType] ?? '';
+  const currency = request.currency || 'EGP';
+
   return (
-    <Box>
-      <Box display="flex" alignItems="center" gap={0.75} mb={2.5}>
-        <Button onClick={() => navigate(-1)} sx={{ minWidth: 40, width: 40, height: 40, p: 0, flexShrink: 0, color: 'text.secondary' }}><ArrowBack sx={{ fontSize: 20 }} /></Button>
-        <Typography variant="h2" sx={{ color: 'text.primary' }}>Request Details</Typography>
-      </Box>
-
-      <Box sx={{ backgroundColor: 'background.paper', borderRadius: 3, p: 2.5, border: '1px solid', borderColor: 'divider' }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2.5}>
-          <Box display="flex" alignItems="center" gap={1.5}>
-            <Box sx={{ fontSize: 28 }}>📄</Box>
-            <Box>
-              <Typography sx={{ fontSize: 12, color: 'text.disabled', fontWeight: 600 }}>CASH REQUEST</Typography>
-              <Typography sx={{ fontSize: 15, fontWeight: 700, color: 'text.primary' }}>{request.reason}</Typography>
-            </Box>
+    <Box sx={{ maxWidth: 480, width: '100%', mx: 'auto' }}>
+      <Box sx={{ borderRadius: 3, p: 1, backgroundColor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, pt: 2.5, pb: 0.5 }}>
+          <Box
+            sx={{
+              width: 36,
+              height: 36,
+              borderRadius: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: alpha(theme.palette.primary.main, 0.1),
+              color: 'primary.main',
+              flexShrink: 0,
+            }}
+          >
+            <ReceiptLongOutlined sx={{ fontSize: 20 }} />
           </Box>
-          <StatusBadge status={request.status} size="medium" />
+          <Typography sx={{ fontSize: 16, fontWeight: 700, color: 'text.primary', flex: 1, minWidth: 0 }}>
+            {t('employee.requestDetails')}
+          </Typography>
+          <IconButton size="small" aria-label={t('common.back')} onClick={() => navigate(-1)}>
+            <ArrowBack sx={{ fontSize: 20 }} />
+          </IconButton>
         </Box>
 
-        <Box mb={2.5}>
-          <Typography sx={{ fontSize: 12, color: 'text.disabled', fontWeight: 600 }}>AMOUNT REQUESTED</Typography>
-          <Typography sx={{ fontSize: 22, fontWeight: 700, color: 'text.primary', mt: 0.2 }}>{formatCurrencyByCode(request.amount, request.currency)}</Typography>
-        </Box>
+        <Box sx={{ px: 2.5, pb: 2.5 }}>
+          <Typography
+            sx={{ fontSize: 15, fontWeight: 700, color: 'text.primary', mt: 1, mb: 1.5, wordBreak: 'break-word', lineHeight: 1.35 }}
+          >
+            {request.reason}
+          </Typography>
 
-        <Box display="flex" gap={3} flexWrap="wrap">
-          <Box>
-            <Typography sx={{ fontSize: 12, color: 'text.disabled', fontWeight: 600 }}>REQUESTED</Typography>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'text.primary' }}>{formatDate(request.createdAt)}</Typography>
+          <Box sx={{ mb: 1.5 }}>
+            <StatusBadge status={request.status} />
           </Box>
-          <Box>
-            <Typography sx={{ fontSize: 12, color: 'text.disabled', fontWeight: 600 }}>STATUS</Typography>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'text.primary' }}>{t(statusLabelKey(request.status), { defaultValue: request.status })}</Typography>
+
+          <Box sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider', backgroundColor: 'background.paper' }}>
+            <DetailRow label={t('request.requestType')} value={t(requestTypeKey)} />
+            <DetailRow label={t('employee.requestAmount')} value={formatCurrencyByCode(request.amount, currency)} strong />
+            <DetailRow label={t('employee.requestCurrency')} value={currency} />
+            <DetailRow label={t('employee.requestDate')} value={formatDate(request.createdAt)} />
+            <DetailRow label={t('employee.requestStatus')} value={t(statusLabelKey(request.status), { defaultValue: request.status })} />
           </Box>
         </Box>
       </Box>
 
       {canSubmitProof && (
         <Box sx={{ backgroundColor: 'background.paper', borderRadius: 3, p: 2.5, border: '1px solid', borderColor: 'divider', mt: 2.5 }}>
-          <Typography sx={{ fontSize: 16, fontWeight: 600, color: 'text.primary', mb: 0.25 }}>Proof of Payment</Typography>
+          <Typography sx={{ fontSize: 16, fontWeight: 600, color: 'text.primary', mb: 0.25 }}>{t('employee.proofOfPayment')}</Typography>
           <Typography sx={{ fontSize: 13, color: 'text.secondary', mb: 2 }}>
-            Your request was approved. Submit the receipt URL for the payment so Finance can finalize it.
+            {t('employee.proofOfPaymentHint')}
           </Typography>
 
           <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             onSubmit={(e) => { e.preventDefault(); void handleSubmitProof(); }}>
-            <TextField label="Receipt URL" value={receiptUrl} onChange={(e) => setReceiptUrl(e.target.value)}
+            <TextField label={t('employee.receiptUrl')} value={receiptUrl} onChange={(e) => setReceiptUrl(e.target.value)}
               placeholder="https://company-storage.com/receipts/rec_12345.jpg"
               fullWidth required
-              helperText={!receiptUrl.trim() ? 'Paste the URL of the uploaded receipt image.' : ' '} />
-            <TextField label="Notes (optional)" value={notes} onChange={(e) => setNotes(e.target.value)}
+              helperText={!receiptUrl.trim() ? t('employee.receiptUrlHint') : ' '} />
+            <TextField label={t('employee.notesOptional')} value={notes} onChange={(e) => setNotes(e.target.value)}
               multiline rows={2} fullWidth />
 
             <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={1.5}>
               <Button fullWidth variant="contained" type="button" startIcon={<UploadOutlined sx={{ fontSize: 18 }} />}
                 disabled={!receiptUrl.trim() || submitPaymentMutation.isPending} onClick={() => void handleSubmitProof()}
                 sx={{ borderRadius: 2, py: 1 }}>
-                {submitPaymentMutation.isPending ? 'Submitting...' : 'Submit Proof'}
+                {submitPaymentMutation.isPending ? t('employee.submitting') : t('employee.submitProof')}
               </Button>
               <Button fullWidth variant="outlined" type="button" startIcon={<Replay sx={{ fontSize: 18 }} />}
                 disabled={!receiptUrl.trim() || resubmitProofMutation.isPending} onClick={() => void handleResubmitProof()}
                 sx={{ borderRadius: 2, py: 1 }}>
-                {resubmitProofMutation.isPending ? 'Resubmitting...' : 'Resubmit Proof'}
+                {resubmitProofMutation.isPending ? t('employee.resubmitting') : t('employee.resubmitProof')}
               </Button>
             </Box>
           </Box>

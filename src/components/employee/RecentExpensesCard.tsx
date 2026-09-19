@@ -13,6 +13,7 @@ import { formatCurrencyByCode, formatDate } from '@/utils/format';
 import { mapExpenseStatus } from '@/utils/mappers';
 import { ROUTES } from '@/utils/constants';
 import { AddExpenseDialog } from './AddExpenseDialog';
+import { ExpenseDetailsDialog } from './ExpenseDetailsDialog';
 
 const ROWS_PER_PAGE_OPTIONS = [6, 12, 24];
 
@@ -52,6 +53,7 @@ export function RecentExpensesCard() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [addExpenseOpen, setAddExpenseOpen] = useState(false);
+  const [detailsExpense, setDetailsExpense] = useState<EmployeeExpenseItem | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE_OPTIONS[0]!);
   const { data, isLoading, isError, refetch } = useExpenses();
@@ -177,9 +179,11 @@ export function RecentExpensesCard() {
                 icon={config.icon}
                 tone={config.tone}
                 title={label}
-                badge={<StatusBadge status={status} />}
+                badge={<StatusBadge status={status} labelKey={status === 'pending-manager' ? 'request.status.pending' : undefined} />}
                 dateText={formatDate(expense.DateSubmitted ?? null)}
                 amountText={formatCurrencyByCode(expense.Amount, expense.Currency ?? 'EGP')}
+                onClick={() => setDetailsExpense(expense)}
+                ariaLabel={t('employee.expenseDetails')}
               />
             );
           })}
@@ -215,6 +219,7 @@ export function RecentExpensesCard() {
       )}
 
       <AddExpenseDialog open={addExpenseOpen} onClose={() => setAddExpenseOpen(false)} />
+      <ExpenseDetailsDialog expense={detailsExpense} onClose={() => setDetailsExpense(null)} />
     </Box>
   );
 }

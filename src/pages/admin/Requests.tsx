@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { usePendingRequests } from '@/hooks/api';
 import { StatusBadge } from '@/components/feature/StatusBadge';
 import { EmptyState, SkeletonLoader } from '@/components/shared';
-import { formatCurrency } from '@/utils/format';
+import { formatCurrencyByCode } from '@/utils/format';
 import { mapPendingRequestToRequest, sortByDateDesc } from '@/utils/mappers';
 
 export default function AdminRequests() {
@@ -49,9 +49,9 @@ export default function AdminRequests() {
             <Box key={req.id} sx={{ p: 2, borderRadius: 3, backgroundColor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
               <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={0.5} gap={1}>
                 <Box minWidth={0}>
-                  <Typography sx={{ fontSize: 16, fontWeight: 700, color: 'text.primary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{formatCurrency(req.amount)}</Typography>
+                  <Typography sx={{ fontSize: 16, fontWeight: 700, color: 'text.primary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{formatCurrencyByCode(req.amount, req.currency)}</Typography>
                   <Typography sx={{ fontSize: 12, color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
-                    {req.employeeName ?? req.employeeId} · {req.reason}
+                    {req.employeeName || t('role.employee')} · {req.reason}
                   </Typography>
                 </Box>
                 <StatusBadge status={req.status} />

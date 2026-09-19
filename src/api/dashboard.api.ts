@@ -2,11 +2,15 @@ import { execute } from './axios';
 import type {
   AdminDashboardData,
   BudgetUsageData,
+  CompletedTransferPoint,
+  CompletedTransfersParams,
   EmployeeDashboardData,
+  ExpenseTrendData,
   ExpenseTrendPoint,
   ManagerDashboardData,
   MonthlySpendPoint,
   MyProfileInfo,
+  TopCategoriesData,
   TopCategoryItem,
   WalletCurrencies,
 } from '@/types/api';
@@ -34,21 +38,43 @@ export function getMonthlySpend(months = 6): Promise<MonthlySpendPoint[]> {
   });
 }
 
-export function getExpenseTrend(months = 6): Promise<ExpenseTrendPoint[]> {
-  return execute<ExpenseTrendPoint[]>({
+export async function getExpenseTrend(months = 6, currency = 'EGP'): Promise<ExpenseTrendPoint[]> {
+  const payload = await execute<ExpenseTrendData | null>({
     action: 'Employee/ExpenseTrend',
-    parameters: { Months: months },
+    parameters: { Months: months, Currency: currency },
+  });
+  const rows = payload?.ChartData;
+  return Array.isArray(rows) ? rows : [];
+}
+
+export function getBudgetUsage(currency = 'EGP'): Promise<BudgetUsageData> {
+  return execute<BudgetUsageData>({
+    action: 'Employee/BudgetUsage',
+    parameters: { Currency: currency },
   });
 }
 
-export function getBudgetUsage(): Promise<BudgetUsageData> {
-  return execute<BudgetUsageData>({ action: 'Employee/BudgetUsage' });
-}
-
-export function getTopCategories(): Promise<TopCategoryItem[]> {
-  return execute<TopCategoryItem[]>({ action: 'Employee/TopCategories' });
+export async function getTopCategories(currency = 'EGP'): Promise<TopCategoryItem[]> {
+  const payload = await execute<TopCategoriesData | null>({
+    action: 'Employee/TopCategories',
+    parameters: { Currency: currency },
+  });
+  const rows = payload?.ChartData;
+  return Array.isArray(rows) ? rows : [];
 }
 
 export function getWalletCurrencies(): Promise<WalletCurrencies> {
   return execute<WalletCurrencies>({ action: 'Employee/GetWallet' });
+}
+
+/**
+ * Shared Manager/Admin dashboard chart series: completed transfers per month.
+ * Sends only `TargetYear` so the backend returns the full 12-month annual
+ * series (scoped server-side to the caller's role).
+ */
+export function getCompletedTransfers(params: CompletedTransfersParams = {}): Promise<CompletedTransferPoint[]> {
+  return execute<CompletedTransferPoint[]>({
+    action: 'Manager/CompletedTransfers',
+    parameters: { ...params },
+  });
 }

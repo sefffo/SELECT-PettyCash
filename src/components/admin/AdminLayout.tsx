@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Box, Drawer, useTheme } from '@mui/material';
-import { DashboardOutlined, PeopleOutlined, ReceiptLongOutlined, PersonOutlined, NotificationsOutlined, SettingsOutlined } from '@mui/icons-material';
+import { DashboardOutlined, PeopleOutlined, PersonOutlined, SettingsOutlined } from '@mui/icons-material';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { AppSidebar, AppHeader } from '@/components/shared';
 import type { AppSidebarNavItem } from '@/components/shared';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
-import { usePendingRequests } from '@/hooks/api';
-import { useUnreadNotifications } from '@/hooks/unreadNotifications';
 import { ROUTES, SIDEBAR_COLLAPSED_WIDTH, SIDEBAR_WIDTH } from '@/utils/constants';
 
 export function AdminLayout() {
@@ -16,19 +14,11 @@ export function AdminLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const validateSession = useAuthStore((s) => s.validateSession);
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
-  const { data: pendingRequests } = usePendingRequests();
-  const unreadCount = useUnreadNotifications();
-
-  const pendingCount = pendingRequests?.length ?? 0;
-  const pendingBadge = pendingCount > 0 ? (pendingCount > 99 ? '99+' : pendingCount) : undefined;
-  const unreadBadge = unreadCount === 0 ? undefined : unreadCount > 99 ? '99+' : unreadCount;
 
   const navItems: AppSidebarNavItem[] = [
     { label: 'nav.dashboard', icon: <DashboardOutlined />, path: ROUTES.ADMIN_DASHBOARD },
     { label: 'nav.employees', icon: <PeopleOutlined />, path: ROUTES.ADMIN_EMPLOYEES },
-    { label: 'nav.requests', icon: <ReceiptLongOutlined />, path: ROUTES.ADMIN_REQUESTS, badge: pendingBadge },
     { label: 'nav.profile', icon: <PersonOutlined />, path: ROUTES.ADMIN_PROFILE },
-    { label: 'nav.notifications', icon: <NotificationsOutlined />, path: ROUTES.ADMIN_NOTIFICATIONS, badge: unreadBadge },
     { label: 'nav.settings', icon: <SettingsOutlined />, path: ROUTES.ADMIN_SETTINGS },
   ];
 
@@ -40,7 +30,7 @@ export function AdminLayout() {
 
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
-      <AppHeader panelLabel="nav.adminPanel" onMenuClick={() => setDrawerOpen(true)} showNotifications />
+      <AppHeader panelLabel="nav.adminPanel" onMenuClick={() => setDrawerOpen(true)} />
 
       <Box display="flex" flex={1}>
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>

@@ -1,6 +1,5 @@
 import { Box, Button, Chip, Dialog, DialogContent, Divider, IconButton, Typography } from '@mui/material';
 import { Close, Launch } from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
@@ -79,136 +78,117 @@ export function NotificationDetailsDialog({ notification, onClose }: Notificatio
     navigate(viewRequestPath);
   };
 
+  if (!notification) return null;
+
   return (
-    <AnimatePresence>
-      {open && notification && (
-        <Dialog
-          open={open}
-          onClose={onClose}
-          slots={{
-            transition: (props) => (
-              <motion.div
-                {...props}
-                initial={{ opacity: 0, scale: 0.92, y: 8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.92, y: 8 }}
-                transition={{ duration: 0.2 }}
-              />
-            ),
+    <Dialog
+      open={open}
+      onClose={onClose}
+      slotProps={{
+        backdrop: { sx: { backgroundColor: 'rgba(7, 19, 33, 0.6)' } },
+        paper: {
+          sx: {
+            borderRadius: 3,
+            p: 1,
+            maxWidth: { xs: 'calc(100vw - 32px)', sm: 440 },
+            width: '100%',
+            m: 2,
+            backgroundImage: 'none',
+          },
+        },
+      }}
+    >
+      <DialogContent sx={{ py: 1.5, px: 2, maxHeight: 'min(72vh, 600px)', overflowY: 'auto' }}>
+        <Box display="flex" alignItems="flex-start" gap={1.5} mb={1.5}>
+          <NotificationIcon kind={getNotificationKind(notification)} size="medium" />
+          <Typography sx={{ flex: 1, minWidth: 0, fontSize: 15, fontWeight: 700, color: 'text.primary', lineHeight: 1.35, pt: 0.5 }}>
+            {getNotificationTitle(notification) || t('notification.details')}
+          </Typography>
+          <IconButton
+            onClick={onClose}
+            aria-label={t('common.close')}
+            size="small"
+            sx={{ width: 32, height: 32, borderRadius: 1.5, color: 'text.secondary', flexShrink: 0, '&:hover': { backgroundColor: 'action.hover' } }}
+          >
+            <Close sx={{ fontSize: 18 }} />
+          </IconButton>
+        </Box>
+
+        <Chip
+          size="small"
+          label={read ? t('notification.read') : t('notification.unread')}
+          sx={{
+            mb: 1.5,
+            backgroundColor: read
+              ? 'rgba(100, 116, 139, 0.15)'
+              : 'rgba(239, 68, 68, 0.12)',
+            color: read ? '#64748B' : '#EF4444',
+            fontWeight: 600,
+            borderRadius: 1,
+            height: 24,
+            fontSize: 11,
+            px: 1,
           }}
-          slotProps={{
-            backdrop: { sx: { backgroundColor: 'rgba(7, 19, 33, 0.6)', backdropFilter: 'blur(4px)' } },
-            paper: {
-              sx: {
-                borderRadius: 3,
-                p: 1,
-                maxWidth: { xs: 'calc(100vw - 32px)', sm: 440 },
-                width: '100%',
-                m: 2,
-                backgroundImage: 'none',
-              },
-            },
+        />
+
+        {getNotificationMessage(notification) && (
+          <Typography
+            sx={{
+              fontSize: 13.5,
+              color: 'text.secondary',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              lineHeight: 1.6,
+              mb: 2,
+            }}
+          >
+            {getNotificationMessage(notification)}
+          </Typography>
+        )}
+
+        {getNotificationMessage(notification) && <Divider sx={{ mb: 1.5 }} />}
+
+        <Box
+          sx={{
+            backgroundColor: 'background.default',
+            borderRadius: 2,
+            px: 1.5,
+            py: 0.5,
+            border: '1px solid',
+            borderColor: 'divider',
           }}
         >
-          <DialogContent sx={{ py: 1.5, px: 2, maxHeight: 'min(72vh, 600px)', overflowY: 'auto' }}>
-            <Box display="flex" alignItems="flex-start" gap={1.5} mb={1.5}>
-              <NotificationIcon kind={getNotificationKind(notification)} size="medium" />
-              <Typography sx={{ flex: 1, minWidth: 0, fontSize: 15, fontWeight: 700, color: 'text.primary', lineHeight: 1.35, pt: 0.5 }}>
-                {getNotificationTitle(notification) || t('notification.details')}
-              </Typography>
-              <IconButton
-                onClick={onClose}
-                aria-label={t('common.close')}
-                size="small"
-                sx={{ width: 32, height: 32, borderRadius: 1.5, color: 'text.secondary', flexShrink: 0, '&:hover': { backgroundColor: 'action.hover' } }}
-              >
-                <Close sx={{ fontSize: 18 }} />
-              </IconButton>
-            </Box>
-
-            <Chip
-              size="small"
-              label={read ? t('notification.read') : t('notification.unread')}
-              sx={{
-                mb: 1.5,
-                backgroundColor: read
-                  ? 'rgba(100, 116, 139, 0.15)'
-                  : 'rgba(239, 68, 68, 0.12)',
-                color: read ? '#64748B' : '#EF4444',
-                fontWeight: 600,
-                borderRadius: 1,
-                height: 24,
-                fontSize: 11,
-                px: 1,
-              }}
+          {getNotificationDate(notification) && (
+            <MetaRow
+              label={t('notification.date')}
+              value={formatFullDate(getNotificationDate(notification) as string, i18n.language)}
             />
+          )}
+          {notification.Type && <MetaRow label={t('notification.type')} value={notification.Type} />}
+        </Box>
 
-            {getNotificationMessage(notification) && (
-              <Typography
-                sx={{
-                  fontSize: 13.5,
-                  color: 'text.secondary',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word',
-                  lineHeight: 1.6,
-                  mb: 2,
-                }}
-              >
-                {getNotificationMessage(notification)}
-              </Typography>
-            )}
+        {requestId && viewRequestPath && (
+          <Button
+            fullWidth
+            size="small"
+            variant="text"
+            endIcon={<Launch sx={{ fontSize: 14 }} />}
+            onClick={handleViewRequest}
+            sx={{ borderRadius: 1.5, fontSize: 12, fontWeight: 600, mt: 0.5 }}
+          >
+            {t('notification.viewRequest')}
+          </Button>
+        )}
 
-            {getNotificationMessage(notification) && <Divider sx={{ mb: 1.5 }} />}
-
-            <Box
-              sx={{
-                backgroundColor: 'background.default',
-                borderRadius: 2,
-                px: 1.5,
-                py: 0.5,
-                border: '1px solid',
-                borderColor: 'divider',
-              }}
-            >
-              {getNotificationDate(notification) && (
-                <MetaRow
-                  label={t('notification.date')}
-                  value={formatFullDate(getNotificationDate(notification) as string, i18n.language)}
-                />
-              )}
-              {notification.Type && <MetaRow label={t('notification.type')} value={notification.Type} />}
-              {requestId && (
-                <MetaRow
-                  label={t('notification.relatedRequest')}
-                  value={requestId}
-                  action={
-                    viewRequestPath ? (
-                      <Button
-                        size="small"
-                        variant="text"
-                        endIcon={<Launch sx={{ fontSize: 14 }} />}
-                        onClick={handleViewRequest}
-                        sx={{ borderRadius: 1.5, fontSize: 12, fontWeight: 600, flexShrink: 0 }}
-                      >
-                        {t('notification.viewRequest')}
-                      </Button>
-                    ) : undefined
-                  }
-                />
-              )}
-            </Box>
-
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={onClose}
-              sx={{ borderRadius: 2, py: 1, mt: 2, fontSize: 13 }}
-            >
-              {t('common.close')}
-            </Button>
-          </DialogContent>
-        </Dialog>
-      )}
-    </AnimatePresence>
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={onClose}
+          sx={{ borderRadius: 2, py: 1, mt: 2, fontSize: 13 }}
+        >
+          {t('common.close')}
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 }

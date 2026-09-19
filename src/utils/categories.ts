@@ -14,6 +14,17 @@ export const requestTypeLabels: Record<RequestTypeValue, string> = {
   travel: 'Travel',
 };
 
+export const requestCategories: string[] = [
+  'Transportation',
+  'Meals',
+  'Office Supplies',
+  'Utilities',
+  'Travel',
+  'Entertainment',
+  'Maintenance',
+  'Other',
+];
+
 const requestTypeCategoryNames: Record<RequestTypeValue, string> = {
   'cash-advance': 'Other',
   budget: 'Other',

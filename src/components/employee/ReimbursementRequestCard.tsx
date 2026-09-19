@@ -13,7 +13,6 @@ const reimbursementCategories = ['Office Supplies', 'Meals', 'Transportation', '
 interface ReimbursementResult {
   ok: boolean;
   message: string;
-  requestId?: string;
 }
 
 export function ReimbursementRequestCard() {
@@ -34,7 +33,7 @@ export function ReimbursementRequestCard() {
   const onSubmit = async (data: ReimbursementFormData) => {
     if (submitReimbursement.isPending) return;
     try {
-      const response = await submitReimbursement.mutateAsync({
+      await submitReimbursement.mutateAsync({
         Amount: data.amount,
         Currency: 'EGP',
         Reason: data.reason,
@@ -43,7 +42,6 @@ export function ReimbursementRequestCard() {
       setResult({
         ok: true,
         message: t('employee.reimbursementSuccess'),
-        requestId: response.RequestId,
       });
       reset();
     } catch (err) {
@@ -106,11 +104,6 @@ export function ReimbursementRequestCard() {
             sx={{ borderRadius: 2, '& .MuiAlert-message': { alignSelf: 'center' } }}
           >
             <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{result.message}</Typography>
-            {result.ok && result.requestId && (
-              <Typography sx={{ fontSize: 12, color: 'text.secondary', mt: 0.25 }}>
-                {t('employee.reimbursementRequestId', { id: result.requestId })}
-              </Typography>
-            )}
           </Alert>
         )}
 

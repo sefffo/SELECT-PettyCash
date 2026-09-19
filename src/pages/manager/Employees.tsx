@@ -6,8 +6,8 @@ import { useManagerApprovedRequests, useManagerEmployeeBalances, useManagerPendi
 import { EmployeeTable } from '@/components/admin/EmployeeTable';
 import { EmployeeDetailModal } from '@/components/admin/EmployeeDetailModal';
 import { DirectMoneyRequestDialog, EmptyState, SkeletonLoader } from '@/components/shared';
-import { mapApiUserToEmployee } from '@/utils/mappers';
-import type { AdminProfileInfo, ApiUser, ManagerRequestItem } from '@/types/api';
+import { mapApiUserToEmployee, buildRequesterNameMap } from '@/utils/mappers';
+import type { AdminProfileInfo, ApiDepartment, ApiUser, ManagerRequestItem } from '@/types/api';
 import type { Employee } from '@/types/vertex';
 
 const normalizeName = (name: string | null | undefined) => (name ?? '').trim().toLowerCase();
@@ -31,16 +31,19 @@ export default function ManagerEmployees() {
   const [requestTargetId, setRequestTargetId] = useState('');
 
   const employees = useMemo(() => {
-    const managerDepartment = myProfile?.DepartmentId;
-    if (!managerDepartment) return [];
-    const dept = managerDepartment.trim().toLowerCase();
+    const managerDepartmentId = myProfile?.DepartmentId?.trim() ?? '';
+    if (!managerDepartmentId) return [];
+    const dept = managerDepartmentId.toLowerCase();
+    const managerDepartments: ApiDepartment[] = [
+      { Id: managerDepartmentId, Name: myProfile?.DepartmentName || '—' },
+    ];
     return users
       .filter((u) =>
         u.Role === 'Employee' &&
         (u.DepartmentId ?? '').trim().toLowerCase() === dept,
       )
-      .map((u) => mapApiUserToEmployee(u, []));
-  }, [users, myProfile?.DepartmentId]);
+      .map((u) => mapApiUserToEmployee(u, managerDepartments));
+  }, [users, myProfile?.DepartmentId, myProfile?.DepartmentName]);
 
   const eligibleEmployees = useMemo(() => {
     const managerDepartment = myProfile?.DepartmentId;
@@ -62,7 +65,13 @@ export default function ManagerEmployees() {
     return employees.filter((e) => e.name.toLowerCase().includes(q) || e.email.toLowerCase().includes(q));
   }, [employees, search]);
 
-  const allRequests = useMemo(() => [...pending, ...approved, ...rejected], [pending, approved, rejected]);
+  const allRequests = useMemo(() => {
+    const nameMap = buildRequesterNameMap(users);
+    return [...pending, ...approved, ...rejected].map((r) => ({
+      ...r,
+      EmployeeName: r.EmployeeName ?? (r.EmployeeId ? (nameMap[r.EmployeeId] ?? '') : ''),
+    }));
+  }, [pending, approved, rejected, users]);
 
   const transactions = useMemo(
     () => (detailEmployee ? allRequests.filter((r) => normalizeName(r.EmployeeName) === normalizeName(detailEmployee.name)) : []),
@@ -126,7 +135,7 @@ export default function ManagerEmployees() {
       </Box>
 
       {isLoading ? <SkeletonLoader type="list" count={5} /> : filtered.length > 0 ? (
-        <EmployeeTable employees={filtered} showDepartment={false} onView={openDetail} onDirectRequest={openDirectRequest} />
+        <EmployeeTable employees={filtered} onView={openDetail} onDirectRequest={openDirectRequest} />
       ) : (
         <EmptyState icon="👥" title={search ? t('manager.noEmployeesTitle') : t('manager.emptyTeamTitle')}
           description={search ? t('manager.noEmployeesHint') : t('manager.emptyTeamHint')} />
@@ -140,8 +149,6 @@ export default function ManagerEmployees() {
         balances={walletBalances}
         balancesLoading={balancesLoading}
         balancesError={balancesError}
-        showDepartment={false}
-        showEmployeeId={false}
         open={detailOpen}
         onClose={() => { setDetailOpen(false); setDetailUser(null); setDetailEmployee(null); }}
       />

@@ -35,9 +35,9 @@ export function formatCurrencyByCode(amount: number, currency: string | null | u
   }).format(amount);
 }
 
-export function formatTooltipCurrency(value: TooltipValueType | undefined): [string, string] {
+export function formatTooltipCurrency(value: TooltipValueType | undefined, currency = 'EGP'): [string, string] {
   const amount = typeof value === 'number' ? value : 0;
-  return [formatCurrency(amount), ''];
+  return [formatCurrencyByCode(amount, currency), ''];
 }
 
 export function formatDate(dateString: string | null | undefined): string {

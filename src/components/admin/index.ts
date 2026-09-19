@@ -5,4 +5,4 @@ export { EditEmployeeForm } from './EditEmployeeForm';
 export { EmployeeDetailModal } from './EmployeeDetailModal';
 export { ChangeDepartmentModal } from './ChangeDepartmentModal';
 export { AdminPendingApprovals } from './AdminPendingApprovals';
-export { AdminPendingChart } from './AdminPendingChart';
+export { AdminDashboardBalances } from './AdminDashboardBalances';

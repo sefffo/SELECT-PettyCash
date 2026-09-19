@@ -25,9 +25,10 @@ const statusConfig: Record<Status, { color: string; bg: string; darkText: string
 interface StatusBadgeProps {
   status: Status;
   size?: 'small' | 'medium';
+  labelKey?: string;
 }
 
-export function StatusBadge({ status, size = 'small' }: StatusBadgeProps) {
+export function StatusBadge({ status, size = 'small', labelKey }: StatusBadgeProps) {
   const { t } = useTranslation();
   const theme = useTheme();
   const config = statusConfig[status];
@@ -38,7 +39,7 @@ export function StatusBadge({ status, size = 'small' }: StatusBadgeProps) {
     <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
       <Chip
         icon={config.icon}
-        label={t(config.key)}
+        label={t(labelKey ?? config.key)}
         size={size}
         sx={{
           backgroundColor: config.bg,

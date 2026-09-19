@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { DownloadOutlined, ReceiptLongOutlined, AccountBalanceWalletOutlined, History, SpaceDashboardOutlined } from '@mui/icons-material';
+import { ReceiptLongOutlined, AccountBalanceWalletOutlined, History, SpaceDashboardOutlined } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -144,7 +144,7 @@ export default function FinanceDashboard() {
                 onClick={() => navigate(ROUTES.FINANCE_BALANCES)}
                 sx={{ borderRadius: 2, px: 2.25, py: 1, borderColor: 'rgba(255,255,255,0.5)', color: '#fff', '&:hover': { borderColor: '#fff', backgroundColor: 'rgba(255,255,255,0.12)' } }}
               >
-                {t('nav.balances')}
+                {t('finance.balances')}
               </Button>
               <Button
                 variant="outlined"
@@ -153,14 +153,6 @@ export default function FinanceDashboard() {
                 sx={{ borderRadius: 2, px: 2.25, py: 1, borderColor: 'rgba(255,255,255,0.5)', color: '#fff', '&:hover': { borderColor: '#fff', backgroundColor: 'rgba(255,255,255,0.12)' } }}
               >
                 {t('finance.nav.employeeHistory')}
-              </Button>
-              <Button
-                variant="outlined"
-                disabled
-                startIcon={<DownloadOutlined sx={{ fontSize: 17 }} />}
-                sx={{ borderRadius: 2, px: 2.25, py: 1, borderColor: 'rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.75)' }}
-              >
-                {t('finance.exportLedger')}
               </Button>
             </Box>
           </Box>

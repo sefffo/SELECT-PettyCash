@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, PendingActionsOutlined } from '@mui/icons-material';
+import { CancelOutlined, CheckCircleOutlined, PendingActionsOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
 import { useEmployeeDashboard, useMyRequests } from '@/hooks/api';
@@ -12,11 +12,12 @@ export function EmployeeSummaryCards() {
   const { isLoading } = useEmployeeDashboard();
   const { data: requests } = useMyRequests();
 
-  if (isLoading) return <SkeletonLoader type="dashboard" count={2} />;
+  if (isLoading) return <SkeletonLoader type="dashboard" count={3} />;
 
   const isSettled = (status: string | undefined) => status === 'Approved' || status === 'Rejected' || status === 'Completed';
   const pendingCount = (requests ?? []).filter((r) => !isSettled(r.Status)).length;
   const approvedCount = (requests ?? []).filter((r) => r.Status === 'Approved').length;
+  const rejectedCount = (requests ?? []).filter((r) => r.Status === 'Rejected').length;
 
   const cards = [
     {
@@ -35,6 +36,14 @@ export function EmployeeSummaryCards() {
       color: p.success.main,
       format: 'count' as const,
     },
+    {
+      title: t('employee.rejectedRequests'),
+      subtitle: t('employee.rejectedRequestsHint'),
+      value: rejectedCount,
+      icon: <CancelOutlined />,
+      color: p.error.main,
+      format: 'count' as const,
+    },
   ];
 
   return (
@@ -45,8 +54,7 @@ export function EmployeeSummaryCards() {
           {...card}
           index={i}
           sx={{
-            p: { xs: 1.25, sm: 1.75 },
-            '& > div:nth-of-type(2)': { mb: 1 },
+            p: { xs: 1.25, sm: 1.5 },
           }}
         />
       ))}

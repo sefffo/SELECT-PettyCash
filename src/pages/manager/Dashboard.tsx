@@ -7,9 +7,10 @@ import {
   ManagerPendingApprovals,
   ManagerExpenseOverviewCard,
 } from '@/components/manager';
-import { useApproveRequest, useManagerDashboard, useManagerPendingRequests, useRejectRequest } from '@/hooks/api';
-import { mapManagerRequestToRequest, sortByDateDesc } from '@/utils/mappers';
-import { DashboardHero, RejectRequestDialog } from '@/components/shared';
+import { useApproveRequest, useManagerNameMap, useManagerPendingRequests, useMyProfile, useRejectRequest, useUsers } from '@/hooks/api';
+import { mapManagerRequestToRequest, resolveRequestEmployeeNames, sortByDateDesc } from '@/utils/mappers';
+import { CompletedTransfersChartCard, DashboardHero, RejectRequestDialog } from '@/components/shared';
+import { CurrencyToggle } from '@/components/feature';
 import { ROUTES } from '@/utils/constants';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -19,15 +20,22 @@ import { formatCurrencyByCode } from '@/utils/format';
 export default function ManagerDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data: dashboard, isLoading } = useManagerDashboard();
+  const { data: myProfile } = useMyProfile();
+  const { data: users = [], isLoading: usersLoading } = useUsers();
+  const nameMap = useManagerNameMap();
   const { data: pendingData, isLoading: pendingLoading } = useManagerPendingRequests();
   const approveMutation = useApproveRequest();
   const rejectMutation = useRejectRequest();
   const [rejectTarget, setRejectTarget] = useState<Request | null>(null);
+  const [currency, setCurrency] = useState('EGP');
 
-  const requests = sortByDateDesc((pendingData ?? []).map(mapManagerRequestToRequest));
-  const loading = isLoading || pendingLoading;
-  const teamCount = new Set((pendingData ?? []).map((r) => r.EmployeeName).filter(Boolean)).size;
+  const requests = sortByDateDesc(resolveRequestEmployeeNames((pendingData ?? []).map(mapManagerRequestToRequest), nameMap));
+  const loading = pendingLoading || usersLoading;
+
+  const managerDepartment = (myProfile?.DepartmentId ?? '').trim().toLowerCase();
+  const teamCount = users.filter(
+    (u) => u.Role === 'Employee' && (u.DepartmentId ?? '').trim().toLowerCase() === managerDepartment,
+  ).length;
 
   const handleApproveRequest = (id: string) => {
     approveMutation.mutate(id, {
@@ -79,7 +87,7 @@ export default function ManagerDashboard() {
             label: t('manager.pendingRequests'),
             sublabel: t('manager.awaitingReview'),
             icon: <HourglassEmptyOutlined />,
-            value: dashboard?.PendingRequestCount ?? requests.length,
+            value: requests.length,
             loading,
           },
         ]}
@@ -88,13 +96,26 @@ export default function ManagerDashboard() {
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5, mb: 3 }}>
         <ManagerStatCards
           teamCount={teamCount}
-          pendingRequests={dashboard?.PendingRequestCount ?? requests.length}
+          pendingRequests={requests.length}
           loading={loading}
         />
       </Box>
 
-      <Box sx={{ mb: 3 }}>
-        <ManagerExpenseOverviewCard />
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 1.5 }}>
+        <CurrencyToggle value={currency} onChange={setCurrency} />
+      </Box>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+          gap: 2,
+          alignItems: 'stretch',
+          mb: 3,
+        }}
+      >
+        <ManagerExpenseOverviewCard currency={currency} />
+        <CompletedTransfersChartCard currency={currency} />
       </Box>
 
       <Box sx={{ mb: 3 }}>
@@ -110,7 +131,7 @@ export default function ManagerDashboard() {
         open={rejectTarget !== null}
         onClose={() => setRejectTarget(null)}
         onConfirm={handleRejectRequest}
-        employeeName={rejectTarget?.employeeName ?? rejectTarget?.employeeId}
+        employeeName={rejectTarget?.employeeName || undefined}
         amount={rejectTarget ? formatCurrencyByCode(rejectTarget.amount, rejectTarget.currency) : undefined}
         submitting={rejectMutation.isPending}
       />

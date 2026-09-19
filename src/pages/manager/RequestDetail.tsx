@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { ArrowBack, CheckCircle, Cancel } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useApproveRequest, useManagerApprovedRequests, useManagerPendingRequests, useManagerRejectedRequests, useRejectRequest } from '@/hooks/api';
+import { useApproveRequest, useManagerApprovedRequests, useManagerNameMap, useManagerPendingRequests, useManagerRejectedRequests, useRejectRequest } from '@/hooks/api';
 import { useAuthStore } from '@/store/authStore';
 import { StatusBadge } from '@/components/feature/StatusBadge';
 import { ConfirmationDialog, RejectRequestDialog, Toast } from '@/components/shared';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
 import { canApproveRequests, canRejectRequests } from '@/utils/permissions';
-import { mapManagerRequestToRequest } from '@/utils/mappers';
+import { mapManagerRequestToRequest, resolveRequestEmployeeNames } from '@/utils/mappers';
 
 const requestTypeLabels: Record<string, { label: string; emoji: string }> = {
   'cash-advance': { label: 'Cash Advance', emoji: '💵' },
@@ -21,6 +21,7 @@ export default function ManagerRequestDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
   const role = useAuthStore((s) => s.role);
+  const nameMap = useManagerNameMap();
   const pendingQuery = useManagerPendingRequests();
   const approvedQuery = useManagerApprovedRequests();
   const rejectedQuery = useManagerRejectedRequests();
@@ -30,9 +31,10 @@ export default function ManagerRequestDetail() {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [toast, setToast] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
-  const request = [...(pendingQuery.data ?? []), ...(approvedQuery.data ?? []), ...(rejectedQuery.data ?? [])]
-    .map(mapManagerRequestToRequest)
-    .find((r) => r.id === id);
+  const request = resolveRequestEmployeeNames(
+    [...(pendingQuery.data ?? []), ...(approvedQuery.data ?? []), ...(rejectedQuery.data ?? [])].map(mapManagerRequestToRequest),
+    nameMap,
+  ).find((r) => r.id === id);
 
   if (!request) {
     return (
@@ -93,7 +95,7 @@ export default function ManagerRequestDetail() {
 
         <Box mb={2.5}>
           <Typography sx={{ fontSize: 12, color: 'text.disabled', fontWeight: 600 }}>EMPLOYEE</Typography>
-          <Typography sx={{ fontSize: 15, fontWeight: 600, color: 'text.primary' }}>{request.employeeName ?? request.employeeId}</Typography>
+          <Typography sx={{ fontSize: 15, fontWeight: 600, color: 'text.primary' }}>{request.employeeName || '—'}</Typography>
         </Box>
 
         <Box mb={2.5}>
@@ -130,7 +132,7 @@ export default function ManagerRequestDetail() {
         open={rejectOpen}
         onClose={() => setRejectOpen(false)}
         onConfirm={handleReject}
-        employeeName={request.employeeName ?? request.employeeId}
+        employeeName={request.employeeName || undefined}
         amount={formatCurrencyByCode(request.amount, request.currency)}
         submitting={rejectMutation.isPending}
       />

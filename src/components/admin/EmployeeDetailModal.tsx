@@ -37,13 +37,13 @@ interface EmployeeDetailModalProps {
   balancesLoading?: boolean;
   balancesError?: boolean;
   showDepartment?: boolean;
-  showEmployeeId?: boolean;
   open: boolean;
   onClose: () => void;
 }
 
-export function EmployeeDetailModal({ employee, profile = null, transactions = [], transactionsLoading = false, balances, balancesLoading = false, balancesError = false, showDepartment = true, showEmployeeId = true, open, onClose }: EmployeeDetailModalProps) {
+export function EmployeeDetailModal({ employee, profile = null, transactions = [], transactionsLoading = false, balances, balancesLoading = false, balancesError = false, showDepartment = true, open, onClose }: EmployeeDetailModalProps) {
   const { t } = useTranslation();
+  const role = String(profile?.Role ?? employee?.role ?? '').toLowerCase();
   const walletRows = balances ?? [];
 
   return (
@@ -81,7 +81,6 @@ export function EmployeeDetailModal({ employee, profile = null, transactions = [
             <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={1}>
               <InfoBlock label={t('admin.employeeTable.email')} value={profile?.Email ?? employee.email} />
               <InfoBlock label={t('admin.employeeTable.role')} value={String(profile?.Role ?? employee.role)} />
-              {showEmployeeId && <InfoBlock label={t('admin.employeeId')} value={profile?.Id ?? employee.id} />}
               {showDepartment && <InfoBlock label={t('admin.employeeTable.department')} value={employee.department} />}
             </Box>
 
@@ -132,29 +131,33 @@ export function EmployeeDetailModal({ employee, profile = null, transactions = [
               </>
             )}
 
-            <Divider sx={{ my: 1.5 }} />
-            <SectionHeader icon={<ReceiptLongOutlined sx={{ fontSize: 14 }} />} label="TRANSACTIONS" />
+            {role === 'employee' && (
+              <>
+                <Divider sx={{ my: 1.5 }} />
+                <SectionHeader icon={<ReceiptLongOutlined sx={{ fontSize: 14 }} />} label="TRANSACTIONS" />
 
-            {transactionsLoading ? (
-              <SkeletonLoader type="list" count={2} />
-            ) : transactions.length === 0 ? (
-              <Typography sx={{ fontSize: 13, color: 'text.secondary', py: 1 }}>No transactions yet.</Typography>
-            ) : (
-              <Box sx={{ maxHeight: 232, overflowY: 'auto', pr: 0.25 }}>
-                {transactions.map((tx) => (
-                  <Box key={tx.RequestId} display="flex" justifyContent="space-between" alignItems="center" gap={1.25} py={0.75}
-                    sx={{ borderBottom: '1px solid', borderColor: 'divider', '&:last-child': { borderBottom: 'none' } }}>
-                    <Box minWidth={0} flex={1}>
-                      <Typography noWrap sx={{ fontSize: 13, fontWeight: 600, color: 'text.primary' }}>{tx.Reason}</Typography>
-                      <Typography noWrap sx={{ fontSize: 11, color: 'text.secondary' }}>{formatDate(tx.DateRequested)} · #{tx.RequestId}</Typography>
-                    </Box>
-                    <Box flexShrink={0} display="flex" flexDirection="column" alignItems="flex-end" gap={0.35}>
-                      <Typography sx={{ fontSize: 13, fontWeight: 700, color: 'text.primary', fontVariantNumeric: 'tabular-nums' }}>{formatCurrencyByCode(tx.Amount, tx.Currency)}</Typography>
-                      <StatusBadge status={mapManagerRequestStatus(tx.Status)} />
-                    </Box>
+                {transactionsLoading ? (
+                  <SkeletonLoader type="list" count={2} />
+                ) : transactions.length === 0 ? (
+                  <Typography sx={{ fontSize: 13, color: 'text.secondary', py: 1 }}>No transactions yet.</Typography>
+                ) : (
+                  <Box sx={{ maxHeight: 232, overflowY: 'auto', pr: 0.25 }}>
+                    {transactions.map((tx) => (
+                      <Box key={tx.RequestId} display="flex" justifyContent="space-between" alignItems="center" gap={1.25} py={0.75}
+                        sx={{ borderBottom: '1px solid', borderColor: 'divider', '&:last-child': { borderBottom: 'none' } }}>
+                        <Box minWidth={0} flex={1}>
+                          <Typography noWrap sx={{ fontSize: 13, fontWeight: 600, color: 'text.primary' }}>{tx.Reason}</Typography>
+                          <Typography noWrap sx={{ fontSize: 11, color: 'text.secondary' }}>{formatDate(tx.DateRequested)}</Typography>
+                        </Box>
+                        <Box flexShrink={0} display="flex" flexDirection="column" alignItems="flex-end" gap={0.35}>
+                          <Typography sx={{ fontSize: 13, fontWeight: 700, color: 'text.primary', fontVariantNumeric: 'tabular-nums' }}>{formatCurrencyByCode(tx.Amount, tx.Currency)}</Typography>
+                          <StatusBadge status={mapManagerRequestStatus(tx.Status)} />
+                        </Box>
+                      </Box>
+                    ))}
                   </Box>
-                ))}
-              </Box>
+                )}
+              </>
             )}
 
             <Button fullWidth variant="outlined" onClick={onClose} sx={{ borderRadius: 2, py: 0.85, mt: 1.75 }}>{t('common.close')}</Button>

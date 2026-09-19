@@ -4,11 +4,11 @@ import {
   ApartmentOutlined,
   WorkOutlineOutlined,
   CheckCircleOutlineOutlined,
-  CalendarMonthOutlined,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
+import { useMyProfile } from '@/hooks/api';
 import { ChangePasswordCard } from './ChangePasswordCard';
 
 interface ProfilePageProps {
@@ -25,13 +25,11 @@ interface ProfilePageProps {
 export function ProfilePage({ title, subtitle, roleLabel, accentColor = '#145DB8', fallbackChar = 'U', profile = null, department = null, children }: ProfilePageProps) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
+  const { data: myProfile } = useMyProfile();
 
   const displayName = profile?.name ?? user?.name ?? 'User';
   const displayEmail = profile?.email ?? user?.email;
-  const displayDepartment = department ?? user?.department;
-  const memberSince = user?.createdAt
-    ? new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
-    : null;
+  const displayDepartment = department ?? myProfile?.DepartmentName ?? (user?.department || null);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
@@ -98,10 +96,7 @@ export function ProfilePage({ title, subtitle, roleLabel, accentColor = '#145DB8
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr 1fr' }, gap: 1.5, mb: 2 }}>
         <DetailCard icon={<EmailOutlined />} label={t('profile.email')} value={displayEmail ?? t('profile.notAvailable')} />
         <DetailCard icon={<WorkOutlineOutlined />} label={t('profile.role')} value={roleLabel} />
-        {displayDepartment && (
-          <DetailCard icon={<ApartmentOutlined />} label={t('profile.department')} value={displayDepartment} />
-        )}
-        <DetailCard icon={<CalendarMonthOutlined />} label={t('profile.memberSince')} value={memberSince ?? t('profile.notAvailable')} />
+        <DetailCard icon={<ApartmentOutlined />} label={t('profile.department')} value={displayDepartment ?? t('profile.notAvailable')} />
       </Box>
 
       <ChangePasswordCard />

@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getBudgetUsage,
+  getCompletedTransfers,
   getEmployeeDashboard,
   getExpenseTrend,
   getManagerDashboard,
@@ -18,6 +19,7 @@ import {
   createUser,
   deleteUser,
   editUser,
+  getAdminDashboardBalances,
   getAdminNotifications,
   getDepartments,
   getEmployeeProfile,
@@ -71,10 +73,10 @@ import {
   processFinanceTransaction,
   submitDirectPayment,
 } from '@/api/finance.api';
-import type { ApiNotification, DirectGrantParams, DirectPaymentParams } from '@/types/api';
+import type { ApiNotification, DirectGrantParams, DirectPaymentParams, NotificationPageResult } from '@/types/api';
 import { changePassword, type ChangePasswordParams } from '@/api/auth.api';
 import { buildEmailNameMap, buildRequesterNameMap } from '@/utils/mappers';
-import { filterNotificationsForCurrentUser } from '@/utils/notifications';
+import { filterNotificationsForCurrentUser, getNotificationKey } from '@/utils/notifications';
 import { useAuthStore } from '@/store/authStore';
 
 export const queryKeys = {
@@ -82,7 +84,9 @@ export const queryKeys = {
   myProfile: ['profile', 'employee'] as const,
   managerDashboard: ['dashboard', 'manager'] as const,
   managerExpenseOverview: ['manager', 'expense-overview'] as const,
+  completedTransfers: ['manager', 'completed-transfers'] as const,
   adminDashboard: ['dashboard', 'admin'] as const,
+  adminDashboardBalances: ['dashboard', 'admin', 'balances'] as const,
   monthlySpend: ['dashboard', 'monthly-spend'] as const,
   expenseTrend: ['employee', 'expense-trend'] as const,
   budgetUsage: ['employee', 'budget-usage'] as const,
@@ -130,11 +134,26 @@ export function useManagerDashboard() {
   });
 }
 
-export function useManagerExpenseOverview() {
+export function useManagerExpenseOverview(currency = 'EGP') {
   const userId = useAuthStore((s) => s.user?.id ?? null);
   return useQuery({
-    queryKey: [...queryKeys.managerExpenseOverview, userId] as const,
-    queryFn: getManagerExpenseOverview,
+    queryKey: [...queryKeys.managerExpenseOverview, userId, currency] as const,
+    queryFn: () => getManagerExpenseOverview(currency),
+    enabled: Boolean(userId),
+  });
+}
+
+/**
+ * Shared Manager/Admin dashboard chart series (`Manager/CompletedTransfers`).
+ * Fetches the full annual series for the current year; the backend scopes rows
+ * to the caller's role (company-wide for Admin, department for Manager).
+ */
+export function useCompletedTransfers() {
+  const userId = useAuthStore((s) => s.user?.id ?? null);
+  const targetYear = new Date().getFullYear();
+  return useQuery({
+    queryKey: [...queryKeys.completedTransfers, userId, targetYear] as const,
+    queryFn: () => getCompletedTransfers({ TargetYear: targetYear }),
     enabled: Boolean(userId),
   });
 }
@@ -146,6 +165,13 @@ export function useAdminDashboard() {
   });
 }
 
+export function useAdminDashboardBalances() {
+  return useQuery({
+    queryKey: queryKeys.adminDashboardBalances,
+    queryFn: getAdminDashboardBalances,
+  });
+}
+
 export function useMonthlySpend() {
   return useQuery({
     queryKey: queryKeys.monthlySpend,
@@ -153,24 +179,24 @@ export function useMonthlySpend() {
   });
 }
 
-export function useExpenseTrend() {
+export function useExpenseTrend(currency = 'EGP') {
   return useQuery({
-    queryKey: queryKeys.expenseTrend,
-    queryFn: () => getExpenseTrend(6),
+    queryKey: [...queryKeys.expenseTrend, currency] as const,
+    queryFn: () => getExpenseTrend(6, currency),
   });
 }
 
-export function useBudgetUsage() {
+export function useBudgetUsage(currency = 'EGP') {
   return useQuery({
-    queryKey: queryKeys.budgetUsage,
-    queryFn: getBudgetUsage,
+    queryKey: [...queryKeys.budgetUsage, currency] as const,
+    queryFn: () => getBudgetUsage(currency),
   });
 }
 
-export function useTopCategories() {
+export function useTopCategories(currency = 'EGP') {
   return useQuery({
-    queryKey: queryKeys.topCategories,
-    queryFn: getTopCategories,
+    queryKey: [...queryKeys.topCategories, currency] as const,
+    queryFn: () => getTopCategories(currency),
   });
 }
 
@@ -196,6 +222,15 @@ export function useRequesterNames() {
 export function useEmailNameMap() {
   const { data: users } = useUsers();
   return useMemo(() => buildEmailNameMap(users ?? []), [users]);
+}
+
+/**
+ * `UserId -> Name` map built from `Data/Users`. The manager PENDING queue
+ * returns only `EmployeeId`, so pending rows are resolved against this map.
+ */
+export function useManagerNameMap() {
+  const { data: users } = useUsers();
+  return useMemo(() => buildRequesterNameMap(users ?? []), [users]);
 }
 
 export function useDepartments() {
@@ -273,19 +308,117 @@ export function useManagerEmployeeBalances() {
   });
 }
 
+const NOTIFICATIONS_PAGE_SIZE = 10;
+
+const noopFetchNextPage = async (): Promise<unknown> => undefined;
+
+function isNotificationPagesData(value: unknown): value is { pages: NotificationPageResult[]; pageParams: unknown[] } {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    Array.isArray((value as { pages?: unknown }).pages) &&
+    (value as { pages: unknown[] }).pages.every(
+      (page) => typeof page === 'object' && page !== null && Array.isArray((page as { items?: unknown }).items),
+    )
+  );
+}
+
+/** Updates read state inside both infinite-query pages and the legacy admin array. */
+function applyToNotificationPages(
+  data: unknown,
+  updater: (notification: ApiNotification) => ApiNotification,
+): unknown {
+  if (Array.isArray(data)) {
+    return (data as ApiNotification[]).map(updater);
+  }
+  if (isNotificationPagesData(data)) {
+    return {
+      ...data,
+      pages: data.pages.map((page) => ({
+        ...page,
+        items: page.items.map(updater),
+      })),
+    };
+  }
+  return data;
+}
+
+function filterNotificationPagesForCurrentUser<T>(
+  data: T,
+  userId: string | null | undefined,
+): T {
+  if (!userId) return data;
+  if (Array.isArray(data)) return filterNotificationsForCurrentUser(data, userId) as unknown as T;
+  if (isNotificationPagesData(data)) {
+    return {
+      ...data,
+      pages: data.pages.map((page) => ({
+        ...page,
+        items: filterNotificationsForCurrentUser(page.items, userId),
+      })),
+    } as T;
+  }
+  return data;
+}
+
 export function useNotifications() {
   const role = useAuthStore((s) => s.role);
   const userId = useAuthStore((s) => s.user?.id ?? null);
-  return useQuery({
-    queryKey: [...queryKeys.notifications, role, userId] as const,
-    queryFn: () => {
-      if (role === 'admin') return getAdminNotifications();
-      if (role === 'manager') return getManagerNotifications();
-      return getEmployeeNotifications();
+  const isPaginatedRole = role === 'employee' || role === 'manager' || role === 'finance';
+  const isAdmin = role === 'admin';
+
+  const selectNotifications = useMemo(
+    () => <T,>(data: T): T => filterNotificationPagesForCurrentUser(data, userId),
+    [userId],
+  );
+
+  const infinite = useInfiniteQuery({
+    queryKey: [...queryKeys.notifications, 'pages', role, userId] as const,
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) => {
+      const params = { page: pageParam, pageSize: NOTIFICATIONS_PAGE_SIZE };
+      return role === 'manager' ? getManagerNotifications(params) : getEmployeeNotifications(params);
     },
-    select: (data) => filterNotificationsForCurrentUser(data ?? [], userId),
-    enabled: role === 'admin' || role === 'manager' || role === 'finance' || role === 'employee',
+    enabled: isPaginatedRole && Boolean(userId),
+    staleTime: 60_000,
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.hasMore) return undefined;
+      return lastPage.nextPage ?? allPages.length + 1;
+    },
+    select: selectNotifications,
   });
+
+  // Admin has no visible notifications UI and is intentionally NOT upgraded to
+  // lazy loading. Keep the existing (unpaged) behavior unchanged.
+  const admin = useQuery({
+    queryKey: [...queryKeys.notifications, 'all', role, userId] as const,
+    queryFn: getAdminNotifications,
+    select: selectNotifications,
+    enabled: isAdmin,
+  });
+
+  const flattened = (infinite.data?.pages ?? []).flatMap((page) => page.items);
+  const seen = new Set<string>();
+  const data = flattened.filter((notification) => {
+    const key = getNotificationKey(notification);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  return {
+    data: isAdmin ? (admin.data ?? []) : data,
+    isLoading: isAdmin ? admin.isLoading : isPaginatedRole ? infinite.isLoading : false,
+    isError: isAdmin ? admin.isError : isPaginatedRole ? infinite.isError : false,
+    error: isAdmin ? admin.error : infinite.error,
+    hasMore: isPaginatedRole ? infinite.hasNextPage : false,
+    hasNextPage: isPaginatedRole ? infinite.hasNextPage : false,
+    isFetchingNextPage: isPaginatedRole ? infinite.isFetchingNextPage : false,
+    isFetchNextPageError: isPaginatedRole ? infinite.isFetchNextPageError : false,
+    fetchNextPage: isPaginatedRole ? () => infinite.fetchNextPage() : noopFetchNextPage,
+    totalUnread: isPaginatedRole ? (infinite.data?.pages[0]?.totalUnread ?? null) : null,
+    refetch: isAdmin ? admin.refetch : infinite.refetch,
+  };
 }
 
 export function useMarkNotificationAsRead() {
@@ -294,9 +427,9 @@ export function useMarkNotificationAsRead() {
     mutationFn: (notificationId: string) => markNotificationAsRead(notificationId),
     onMutate: async (notificationId: string) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.notifications });
-      const snapshots = queryClient.getQueriesData<ApiNotification[]>({ queryKey: queryKeys.notifications });
-      queryClient.setQueriesData<ApiNotification[]>({ queryKey: queryKeys.notifications }, (old) =>
-        (old ?? []).map((notification) =>
+      const snapshots = queryClient.getQueriesData({ queryKey: queryKeys.notifications });
+      queryClient.setQueriesData({ queryKey: queryKeys.notifications }, (old) =>
+        applyToNotificationPages(old, (notification) =>
           (notification.Id ?? notification.NotificationId) === notificationId
             ? { ...notification, IsRead: true }
             : notification,
@@ -319,9 +452,9 @@ export function useMarkAllNotificationsAsRead() {
     mutationFn: () => markAllNotificationsAsRead(),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: queryKeys.notifications });
-      const snapshots = queryClient.getQueriesData<ApiNotification[]>({ queryKey: queryKeys.notifications });
-      queryClient.setQueriesData<ApiNotification[]>({ queryKey: queryKeys.notifications }, (old) =>
-        (old ?? []).map((notification) => ({ ...notification, IsRead: true })),
+      const snapshots = queryClient.getQueriesData({ queryKey: queryKeys.notifications });
+      queryClient.setQueriesData({ queryKey: queryKeys.notifications }, (old) =>
+        applyToNotificationPages(old, (notification) => ({ ...notification, IsRead: true })),
       );
       return { snapshots };
     },
@@ -397,6 +530,7 @@ export function useProcessTransaction() {
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       // Invalidate notifications so the employee bell badge refreshes immediately.
       queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
+      queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
   });
 }
@@ -414,6 +548,7 @@ export function useSubmitDirectPayment() {
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
       // Invalidate notifications so the employee bell badge refreshes immediately.
       queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
+      queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
   });
 }
@@ -436,6 +571,7 @@ export function useSubmitDirectGrant() {
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
       // Invalidate notifications so the employee bell badge refreshes immediately.
       queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
+      queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
   });
 }
@@ -469,6 +605,7 @@ export function useSubmitRequest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.expenseTrend });
       queryClient.invalidateQueries({ queryKey: queryKeys.budgetUsage });
       queryClient.invalidateQueries({ queryKey: queryKeys.topCategories });
+      queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
   });
 }
@@ -484,6 +621,7 @@ export function useSubmitReimbursement() {
       queryClient.invalidateQueries({ queryKey: queryKeys.expenseTrend });
       queryClient.invalidateQueries({ queryKey: queryKeys.budgetUsage });
       queryClient.invalidateQueries({ queryKey: queryKeys.topCategories });
+      queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
   });
 }
@@ -500,6 +638,7 @@ export function useAddExpense() {
       queryClient.invalidateQueries({ queryKey: queryKeys.expenseTrend });
       queryClient.invalidateQueries({ queryKey: queryKeys.budgetUsage });
       queryClient.invalidateQueries({ queryKey: queryKeys.topCategories });
+      queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
   });
 }
@@ -522,6 +661,7 @@ export function useApproveRequest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.financeRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeTransactions });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
   });
 }
@@ -540,6 +680,7 @@ export function useRejectRequest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses });
       queryClient.invalidateQueries({ queryKey: queryKeys.financeRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
   });
 }
@@ -629,6 +770,7 @@ export function useSubmitPayment() {
       queryClient.invalidateQueries({ queryKey: queryKeys.pendingRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests });
       queryClient.invalidateQueries({ queryKey: queryKeys.employeeAllRequests });
+      queryClient.invalidateQueries({ queryKey: queryKeys.completedTransfers });
     },
   });
 }

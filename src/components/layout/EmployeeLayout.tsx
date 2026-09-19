@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Drawer, useTheme } from '@mui/material';
 import { DashboardOutlined, ReceiptLongOutlined, AccountBalanceWalletOutlined, PersonOutlined, NotificationsOutlined, SettingsOutlined } from '@mui/icons-material';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -7,7 +7,6 @@ import type { AppSidebarNavItem } from '@/components/shared';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
 import { useUnreadNotifications } from '@/hooks/unreadNotifications';
-import { useMyRequests } from '@/hooks/api';
 import { ROUTES, SIDEBAR_COLLAPSED_WIDTH, SIDEBAR_WIDTH } from '@/utils/constants';
 
 export function EmployeeLayout() {
@@ -17,17 +16,10 @@ export function EmployeeLayout() {
   const validateSession = useAuthStore((s) => s.validateSession);
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const unreadCount = useUnreadNotifications();
-  const { data: myRequests } = useMyRequests();
-
-  const pendingCount = useMemo(
-    () => (myRequests ?? []).filter((r) => r.Status !== 'Approved' && r.Status !== 'Rejected').length,
-    [myRequests],
-  );
-  const pendingBadge = pendingCount > 0 ? (pendingCount > 99 ? '99+' : pendingCount) : undefined;
 
   const navItems: AppSidebarNavItem[] = [
     { label: 'nav.dashboard', icon: <DashboardOutlined />, path: ROUTES.EMPLOYEE_DASHBOARD },
-    { label: 'nav.requests', icon: <ReceiptLongOutlined />, path: ROUTES.EMPLOYEE_REQUESTS, badge: pendingBadge },
+    { label: 'nav.requests', icon: <ReceiptLongOutlined />, path: ROUTES.EMPLOYEE_REQUESTS },
     { label: 'nav.expenses', icon: <AccountBalanceWalletOutlined />, path: ROUTES.EMPLOYEE_EXPENSES },
     { label: 'nav.profile', icon: <PersonOutlined />, path: ROUTES.EMPLOYEE_PROFILE },
     {

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { DashboardCardHeader } from '@/components/shared';
 import { ChartCardState } from './ChartCardState';
 import { useExpenseTrend } from '@/hooks/api';
-import { formatCurrency, formatTooltipCurrency } from '@/utils/format';
+import { formatCurrencyByCode, formatTooltipCurrency } from '@/utils/format';
 
 interface TrendDatum {
   label: string;
@@ -24,14 +24,14 @@ function compactAmount(value: number): string {
   return `${value}`;
 }
 
-export function ExpenseTrendCard() {
+export function ExpenseTrendCard({ currency = 'EGP' }: { currency?: string }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { data, isLoading, isError, refetch } = useExpenseTrend();
+  const { data, isLoading, isError, refetch } = useExpenseTrend(currency);
 
   const chartData: TrendDatum[] = (data ?? []).map((point, index) => ({
     label: point.Month || `#${index + 1}`,
-    amount: Number(point.Amount ?? point.Total ?? 0),
+    amount: Number(point.TotalSpent ?? 0),
   }));
 
   // Only hide the chart when the API returned no data points at all
@@ -100,7 +100,7 @@ export function ExpenseTrendCard() {
                 <Tooltip
                   cursor={{ stroke: alpha(theme.palette.primary.main, 0.35), strokeWidth: 1.5, strokeDasharray: '4 4' }}
                   labelFormatter={(label) => String(label)}
-                  formatter={(value) => formatTooltipCurrency(value)}
+                  formatter={(value) => formatTooltipCurrency(value, currency)}
                   contentStyle={{
                     backgroundColor: theme.palette.background.paper,
                     border: `1px solid ${theme.palette.divider}`,
@@ -127,7 +127,7 @@ export function ExpenseTrendCard() {
       {!isEmpty && !isLoading && !isError && (
         <Box sx={{ mt: 1, display: 'flex', alignItems: 'baseline', gap: 1, flexWrap: 'wrap', rowGap: 0.25, minWidth: 0 }}>
           <Typography sx={{ fontSize: 20, fontWeight: 700, color: 'text.primary' }}>
-            {formatCurrency(chartData.reduce((sum, point) => sum + point.amount, 0))}
+            {formatCurrencyByCode(chartData.reduce((sum, point) => sum + point.amount, 0), currency)}
           </Typography>
           <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{t('employee.expenseTrendTotal')}</Typography>
         </Box>
