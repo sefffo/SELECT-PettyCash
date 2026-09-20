@@ -1,21 +1,24 @@
-import { useState, type ReactNode } from 'react';
-import { Box, Button, TablePagination, Typography, useTheme } from '@mui/material';
-import { Add, Check, Close, ErrorOutline, PaymentOutlined, PersonOutline, ReceiptLongOutlined, Replay, ScheduleOutlined } from '@mui/icons-material';
+import { useState } from 'react';
+import { Box, Button, Typography, useTheme } from '@mui/material';
+import { Add, ErrorOutline, ReceiptLongOutlined, Replay } from '@mui/icons-material';
 import { alpha } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useExpenses } from '@/hooks/api';
 import type { EmployeeExpenseItem } from '@/types/api';
-import type { ExpenseStatus } from '@/types/vertex';
-import { StatusBadge } from '@/components/feature/StatusBadge';
-import { DashboardCardHeader, DashboardCardFooter, DashboardTimeline, DashboardTimelineCard, SkeletonLoader, type TimelineTone } from '@/components/shared';
+import { getStatusColor, getStatusLabelKey } from '@/components/feature/StatusBadge';
+import {
+  DashboardCardHeader,
+  DashboardCardFooter,
+  DashboardTimeline,
+  DashboardTimelineCard,
+  SkeletonLoader,
+} from '@/components/shared';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
 import { mapExpenseStatus } from '@/utils/mappers';
 import { ROUTES } from '@/utils/constants';
 import { AddExpenseDialog } from './AddExpenseDialog';
 import { ExpenseDetailsDialog } from './ExpenseDetailsDialog';
-
-const ROWS_PER_PAGE_OPTIONS = [6, 12, 24];
 
 function sortByExpenseDateDesc(items: EmployeeExpenseItem[]): EmployeeExpenseItem[] {
   return [...items].sort((a, b) => {
@@ -28,45 +31,33 @@ function sortByExpenseDateDesc(items: EmployeeExpenseItem[]): EmployeeExpenseIte
   });
 }
 
-function expenseTimelineConfig(status: ExpenseStatus): { icon: ReactNode; tone: TimelineTone } {
-  switch (status) {
-    case 'approved':
-      return { icon: <Check fontSize="small" />, tone: 'success' };
-    case 'completed':
-    case 'reimbursed':
-      return { icon: <PaymentOutlined fontSize="small" />, tone: 'info' };
-    case 'rejected':
-      return { icon: <Close fontSize="small" />, tone: 'error' };
-    case 'pending-finance':
-    case 'pending-approval':
-      return { icon: <PersonOutline fontSize="small" />, tone: 'info' };
-    case 'pending-manager':
-    case 'pending':
-      return { icon: <ScheduleOutlined fontSize="small" />, tone: 'warning' };
-    default:
-      return { icon: <ScheduleOutlined fontSize="small" />, tone: 'warning' };
-  }
-}
-
 export function RecentExpensesCard() {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
   const [addExpenseOpen, setAddExpenseOpen] = useState(false);
   const [detailsExpense, setDetailsExpense] = useState<EmployeeExpenseItem | null>(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE_OPTIONS[0]!);
   const { data, isLoading, isError, refetch } = useExpenses();
 
   const expenses = sortByExpenseDateDesc(data ?? []);
-  const pageCount = Math.max(1, Math.ceil(expenses.length / rowsPerPage));
-  const currentPage = Math.min(page, pageCount - 1);
-  const pagedExpenses = expenses.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
+  const previewExpenses = expenses.slice(0, 6);
 
   const hasData = !isLoading && !isError && expenses.length > 0;
 
   return (
-    <Box sx={{ backgroundColor: 'background.paper', borderRadius: 3, border: '1px solid', borderColor: 'divider', p: { xs: 1.5, sm: 2.5 }, minWidth: 0, display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Box
+      sx={{
+        backgroundColor: 'background.paper',
+        borderRadius: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        p: { xs: 1.5, sm: 2.5 },
+        minWidth: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        height: 'auto',
+      }}
+    >
       <DashboardCardHeader
         icon={<ReceiptLongOutlined />}
         color="#0E7490"
@@ -92,8 +83,27 @@ export function RecentExpensesCard() {
       )}
 
       {!isLoading && isError && (
-        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', py: { xs: 1.5, sm: 2 }, px: 2, maxWidth: '100%' }}>
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              py: { xs: 1.5, sm: 2 },
+              px: 2,
+              maxWidth: '100%',
+            }}
+          >
             <Box
               sx={{
                 width: { xs: 48, sm: 56 },
@@ -110,10 +120,19 @@ export function RecentExpensesCard() {
             >
               <ErrorOutline sx={{ fontSize: { xs: 20, sm: 22 }, color: 'error.main' }} />
             </Box>
-            <Typography sx={{ fontSize: { xs: 13.5, sm: 14 }, fontWeight: 600, color: 'text.primary', mb: 0.25 }}>
+            <Typography
+              sx={{
+                fontSize: { xs: 13.5, sm: 14 },
+                fontWeight: 600,
+                color: 'text.primary',
+                mb: 0.25,
+              }}
+            >
               {t('employee.expensesLoadFailed')}
             </Typography>
-            <Typography sx={{ fontSize: { xs: 12, sm: 12.5 }, color: 'text.secondary', maxWidth: 320 }}>
+            <Typography
+              sx={{ fontSize: { xs: 12, sm: 12.5 }, color: 'text.secondary', maxWidth: 320 }}
+            >
               {t('employee.expensesLoadFailedHint')}
             </Typography>
             <Button
@@ -121,7 +140,14 @@ export function RecentExpensesCard() {
               variant="outlined"
               startIcon={<Replay sx={{ fontSize: 16 }} />}
               onClick={() => refetch()}
-              sx={{ borderRadius: 2, mt: 1.5, px: 1.5, fontSize: 13, textTransform: 'none', fontWeight: 600 }}
+              sx={{
+                borderRadius: 2,
+                mt: 1.5,
+                px: 1.5,
+                fontSize: 13,
+                textTransform: 'none',
+                fontWeight: 600,
+              }}
             >
               {t('employee.retry')}
             </Button>
@@ -130,8 +156,27 @@ export function RecentExpensesCard() {
       )}
 
       {!isLoading && !isError && expenses.length === 0 && (
-        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', py: { xs: 1.5, sm: 2 }, px: 2, maxWidth: '100%' }}>
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              py: { xs: 1.5, sm: 2 },
+              px: 2,
+              maxWidth: '100%',
+            }}
+          >
             <Box
               sx={{
                 width: { xs: 48, sm: 56 },
@@ -148,10 +193,19 @@ export function RecentExpensesCard() {
             >
               <ReceiptLongOutlined sx={{ fontSize: { xs: 20, sm: 22 }, color: 'text.secondary' }} />
             </Box>
-            <Typography sx={{ fontSize: { xs: 13.5, sm: 14 }, fontWeight: 600, color: 'text.primary', mb: 0.25 }}>
+            <Typography
+              sx={{
+                fontSize: { xs: 13.5, sm: 14 },
+                fontWeight: 600,
+                color: 'text.primary',
+                mb: 0.25,
+              }}
+            >
               {t('employee.noExpenses')}
             </Typography>
-            <Typography sx={{ fontSize: { xs: 12, sm: 12.5 }, color: 'text.secondary', maxWidth: 320 }}>
+            <Typography
+              sx={{ fontSize: { xs: 12, sm: 12.5 }, color: 'text.secondary', maxWidth: 320 }}
+            >
               {t('employee.noExpensesHint')}
             </Typography>
             <Button
@@ -159,7 +213,14 @@ export function RecentExpensesCard() {
               variant="outlined"
               startIcon={<Add sx={{ fontSize: 16 }} />}
               onClick={() => setAddExpenseOpen(true)}
-              sx={{ borderRadius: 2, mt: 1.5, px: 1.5, fontSize: 13, textTransform: 'none', fontWeight: 600 }}
+              sx={{
+                borderRadius: 2,
+                mt: 1.5,
+                px: 1.5,
+                fontSize: 13,
+                textTransform: 'none',
+                fontWeight: 600,
+              }}
             >
               {t('employee.addExpense')}
             </Button>
@@ -168,54 +229,35 @@ export function RecentExpensesCard() {
       )}
 
       {hasData && (
-        <DashboardTimeline>
-          {pagedExpenses.map((expense) => {
-            const label = expense.Reason || '—';
-            const status = mapExpenseStatus(expense.Status);
-            const config = expenseTimelineConfig(status);
-            return (
-              <DashboardTimelineCard
-                key={expense.ExpenseId}
-                icon={config.icon}
-                tone={config.tone}
-                title={label}
-                badge={<StatusBadge status={status} labelKey={status === 'pending-manager' ? 'request.status.pending' : undefined} />}
-                dateText={formatDate(expense.DateSubmitted ?? null)}
-                amountText={formatCurrencyByCode(expense.Amount, expense.Currency ?? 'EGP')}
-                onClick={() => setDetailsExpense(expense)}
-                ariaLabel={t('employee.expenseDetails')}
-              />
-            );
-          })}
-        </DashboardTimeline>
+        <Box sx={{ flex: 1, minHeight: 0 }}>
+          <DashboardTimeline>
+            {previewExpenses.map((expense) => {
+              const label = expense.Reason || '—';
+              const status = mapExpenseStatus(expense.Status);
+              const statusLabelKey =
+                status === 'pending-manager' ? 'request.status.pending' : getStatusLabelKey(status);
+              return (
+                <DashboardTimelineCard
+                  key={expense.ExpenseId}
+                  title={label}
+                  statusLabel={statusLabelKey ? t(statusLabelKey) : undefined}
+                  statusColor={getStatusColor(status)}
+                  dateText={formatDate(expense.DateSubmitted ?? null)}
+                  amountText={formatCurrencyByCode(expense.Amount, expense.Currency ?? 'EGP')}
+                  onClick={() => setDetailsExpense(expense)}
+                  ariaLabel={t('employee.expenseDetails')}
+                />
+              );
+            })}
+          </DashboardTimeline>
+        </Box>
       )}
 
       {hasData && (
-        <DashboardCardFooter onViewAll={() => navigate(ROUTES.EMPLOYEE_EXPENSES)} viewAllLabel={t('employee.viewAll')}>
-          <TablePagination
-            component="div"
-            count={expenses.length}
-            page={currentPage}
-            onPageChange={(_event, nextPage) => setPage(nextPage)}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={(event) => {
-              setRowsPerPage(parseInt(event.target.value, 10));
-              setPage(0);
-            }}
-            rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
-            labelRowsPerPage={t('employee.rowsPerPage')}
-            sx={{
-              flex: 1,
-              minWidth: 0,
-              '& .MuiTablePagination-toolbar': { minHeight: 40, px: { xs: 0, sm: 1 }, flexWrap: 'wrap', justifyContent: 'flex-end', rowGap: 0.5 },
-              '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
-                fontSize: 12,
-                color: 'text.secondary',
-              },
-              '& .MuiTablePagination-input': { fontSize: 12 },
-            }}
-          />
-        </DashboardCardFooter>
+        <DashboardCardFooter
+          onViewAll={() => navigate(ROUTES.EMPLOYEE_EXPENSES)}
+          viewAllLabel={t('employee.viewAll')}
+        />
       )}
 
       <AddExpenseDialog open={addExpenseOpen} onClose={() => setAddExpenseOpen(false)} />

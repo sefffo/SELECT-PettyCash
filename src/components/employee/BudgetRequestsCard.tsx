@@ -1,42 +1,24 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState } from 'react';
 import { Box, Button } from '@mui/material';
-import { Add, Check, ChecklistOutlined, Close, PaymentOutlined, PersonOutline, ScheduleOutlined } from '@mui/icons-material';
+import { Add, ChecklistOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useMyRequests } from '@/hooks/api';
 import { formatCurrencyByCode, formatDate } from '@/utils/format';
-import { DashboardCardHeader, DashboardCardFooter, DashboardTimeline, DashboardTimelineCard, EmptyState, SkeletonLoader, type TimelineTone } from '@/components/shared';
-import { StatusBadge } from '@/components/feature/StatusBadge';
+import {
+  DashboardCardHeader,
+  DashboardCardFooter,
+  DashboardTimeline,
+  DashboardTimelineCard,
+  EmptyState,
+  SkeletonLoader,
+} from '@/components/shared';
+import { getStatusColor, getStatusLabelKey } from '@/components/feature/StatusBadge';
 import { NewCashRequestDialog } from '@/components/employee/NewCashRequestDialog';
 import { RequestDetailsDialog } from '@/components/employee/RequestDetailsDialog';
 import { ROUTES } from '@/utils/constants';
 import type { PendingRequestStatus } from '@/types/api';
 import type { ExpenseStatus } from '@/types/vertex';
-
-interface TimelineStepConfig {
-  icon: ReactNode;
-  tone: TimelineTone;
-}
-
-function timelineStepConfig(status: PendingRequestStatus | undefined): TimelineStepConfig {
-  switch (status) {
-    case 'Approved':
-      return { icon: <Check fontSize="small" />, tone: 'success' };
-    case 'Completed':
-      return { icon: <PaymentOutlined fontSize="small" />, tone: 'info' };
-    case 'Rejected':
-      return { icon: <Close fontSize="small" />, tone: 'error' };
-    case 'PendingFinance':
-    case 'Pending Finance':
-    case 'PendingApproval':
-      return { icon: <PersonOutline fontSize="small" />, tone: 'info' };
-    case 'Pending':
-    case 'PendingManager':
-      return { icon: <ScheduleOutlined fontSize="small" />, tone: 'warning' };
-    default:
-      return { icon: <ScheduleOutlined fontSize="small" />, tone: 'warning' };
-  }
-}
 
 function statusBadgeValue(status: PendingRequestStatus | undefined): ExpenseStatus {
   switch (status) {
@@ -67,17 +49,30 @@ export function BudgetRequestsCard() {
 
   const requests = useMemo(
     () =>
-      [...(data ?? [])]
-        .sort((a, b) => new Date(b.SubmittedAt ?? '').getTime() - new Date(a.SubmittedAt ?? '').getTime())
-        .slice(0, 5),
+      [...(data ?? [])].sort(
+        (a, b) => new Date(b.SubmittedAt ?? '').getTime() - new Date(a.SubmittedAt ?? '').getTime(),
+      ),
     [data],
   );
 
   const totalRequests = (data ?? []).length;
+  const previewRequests = requests.slice(0, 6);
   const hasRequests = !isLoading && !isError && requests.length > 0;
 
   return (
-    <Box sx={{ backgroundColor: 'background.paper', borderRadius: 3, border: '1px solid', borderColor: 'divider', p: { xs: 1.5, sm: 2.5 }, minWidth: 0, display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Box
+      sx={{
+        backgroundColor: 'background.paper',
+        borderRadius: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        p: { xs: 1.5, sm: 2.5 },
+        minWidth: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        height: 'auto',
+      }}
+    >
       <DashboardCardHeader
         icon={<ChecklistOutlined />}
         color="#7C3AED"
@@ -98,36 +93,62 @@ export function BudgetRequestsCard() {
 
       {isLoading ? (
         <Box sx={{ flex: 1, minHeight: 0 }}>
-          <SkeletonLoader type="list" count={5} />
+          <SkeletonLoader type="list" count={6} />
         </Box>
       ) : isError ? (
-        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <EmptyState icon="⚠️" title={t('employee.loadFailed')} description={t('employee.loadFailedHint')} />
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <EmptyState
+            icon="⚠️"
+            title={t('employee.loadFailed')}
+            description={t('employee.loadFailedHint')}
+          />
         </Box>
       ) : requests.length === 0 ? (
-        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <EmptyState icon="📋" title={t('employee.noBudgetRequests')} description={t('employee.noBudgetRequestsHint')} />
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <EmptyState
+            icon="📋"
+            title={t('employee.noBudgetRequests')}
+            description={t('employee.noBudgetRequestsHint')}
+          />
         </Box>
       ) : (
-        <DashboardTimeline>
-          {requests.map((request) => {
-            const config = timelineStepConfig(request.Status);
-            const description = request.Description ?? '';
-            return (
-              <DashboardTimelineCard
-                key={request.RequestId}
-                icon={config.icon}
-                tone={config.tone}
-                title={description || '—'}
-                badge={<StatusBadge status={statusBadgeValue(request.Status)} />}
-                dateText={t('employee.requestedOn', { date: formatDate(request.SubmittedAt) })}
-                amountText={formatCurrencyByCode(request.Amount, request.Currency)}
-                onClick={() => setDetailsId(request.RequestId)}
-                ariaLabel={t('employee.openRequestDetails', { title: description })}
-              />
-            );
-          })}
-        </DashboardTimeline>
+        <Box sx={{ flex: 1, minHeight: 0 }}>
+          <DashboardTimeline>
+            {previewRequests.map((request) => {
+              const description = request.Description ?? '';
+              const status = statusBadgeValue(request.Status);
+              const statusLabelKey = getStatusLabelKey(status);
+              return (
+                <DashboardTimelineCard
+                  key={request.RequestId}
+                  title={description || '—'}
+                  statusLabel={statusLabelKey ? t(statusLabelKey) : undefined}
+                  statusColor={getStatusColor(status)}
+                  dateText={t('employee.requestedOn', { date: formatDate(request.SubmittedAt) })}
+                  amountText={formatCurrencyByCode(request.Amount, request.Currency)}
+                  onClick={() => setDetailsId(request.RequestId)}
+                  ariaLabel={t('employee.openRequestDetails', { title: description })}
+                />
+              );
+            })}
+          </DashboardTimeline>
+        </Box>
       )}
 
       {hasRequests && (

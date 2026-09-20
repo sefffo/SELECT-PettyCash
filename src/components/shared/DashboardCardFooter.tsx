@@ -23,16 +23,17 @@ export function DashboardCardFooter({ meta, onViewAll, viewAllLabel, children }:
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 1,
+        gap: { xs: 1, sm: 1.5 },
+        rowGap: 0.75,
         flexWrap: 'wrap',
-        mt: 1.5,
+        mt: 'auto',
         pt: 1.25,
         borderTop: '1px solid',
         borderColor: 'divider',
         minHeight: 44,
       }}
     >
-      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap' }}>
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: { xs: 1, sm: 1.5 }, rowGap: 0.5, flexWrap: 'wrap' }}>
         {meta && (
           <Typography sx={{ fontSize: 12, color: 'text.secondary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {meta}
@@ -47,6 +48,7 @@ export function DashboardCardFooter({ meta, onViewAll, viewAllLabel, children }:
           sx={{
             p: 0.5,
             minWidth: 0,
+            whiteSpace: 'nowrap',
             fontSize: 13,
             fontWeight: 600,
             color: 'primary.main',

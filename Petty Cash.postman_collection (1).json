@@ -23,7 +23,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"Action\": \"Auth/Login\",\r\n    \"Parameters\": {\r\n        \"Email\": \"yassin@company.com\",\r\n        \"Password\": \"555555\"\r\n    }\r\n}",
+          "raw": "{\r\n    \"Action\": \"Auth/Login\",\r\n    \"Parameters\": {\r\n        \"Email\": \"farida@company.com\",\r\n        \"Password\": \"555555\"\r\n    }\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -33,15 +33,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -79,16 +72,8 @@
         "url": {
           "raw": "http://169.58.112.181/api/execute",
           "protocol": "http",
-          "host": [
-            "169",
-            "58",
-            "112",
-            "181"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["169", "58", "112", "181"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -121,16 +106,8 @@
         "url": {
           "raw": "http://169.58.112.181/api/execute",
           "protocol": "http",
-          "host": [
-            "169",
-            "58",
-            "112",
-            "181"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["169", "58", "112", "181"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -163,16 +140,8 @@
         "url": {
           "raw": "http://169.58.112.181/api/execute",
           "protocol": "http",
-          "host": [
-            "169",
-            "58",
-            "112",
-            "181"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["169", "58", "112", "181"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -210,16 +179,8 @@
         "url": {
           "raw": "http://169.58.112.181/api/execute",
           "protocol": "http",
-          "host": [
-            "169",
-            "58",
-            "112",
-            "181"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["169", "58", "112", "181"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -252,16 +213,8 @@
         "url": {
           "raw": "http://169.58.112.181/api/execute",
           "protocol": "http",
-          "host": [
-            "169",
-            "58",
-            "112",
-            "181"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["169", "58", "112", "181"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -294,15 +247,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -335,16 +281,8 @@
         "url": {
           "raw": "http://169.58.112.181/api/execute",
           "protocol": "http",
-          "host": [
-            "169",
-            "58",
-            "112",
-            "181"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["169", "58", "112", "181"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -377,15 +315,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -423,15 +354,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -464,16 +388,8 @@
         "url": {
           "raw": "http://169.58.112.181/api/execute",
           "protocol": "http",
-          "host": [
-            "169",
-            "58",
-            "112",
-            "181"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["169", "58", "112", "181"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -511,16 +427,8 @@
         "url": {
           "raw": "http://169.58.112.181/api/execute",
           "protocol": "http",
-          "host": [
-            "169",
-            "58",
-            "112",
-            "181"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["169", "58", "112", "181"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -553,16 +461,8 @@
         "url": {
           "raw": "http://169.58.112.181/api/execute",
           "protocol": "http",
-          "host": [
-            "169",
-            "58",
-            "112",
-            "181"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["169", "58", "112", "181"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -595,15 +495,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -636,15 +529,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -682,15 +568,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -728,15 +607,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -774,15 +646,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -820,15 +685,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -866,15 +724,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -912,15 +763,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -953,15 +797,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -994,15 +831,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1040,15 +870,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1086,15 +909,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1132,15 +948,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1173,15 +982,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1214,15 +1016,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1255,15 +1050,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1296,15 +1084,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1337,15 +1118,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1378,15 +1152,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1414,20 +1181,13 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"Action\": \"Manager/GetNotifications\",\r\n    \"Parameters\": {}\r\n}"
+          "raw": "{\r\n    \"Action\": \"Manager/GetNotifications\",\r\n    \"Parameters\": {\r\n        \"Page\": 2,\r\n        \"PageSize\": 10\r\n    }\r\n}"
         },
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1460,15 +1220,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1501,15 +1254,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1537,20 +1283,13 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"Action\": \"Employee/GetNotifications\",\r\n    \"Parameters\": {}\r\n}"
+          "raw": "{\r\n    \"Action\": \"Employee/GetNotifications\",\r\n    \"Parameters\": {\r\n        \"Page\": 1,\r\n        \"PageSize\": 5\r\n    }\r\n}"
         },
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1583,15 +1322,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1624,15 +1356,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1665,15 +1390,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1706,15 +1424,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1747,15 +1458,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1788,15 +1492,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1829,15 +1526,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1870,15 +1560,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1919,15 +1602,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -1960,15 +1636,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2017,15 +1686,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2058,15 +1720,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2099,15 +1754,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2140,15 +1788,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2181,15 +1822,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2222,15 +1856,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2263,15 +1890,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2304,15 +1924,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2345,15 +1958,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2386,15 +1992,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2422,20 +2021,13 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"Action\": \"Employee/GetNotifications\",\r\n    \"Parameters\": {}\r\n}"
+          "raw": "{\r\n    \"Action\": \"Employee/GetNotifications\",\r\n    \"Parameters\": {\r\n        \"Page\": 1,\r\n        \"PageSize\": 5\r\n    }\r\n}"
         },
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2468,15 +2060,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2509,15 +2094,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2550,15 +2128,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2591,15 +2162,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2632,15 +2196,8 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
-          ]
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2673,15 +2230,76 @@
         "url": {
           "raw": "https://pcapi.selecteg.com/api/execute",
           "protocol": "https",
-          "host": [
-            "pcapi",
-            "selecteg",
-            "com"
-          ],
-          "path": [
-            "api",
-            "execute"
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin sees balances",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0dcm}}",
+              "type": "string"
+            }
           ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"Action\": \"Admin/Dashboard/Balances\",\r\n    \"Parameters\": {}\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Manager/admin charts",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_00ch}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"Action\": \"Manager/CompletedTransfers\",\r\n  \"Parameters\": {\r\n    \"TargetMonth\": 9,\r\n    \"TargetYear\": 2026\r\n  }\r\n}"
+        },
+        "url": {
+          "raw": "https://pcapi.selecteg.com/api/execute",
+          "protocol": "https",
+          "host": ["pcapi", "selecteg", "com"],
+          "path": ["api", "execute"]
         }
       },
       "response": []
@@ -2968,6 +2586,14 @@
     },
     {
       "key": "json_web_token_04z0",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0dcm",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_00ch",
       "secret": true
     }
   ]

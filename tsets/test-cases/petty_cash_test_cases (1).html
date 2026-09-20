@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SELECT Petty Cash System — Test Case Suite</title>
+<style>
+  :root{
+    --navy:#0d2b57; --blue:#1a56c4; --lightblue:#eef4ff; --border:#dbe3ef;
+    --high:#c0392b; --med:#b7791f; --low:#2f855a; --bg:#f7f9fc;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:#1a1f2b;margin:0;padding:0 0 60px;}
+  header{background:linear-gradient(120deg,var(--navy),var(--blue));color:#fff;padding:34px 40px;}
+  header h1{margin:0 0 6px;font-size:26px;}
+  header p{margin:2px 0;font-size:14px;opacity:.9;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 30px;}
+  .meta-box{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px 24px;margin:24px 0;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+  .meta-box table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .meta-box td{padding:4px 8px;vertical-align:top;}
+  .legend{display:flex;gap:24px;flex-wrap:wrap;margin-top:8px;font-size:13px;}
+  .badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11.5px;font-weight:600;color:#fff;}
+  .High{background:var(--high);} .Medium{background:var(--med);} .Low{background:var(--low);}
+  .type-tag{display:inline-block;padding:1px 7px;border-radius:5px;font-size:10.5px;font-weight:600;background:#e3e9f3;color:#2a3a55;margin-right:3px;}
+  nav.toc{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 24px;margin:20px 0;}
+  nav.toc h3{margin-top:0;font-size:15px;}
+  nav.toc a{display:inline-block;margin:3px 10px 3px 0;font-size:13px;color:var(--blue);text-decoration:none;}
+  nav.toc a:hover{text-decoration:underline;}
+  details{background:#fff;border:1px solid var(--border);border-radius:8px;margin:18px 0;overflow:hidden;}
+  summary{cursor:pointer;padding:14px 20px;font-size:16px;font-weight:700;color:var(--navy);background:var(--lightblue);list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  summary:before{content:"▸ ";color:var(--blue);}
+  details[open] summary:before{content:"▾ ";}
+  .sub-note{padding:10px 20px 0;font-size:13px;color:#555;}
+  table.tc{width:100%;border-collapse:collapse;font-size:12.8px;margin:12px 0 18px;}
+  table.tc th{background:#f1f4fa;text-align:left;padding:8px 10px;border:1px solid var(--border);font-size:12px;color:var(--navy);position:sticky;top:0;}
+  table.tc td{padding:8px 10px;border:1px solid var(--border);vertical-align:top;}
+  table.tc tr:nth-child(even){background:#fafbfd;}
+  td.id{font-weight:700;color:var(--blue);white-space:nowrap;}
+  td.steps ol{margin:0;padding-left:16px;}
+  .bug{background:#fff4f4;border:1px solid #f3c2c2;border-radius:8px;padding:14px 20px;margin:10px 0;}
+  .bug h4{margin:0 0 6px;color:var(--high);font-size:14px;}
+  footer{max-width:1200px;margin:40px auto 0;padding:0 30px;font-size:12px;color:#888;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>SELECT Petty Cash System — Master Test Case Suite</h1>
+    <p>Derived from Integration Specification Document (ISD v1.1) and provided UI screenshots</p>
+    <p>Scope: Full system (API actions + Web UI, all four roles) | Prepared for pre-release QA sign-off</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="meta-box">
+    <table>
+      <tr><td><b>System</b></td><td>Petty Cash — Enterprise Expense &amp; Budget Management</td>
+          <td><b>API Base URL</b></td><td>https://pcapi.selecteg.com/api/execute</td></tr>
+      <tr><td><b>App URL</b></td><td>https://pc.selecteg.com</td>
+          <td><b>Auth</b></td><td>Bearer JWT (~8h expiry)</td></tr>
+      <tr><td><b>Roles</b></td><td>Admin, Manager, Employee, Finance</td>
+          <td><b>Currencies confirmed</b></td><td>EGP, USD, SAR</td></tr>
+    </table>
+    <div class="legend">
+      <span><b>Priority:</b> <span class="badge High">High</span> <span class="badge Medium">Medium</span> <span class="badge Low">Low</span></span>
+      <span><b>Type tags:</b>
+        <span class="type-tag">Functional</span>
+        <span class="type-tag">Negative</span>
+        <span class="type-tag">Security</span>
+        <span class="type-tag">Boundary</span>
+        <span class="type-tag">UI</span>
+        <span class="type-tag">Permission</span>
+        <span class="type-tag">Integration</span>
+      </span>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <h3>Contents</h3>
+    <a href="#auth">1. Auth Module</a>
+    <a href="#dept">2. Department &amp; Lookup</a>
+    <a href="#admin">3. Admin Module</a>
+    <a href="#pc">4. Petty Cash Lifecycle</a>
+    <a href="#mgr">5. Manager Module</a>
+    <a href="#emp">6. Employee Module</a>
+    <a href="#fin">7. Finance Module</a>
+    <a href="#dash">8. Dashboard Module</a>
+    <a href="#generic">9. Generic User Actions</a>
+    <a href="#cross">10. Cross-Cutting API (Envelope/Errors/Security/Token)</a>
+    <a href="#ui-login">11. UI — Login</a>
+    <a href="#ui-emp">12. UI — Employee Panel</a>
+    <a href="#ui-mgr">13. UI — Manager Panel (inferred)</a>
+    <a href="#ui-admin">14. UI — Admin Panel</a>
+    <a href="#ui-fin">15. UI — Finance Panel</a>
+    <a href="#e2e">16. End-to-End Scenarios</a>
+    <a href="#bugs">17. Observed Issues to Verify (from screenshots)</a>
+  </nav>
+
+  <!-- ============================================================ -->
+  <details open id="auth"><summary>1. Auth Module (Auth/Login)</summary>
+  <div class="sub-note">Public endpoint — no token required. Confirms response envelope, JWT claims, role routing.</div>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-AUTH-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Successful login for each role</td><td>Valid active accounts exist for Admin, Manager, Employee, Finance</td>
+      <td class="steps"><ol><li>POST Auth/Login with valid Email/Password for each role</li></ol></td>
+      <td>statusCode 0; data.token is valid JWT; data.role matches account role; token decodes with nameid, email, role, iss=PettyCashAPI, aud=PettyCashClients, exp/nbf/iat present</td></tr>
+    <tr><td class="id">TC-AUTH-002</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Login with wrong password</td><td>Valid email, wrong password</td>
+      <td class="steps"><ol><li>POST Auth/Login</li></ol></td>
+      <td>HTTP 404 (per ISD), StatusCode 404, Message "Invalid credentials.", Data null</td></tr>
+    <tr><td class="id">TC-AUTH-003</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Login with non-existent email</td><td>Email not in system</td>
+      <td class="steps"><ol><li>POST Auth/Login</li></ol></td>
+      <td>Same "Invalid credentials." response — must NOT reveal whether email exists (user enumeration protection)</td></tr>
+    <tr><td class="id">TC-AUTH-004</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Login with missing Email or Password field</td><td>-</td>
+      <td class="steps"><ol><li>POST Auth/Login with Email only</li><li>POST with Password only</li><li>POST with empty body</li></ol></td>
+      <td>StatusCode 400 with descriptive validation message for each case</td></tr>
+    <tr><td class="id">TC-AUTH-005</td><td><span class="type-tag">Security</span></td><td><span class="badge High">High</span></td>
+      <td>SQL injection / script injection in Email field</td><td>-</td>
+      <td class="steps"><ol><li>POST Auth/Login with Email = "' OR '1'='1" and similar payloads</li></ol></td>
+      <td>Rejected safely as invalid credentials or validation error; no SQL error leaked; no auth bypass</td></tr>
+    <tr><td class="id">TC-AUTH-006</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Login for Inactive/deactivated account</td><td>Account status = Inactive (see Users/ChangeStatus)</td>
+      <td class="steps"><ol><li>Deactivate a user via Admin</li><li>Attempt login with that user's credentials</li></ol></td>
+      <td>Login rejected with clear error (should not silently succeed); confirm exact status code with backend</td></tr>
+    <tr><td class="id">TC-AUTH-007</td><td><span class="type-tag">Boundary</span></td><td><span class="badge Low">Low</span></td>
+      <td>Email case-sensitivity &amp; whitespace</td><td>-</td>
+      <td class="steps"><ol><li>Login with email in different case (JOHN@company.com vs john@company.com)</li><li>Login with leading/trailing spaces in email</li></ol></td>
+      <td>Login succeeds consistently regardless of case/whitespace (or documented behavior confirmed)</td></tr>
+    <tr><td class="id">TC-AUTH-008</td><td><span class="type-tag">Security</span></td><td><span class="badge High">High</span></td>
+      <td>Token expiry enforcement</td><td>Valid token near/at exp claim (~8h)</td>
+      <td class="steps"><ol><li>Login and capture token</li><li>Wait until/simulate exp timestamp passed</li><li>Call any protected action with expired token</li></ol></td>
+      <td>Request rejected (401/403) — expired token must not be honored</td></tr>
+    <tr><td class="id">TC-AUTH-009</td><td><span class="type-tag">Security</span></td><td><span class="badge High">High</span></td>
+      <td>Tampered / malformed JWT</td><td>-</td>
+      <td class="steps"><ol><li>Modify a valid token's payload (e.g., change role claim) without re-signing</li><li>Call a protected action</li></ol></td>
+      <td>Signature validation fails; request rejected, no privilege escalation</td></tr>
+    <tr><td class="id">TC-AUTH-010</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Call protected action with no Authorization header</td><td>-</td>
+      <td class="steps"><ol><li>Call e.g. Employee/GetWallet without Authorization header</li></ol></td>
+      <td>401/403 returned; Data null</td></tr>
+    <tr><td class="id">TC-AUTH-011</td><td><span class="type-tag">Boundary</span></td><td><span class="badge Low">Low</span></td>
+      <td>Rate limiting / brute force protection on login</td><td>-</td>
+      <td class="steps"><ol><li>Submit repeated failed login attempts rapidly for same account</li></ol></td>
+      <td>Confirm whether lockout/rate-limit exists; if not documented, flag as a security gap for backend team</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="dept"><summary>2. Department &amp; Lookup Module</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-DEPT-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Create department with valid unique name (Admin)</td><td>Logged in as Admin</td>
+      <td class="steps"><ol><li>Department/Create with Name="Logistics"</li></ol></td>
+      <td>statusCode 0, department created, appears in Data/Departments</td></tr>
+    <tr><td class="id">TC-DEPT-002</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Create department with duplicate name</td><td>Department "IT Department" already exists</td>
+      <td class="steps"><ol><li>Department/Create with Name="IT Department"</li></ol></td>
+      <td>Per ISD, raw StatusCode 500 with Postgres duplicate-key error is returned by backend — UI must intercept and show "A department with this name already exists." rather than raw DB error</td></tr>
+    <tr><td class="id">TC-DEPT-003</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Create department with missing Name</td><td>Admin</td>
+      <td class="steps"><ol><li>Department/Create with no Name param</li></ol></td>
+      <td>StatusCode 400, Message "Bad Request: Name is required to create a department."</td></tr>
+    <tr><td class="id">TC-DEPT-004</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Non-admin attempts Department/Create</td><td>Logged in as Manager/Employee/Finance</td>
+      <td class="steps"><ol><li>Department/Create as non-admin</li></ol></td>
+      <td>StatusCode 403, "Forbidden: Only Administrators can view the department list." (or equivalent create-forbidden message) — confirm exact wording with backend</td></tr>
+    <tr><td class="id">TC-DEPT-005</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Non-admin calls Data/Departments</td><td>Logged in as non-admin</td>
+      <td class="steps"><ol><li>Data/Departments</li></ol></td>
+      <td>StatusCode 403 with forbidden message; Data null</td></tr>
+    <tr><td class="id">TC-DEPT-006</td><td><span class="type-tag">Boundary</span></td><td><span class="badge Low">Low</span></td>
+      <td>Department name with special characters / very long string / emoji</td><td>Admin</td>
+      <td class="steps"><ol><li>Create department with name containing 255+ chars, HTML tags, emoji</li></ol></td>
+      <td>Either accepted and rendered safely (no XSS on display) or rejected with clear validation message</td></tr>
+    <tr><td class="id">TC-DEPT-007</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Data/Users returns full Admin-scoped user list</td><td>Admin</td>
+      <td class="steps"><ol><li>Data/Users</li></ol></td>
+      <td>Returns all users with correct fields (name, email, department, role, status) matching Employee Management screen</td></tr>
+    <tr><td class="id">TC-DEPT-008</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Data/PendingRequests scoped correctly to calling Manager</td><td>Manager with team members having pending requests</td>
+      <td class="steps"><ol><li>Login as Manager A</li><li>Data/PendingRequests</li></ol></td>
+      <td>Only requests from Manager A's own team are returned, not other managers' teams</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="admin"><summary>3. Admin Module</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-ADM-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Create user with all valid fields</td><td>Admin</td>
+      <td class="steps"><ol><li>Admin/CreateUser with Name, Email, Password, Role=Employee, DepartmentId</li></ol></td>
+      <td>User created, appears in Employee Management list with Active status</td></tr>
+    <tr><td class="id">TC-ADM-002</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Create user with DepartmentId = null</td><td>Admin</td>
+      <td class="steps"><ol><li>Admin/CreateUser without DepartmentId</li></ol></td>
+      <td>User created with no department (Department column shows "—" as seen for "Main Safe" row)</td></tr>
+    <tr><td class="id">TC-ADM-003</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Create user with duplicate email</td><td>Email already registered</td>
+      <td class="steps"><ol><li>Admin/CreateUser with existing Email</li></ol></td>
+      <td>Clear conflict error returned (not a raw 500/DB error); user not duplicated</td></tr>
+    <tr><td class="id">TC-ADM-004</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Create user with missing required fields</td><td>Admin</td>
+      <td class="steps"><ol><li>Omit Name / Email / Password / Role individually</li></ol></td>
+      <td>StatusCode 400 with field-specific message for each omission</td></tr>
+    <tr><td class="id">TC-ADM-005</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Create user with invalid email format / weak password</td><td>Admin</td>
+      <td class="steps"><ol><li>Email="notanemail"</li><li>Password="1" (too short)</li></ol></td>
+      <td>Validation errors returned; confirm password policy with backend if undocumented</td></tr>
+    <tr><td class="id">TC-ADM-006</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Edit user — change Name / Role independently</td><td>Existing user, Admin</td>
+      <td class="steps"><ol><li>Admin/EditUser with TargetUserId + Name only</li><li>Repeat with Role only</li></ol></td>
+      <td>Only specified field updates; other fields unchanged</td></tr>
+    <tr><td class="id">TC-ADM-007</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Edit user with invalid/non-existent TargetUserId</td><td>Admin</td>
+      <td class="steps"><ol><li>Admin/EditUser with random GUID</li></ol></td>
+      <td>StatusCode 404, appropriate not-found message</td></tr>
+    <tr><td class="id">TC-ADM-008</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Delete user</td><td>Existing non-critical user, Admin</td>
+      <td class="steps"><ol><li>Admin/DeleteUser with TargetUserId</li></ol></td>
+      <td>User removed from list; user can no longer log in; associated wallet/history handling confirmed with backend (soft vs hard delete)</td></tr>
+    <tr><td class="id">TC-ADM-009</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Delete user who has pending requests / non-zero wallet balance</td><td>Employee with pending request and balance &gt; 0</td>
+      <td class="steps"><ol><li>Admin/DeleteUser on this employee</li></ol></td>
+      <td>Confirm expected business rule: blocked with warning, or cascading handling — must not silently lose financial data</td></tr>
+    <tr><td class="id">TC-ADM-010</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Assign / reassign department</td><td>User with existing dept, Admin</td>
+      <td class="steps"><ol><li>Admin/AssignDepartment to a new DepartmentId</li></ol></td>
+      <td>User's department updates correctly and reflects on Employee Management screen</td></tr>
+    <tr><td class="id">TC-ADM-011</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Promote Employee to Manager</td><td>Employee, Admin</td>
+      <td class="steps"><ol><li>Admin/PromoteManager with TargetUserId, Role="Manager"</li></ol></td>
+      <td>Role badge updates to Manager; user gains manager-scoped actions (GetPendingRequests etc.) on next login/token refresh</td></tr>
+    <tr><td class="id">TC-ADM-012</td><td><span class="type-tag">Negative</span></td><td><span class="badge Low">Low</span></td>
+      <td>Promote a user already a Manager/Admin</td><td>Admin</td>
+      <td class="steps"><ol><li>Admin/PromoteManager on existing Manager</li></ol></td>
+      <td>Idempotent success or clear "already a manager" message — no error/corruption</td></tr>
+    <tr><td class="id">TC-ADM-013</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Get user profile / employee profile with transaction history</td><td>Admin, target user has history</td>
+      <td class="steps"><ol><li>Admin/GetProfile</li><li>Admin/GetEmployeeProfile</li></ol></td>
+      <td>Correct profile fields returned; GetEmployeeProfile additionally includes full transaction history</td></tr>
+    <tr><td class="id">TC-ADM-014</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Activate / Deactivate a user</td><td>Active user, Admin</td>
+      <td class="steps"><ol><li>Users/ChangeStatus Status="Inactive"</li><li>Verify login blocked (TC-AUTH-006)</li><li>Reactivate Status="Active"</li></ol></td>
+      <td>Status toggles correctly and is enforced on login and on already-open sessions if token still valid (confirm session invalidation behavior)</td></tr>
+    <tr><td class="id">TC-ADM-015</td><td><span class="type-tag">Negative</span></td><td><span class="badge Low">Low</span></td>
+      <td>ChangeStatus with invalid Status value</td><td>Admin</td>
+      <td class="steps"><ol><li>Users/ChangeStatus Status="Suspended" (not in enum)</li></ol></td>
+      <td>StatusCode 400 validation error</td></tr>
+    <tr><td class="id">TC-ADM-016</td><td><span class="type-tag">Functional</span></td><td><span class="badge Low">Low</span></td>
+      <td>Admin/GetAllNotifications returns system-wide events</td><td>Admin, recent system events exist</td>
+      <td class="steps"><ol><li>Admin/GetAllNotifications</li></ol></td>
+      <td>Notification objects match structure in Section 7 (NotificationId, Message, IsRead, CreatedAt) and cover cross-role events</td></tr>
+    <tr><td class="id">TC-ADM-017</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Non-admin attempts any Admin/* action</td><td>Manager/Employee/Finance token</td>
+      <td class="steps"><ol><li>Call Admin/CreateUser, Admin/DeleteUser, etc. with non-admin token</li></ol></td>
+      <td>All rejected with StatusCode 403</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="pc"><summary>4. Petty Cash Module — Full Request Lifecycle</summary>
+  <div class="sub-note">Covers Submit → Approve/Reject → Finance processing → SubmitPayment → ApproveProof/RequestReview → Resubmit.</div>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-PC-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Employee submits Advance request</td><td>Logged in as Employee</td>
+      <td class="steps"><ol><li>PettyCash/Submit Amount=500, Description="Client lunch", Category="Meals", RequestType="Advance"</li></ol></td>
+      <td>statusCode 0; request appears in Employee/GetMyRequests as Pending and in Manager/GetPendingRequests</td></tr>
+    <tr><td class="id">TC-PC-002</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Employee submits Reimbursement request</td><td>Employee</td>
+      <td class="steps"><ol><li>PettyCash/Submit RequestType="Reimbursement" with receipt already in hand</li></ol></td>
+      <td>Request created and routed through same approval flow; distinguishable by RequestType in UI/lists</td></tr>
+    <tr><td class="id">TC-PC-003</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Submit request with Amount = 0 or negative</td><td>Employee</td>
+      <td class="steps"><ol><li>PettyCash/Submit Amount=0</li><li>PettyCash/Submit Amount=-100</li></ol></td>
+      <td>StatusCode 400 — amount must be positive</td></tr>
+    <tr><td class="id">TC-PC-004</td><td><span class="type-tag">Boundary</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Submit request with extremely large amount</td><td>Employee</td>
+      <td class="steps"><ol><li>PettyCash/Submit Amount=999999999.00</li></ol></td>
+      <td>Accepted per ISD note on large amounts; UI must format with thousand separators everywhere it is displayed (list, wallet, notifications)</td></tr>
+    <tr><td class="id">TC-PC-005</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Submit with invalid RequestType</td><td>Employee</td>
+      <td class="steps"><ol><li>PettyCash/Submit RequestType="Loan"</li></ol></td>
+      <td>StatusCode 400, only "Advance"/"Reimbursement" accepted</td></tr>
+    <tr><td class="id">TC-PC-006</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Submit with missing Description/Category</td><td>Employee</td>
+      <td class="steps"><ol><li>Omit Description</li><li>Omit Category</li></ol></td>
+      <td>Validation error per required-field rules (confirm if these are optional or required with backend — ISD does not mark them optional)</td></tr>
+    <tr><td class="id">TC-PC-007</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Submit with unsupported CurrencyCode</td><td>Employee</td>
+      <td class="steps"><ol><li>PettyCash/Submit CurrencyCode="EUR"</li></ol></td>
+      <td>Rejected or falls back to default currency — confirm behavior; only EGP/USD/SAR confirmed supported</td></tr>
+    <tr><td class="id">TC-PC-008</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Manager approves a pending request</td><td>Pending request exists, Manager owns employee</td>
+      <td class="steps"><ol><li>PettyCash/Approve RequestId</li></ol></td>
+      <td>Status → Approved; Employee notified; request appears in Finance/GetAllRequests queue with Finance "Action Required" notification</td></tr>
+    <tr><td class="id">TC-PC-009</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Manager rejects a request with reason</td><td>Pending request</td>
+      <td class="steps"><ol><li>PettyCash/Reject RequestId, RejectionReason="Insufficient budget"</li></ol></td>
+      <td>Status → Rejected; RejectionReason stored and visible to employee; employee notified automatically</td></tr>
+    <tr><td class="id">TC-PC-010</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Reject without RejectionReason</td><td>Pending request</td>
+      <td class="steps"><ol><li>PettyCash/Reject without RejectionReason</li></ol></td>
+      <td>StatusCode 400 — RejectionReason is required per ISD</td></tr>
+    <tr><td class="id">TC-PC-011</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Manager approves/rejects a request from another manager's team</td><td>Two managers, cross-team request</td>
+      <td class="steps"><ol><li>Manager B calls PettyCash/Approve on Manager A's employee's request</li></ol></td>
+      <td>StatusCode 403 — must be scoped to own team only</td></tr>
+    <tr><td class="id">TC-PC-012</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Approve/Reject an already-approved or already-rejected request</td><td>Request already finalized</td>
+      <td class="steps"><ol><li>PettyCash/Approve on already-Approved RequestId</li></ol></td>
+      <td>Rejected with clear error (no duplicate state transition, no double financial impact)</td></tr>
+    <tr><td class="id">TC-PC-013</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Employee attempts to approve/reject own request</td><td>Employee token</td>
+      <td class="steps"><ol><li>PettyCash/Approve as Employee role</li></ol></td>
+      <td>StatusCode 403</td></tr>
+    <tr><td class="id">TC-PC-014</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Finance processes an approved request end-to-end</td><td>Approved request in Finance queue</td>
+      <td class="steps"><ol><li>Finance/ProcessTransaction RequestId</li><li>Finance/SendApprovalUpdateBalance RequestId</li></ol></td>
+      <td>Transaction recorded in Finance/Transactions; employee wallet balance increases by request Amount in correct currency (Employee/GetWallet)</td></tr>
+    <tr><td class="id">TC-PC-015</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Finance processes a request that is still Pending (not yet Manager-approved)</td><td>Pending (unapproved) request</td>
+      <td class="steps"><ol><li>Finance/ProcessTransaction on Pending RequestId</li></ol></td>
+      <td>Rejected — only Approved requests should be payable</td></tr>
+    <tr><td class="id">TC-PC-016</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Finance double-processes the same request</td><td>Already-processed request</td>
+      <td class="steps"><ol><li>Finance/ProcessTransaction twice on same RequestId</li></ol></td>
+      <td>Second call rejected — must prevent double payout / double wallet credit</td></tr>
+    <tr><td class="id">TC-PC-017</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Employee uploads payment proof (SubmitPayment)</td><td>Advance funded, employee spent money</td>
+      <td class="steps"><ol><li>PettyCash/SubmitPayment RequestId, ReceiptUrl, Notes(optional)</li></ol></td>
+      <td>Request status moves to "Pending Proof Review"; Manager notified</td></tr>
+    <tr><td class="id">TC-PC-018</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>SubmitPayment with missing/invalid ReceiptUrl</td><td>Employee</td>
+      <td class="steps"><ol><li>Omit ReceiptUrl</li><li>Provide non-URL string</li></ol></td>
+      <td>StatusCode 400 validation error</td></tr>
+    <tr><td class="id">TC-PC-019</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Manager approves submitted proof</td><td>Proof submitted</td>
+      <td class="steps"><ol><li>PettyCash/ApproveProof RequestId</li></ol></td>
+      <td>Request status → Completed/Closed; full history visible to Manager and Finance</td></tr>
+    <tr><td class="id">TC-PC-020</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Manager requests revision of proof</td><td>Proof submitted</td>
+      <td class="steps"><ol><li>PettyCash/RequestReview RequestId, ReviewReason="Receipt unreadable"</li></ol></td>
+      <td>Status → Revision Requested; employee notified with ReviewReason</td></tr>
+    <tr><td class="id">TC-PC-021</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>RequestReview without ReviewReason</td><td>Manager</td>
+      <td class="steps"><ol><li>PettyCash/RequestReview without ReviewReason</li></ol></td>
+      <td>StatusCode 400 — required per ISD</td></tr>
+    <tr><td class="id">TC-PC-022</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Employee resubmits proof after revision request</td><td>Status = Revision Requested</td>
+      <td class="steps"><ol><li>PettyCash/Resubmit RequestId, new ReceiptUrl, Notes</li></ol></td>
+      <td>Cycle returns to Manager review (Step 9); repeatable N times</td></tr>
+    <tr><td class="id">TC-PC-023</td><td><span class="type-tag">Integration</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Multiple revision cycles (resubmit loop 3x)</td><td>Employee/Manager</td>
+      <td class="steps"><ol><li>RequestReview → Resubmit → RequestReview → Resubmit → ApproveProof</li></ol></td>
+      <td>Each cycle correctly tracked; final ApproveProof closes the loop; no data loss of prior receipt URLs (history retained)</td></tr>
+    <tr><td class="id">TC-PC-024</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Employee attempts SubmitPayment/Resubmit on another employee's request</td><td>Two employees</td>
+      <td class="steps"><ol><li>Employee B calls PettyCash/SubmitPayment on Employee A's RequestId</li></ol></td>
+      <td>StatusCode 403</td></tr>
+    <tr><td class="id">TC-PC-025</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Actions referencing invalid/non-existent RequestId</td><td>Any role</td>
+      <td class="steps"><ol><li>Call Approve/Reject/SubmitPayment/ApproveProof with random GUID</li></ol></td>
+      <td>StatusCode 404 for all</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="mgr"><summary>5. Manager Module</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-MGR-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>GetPendingRequests / GetApprovedRequests / GetRejectedRequests scoping</td><td>Manager with mixed-status team requests</td>
+      <td class="steps"><ol><li>Call each of the three actions</li></ol></td>
+      <td>Each returns only correctly-statused, team-scoped requests; no cross-contamination between lists</td></tr>
+    <tr><td class="id">TC-MGR-002</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>UpdateRequestStatus as alternate approval path</td><td>Pending request</td>
+      <td class="steps"><ol><li>Manager/UpdateRequestStatus NewStatus="Approved"</li><li>Verify same effect as PettyCash/Approve</li></ol></td>
+      <td>Consistent end state with PettyCash/Approve; flag to dev team per ISD note that duplicate approval actions risk double-submission bugs — regression test both paths independently and together</td></tr>
+    <tr><td class="id">TC-MGR-003</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Race condition: PettyCash/Approve and Manager/UpdateRequestStatus called near-simultaneously on same request</td><td>Pending request</td>
+      <td class="steps"><ol><li>Fire both calls concurrently</li></ol></td>
+      <td>Only one transition succeeds; no duplicate notifications or double-approval state</td></tr>
+    <tr><td class="id">TC-MGR-004</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>ExpenseOverview aggregation</td><td>Team members with logged expenses</td>
+      <td class="steps"><ol><li>Manager/ExpenseOverview</li></ol></td>
+      <td>Correct aggregate totals/categories across all team members' expenses</td></tr>
+    <tr><td class="id">TC-MGR-005</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Direct grant to team employee</td><td>Manager, valid EmployeeId</td>
+      <td class="steps"><ol><li>Manager/DirectGrant EmployeeId, Amount=500, Currency="USD", Notes="Advance for travel"</li></ol></td>
+      <td>Finance receives "Action Required" notification: "A manager has issued a direct grant for 500.00 USD that is waiting for payout processing." (per confirmed pattern)</td></tr>
+    <tr><td class="id">TC-MGR-006</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Direct grant to employee outside manager's team</td><td>Employee not managed by this Manager</td>
+      <td class="steps"><ol><li>Manager/DirectGrant to unrelated EmployeeId</li></ol></td>
+      <td>Rejected (403/400) — should be scoped to own team; confirm expected rule with backend</td></tr>
+    <tr><td class="id">TC-MGR-007</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>DirectGrant with zero/negative amount or unsupported currency</td><td>Manager</td>
+      <td class="steps"><ol><li>Amount=0</li><li>Amount=-50</li><li>Currency="GBP"</li></ol></td>
+      <td>Validation errors for all invalid cases</td></tr>
+    <tr><td class="id">TC-MGR-008</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Manager/GetNotifications trigger coverage</td><td>New submission + proof upload events exist</td>
+      <td class="steps"><ol><li>Employee submits request</li><li>Employee uploads proof</li><li>Manager/GetNotifications</li></ol></td>
+      <td>Both event types appear as notifications with correct Message/IsRead/CreatedAt</td></tr>
+    <tr><td class="id">TC-MGR-009</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Manager/Employees/Balances returns all managed employees' wallets</td><td>Team with multiple currency balances</td>
+      <td class="steps"><ol><li>Manager/Employees/Balances</li></ol></td>
+      <td>All team members listed with correct per-currency balances, matching Employee/GetWallet values</td></tr>
+    <tr><td class="id">TC-MGR-010</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Employee/Finance/Admin attempt any Manager/* action</td><td>Non-manager tokens</td>
+      <td class="steps"><ol><li>Call Manager/GetPendingRequests, Manager/DirectGrant etc.</li></ol></td>
+      <td>StatusCode 403 for all roles except Manager</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="emp"><summary>6. Employee Module</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-EMP-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>GetMyRequests shows all statuses with rejection reasons</td><td>Employee with requests in various states</td>
+      <td class="steps"><ol><li>Employee/GetMyRequests</li></ol></td>
+      <td>All own requests returned with correct status and RejectionReason populated where rejected</td></tr>
+    <tr><td class="id">TC-EMP-002</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>GetWallet reflects correct multi-currency balances</td><td>Employee has EGP/USD/SAR balances</td>
+      <td class="steps"><ol><li>Employee/GetWallet</li></ol></td>
+      <td>Balances match Finance/EmployeeBalances and Manager/Employees/Balances for same employee</td></tr>
+    <tr><td class="id">TC-EMP-003</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>BudgetUsage / BudgetSummary / TopCategories accuracy</td><td>Employee with expense history spanning categories</td>
+      <td class="steps"><ol><li>Call each endpoint</li><li>Cross-check against manually summed expense data</li></ol></td>
+      <td>Numbers match; "No expense data available yet" empty state shown correctly when no data (as seen in screenshot) vs populated chart when data exists</td></tr>
+    <tr><td class="id">TC-EMP-004</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>ExpenseTrend with varying Months parameter</td><td>Employee</td>
+      <td class="steps"><ol><li>Months=1</li><li>Months=6</li><li>Months=12</li></ol></td>
+      <td>Correct number of data points returned per requested range; matches "Mar–Aug" 6-month chart pattern seen in screenshot</td></tr>
+    <tr><td class="id">TC-EMP-005</td><td><span class="type-tag">Negative</span></td><td><span class="badge Low">Low</span></td>
+      <td>ExpenseTrend with missing/invalid Months (0, negative, non-numeric)</td><td>Employee</td>
+      <td class="steps"><ol><li>Months=0</li><li>Months=-3</li><li>Months="abc"</li></ol></td>
+      <td>StatusCode 400 or sensible default applied — confirm behavior</td></tr>
+    <tr><td class="id">TC-EMP-006</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>AddExpense with all fields</td><td>Employee</td>
+      <td class="steps"><ol><li>Employee/AddExpense Title, Category, Amount, Currency, ExpenseDate=YYYY-MM-DD, Description, ReceiptUrl</li></ol></td>
+      <td>Expense created and visible in Employee/Expenses/Get and Recent Expenses widget</td></tr>
+    <tr><td class="id">TC-EMP-007</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>AddExpense without optional Description/ReceiptUrl</td><td>Employee</td>
+      <td class="steps"><ol><li>Omit Description and ReceiptUrl (matches "Optional" label in Add Expense modal)</li></ol></td>
+      <td>Expense created successfully; fields shown blank/absent, no error</td></tr>
+    <tr><td class="id">TC-EMP-008</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>AddExpense with invalid ExpenseDate format</td><td>Employee</td>
+      <td class="steps"><ol><li>ExpenseDate="27-08-2026" (wrong format)</li><li>ExpenseDate="2026-13-40" (invalid date)</li><li>Future date</li></ol></td>
+      <td>StatusCode 400 for malformed/invalid dates; confirm whether future-dated expenses are allowed or blocked</td></tr>
+    <tr><td class="id">TC-EMP-009</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>AddExpense with Amount = 0/negative or missing Title</td><td>Employee</td>
+      <td class="steps"><ol><li>Amount=0</li><li>Amount=-20</li><li>Title=""</li></ol></td>
+      <td>Validation errors for each</td></tr>
+    <tr><td class="id">TC-EMP-010</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Submit logged expense for reimbursement</td><td>Existing expense entries totalling Amount</td>
+      <td class="steps"><ol><li>Employee/Expenses/Submit Amount, Currency, Notes</li></ol></td>
+      <td>Submission created and routed into approval flow; appears under "My Budget Requests"</td></tr>
+    <tr><td class="id">TC-EMP-011</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Submit expense reimbursement exceeding logged expense total</td><td>Employee</td>
+      <td class="steps"><ol><li>Employee/Expenses/Submit Amount greater than sum of unclaimed expenses</li></ol></td>
+      <td>Confirm business rule with backend: should likely be rejected or capped</td></tr>
+    <tr><td class="id">TC-EMP-012</td><td><span class="type-tag">Functional</span></td><td><span class="badge Low">Low</span></td>
+      <td>Employee/Requests/GetAll vs Employee/GetMyRequests consistency</td><td>Employee with request history</td>
+      <td class="steps"><ol><li>Call both actions</li><li>Compare results</li></ol></td>
+      <td>Data is consistent (or documented difference in scope/fields) — clarify with backend if these are duplicate actions</td></tr>
+    <tr><td class="id">TC-EMP-013</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Employee attempts Manager/Admin/Finance-only actions</td><td>Employee token</td>
+      <td class="steps"><ol><li>Call Manager/GetPendingRequests, Admin/CreateUser, Finance/ProcessTransaction as Employee</li></ol></td>
+      <td>StatusCode 403 for all</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="fin"><summary>7. Finance Module</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-FIN-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>GetAllRequests lists all approved requests awaiting payout</td><td>Manager-approved requests exist</td>
+      <td class="steps"><ol><li>Finance/GetAllRequests</li></ol></td>
+      <td>Only Approved (unpaid) requests shown; matches "Pending Payments" count on Finance Overview</td></tr>
+    <tr><td class="id">TC-FIN-002</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>GetRequestDetails returns full detail</td><td>Existing RequestId</td>
+      <td class="steps"><ol><li>Finance/GetRequestDetails RequestId</li></ol></td>
+      <td>Full request detail including employee, amount, category, approval chain, dates</td></tr>
+    <tr><td class="id">TC-FIN-003</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Direct payment to employee bypassing request flow</td><td>Finance, valid EmployeeId</td>
+      <td class="steps"><ol><li>Finance/Payments/Direct EmployeeId, Amount, Currency, Notes</li></ol></td>
+      <td>Employee wallet credited immediately (or per confirmed flow); recorded in transaction ledger</td></tr>
+    <tr><td class="id">TC-FIN-004</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>SafeBalances reflects true vault totals</td><td>Known transaction history</td>
+      <td class="steps"><ol><li>Finance/SafeBalances</li><li>Cross-check EGP/USD/SAR totals against Balances screen (EGP 934,311.00 / $98,191.50 / SAR 99,944.00 style figures)</li></ol></td>
+      <td>Values match UI exactly, correctly formatted per currency</td></tr>
+    <tr><td class="id">TC-FIN-005</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>EmployeeBalances lists all employees' custody balances</td><td>Multiple employees with balances</td>
+      <td class="steps"><ol><li>Finance/EmployeeBalances</li></ol></td>
+      <td>Matches Custody Accounts table (per-employee EGP/USD/SAR) exactly, including totals row</td></tr>
+    <tr><td class="id">TC-FIN-006</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Transactions ledger completeness and filters</td><td>Mixed pending/completed transactions</td>
+      <td class="steps"><ol><li>Finance/Transactions</li><li>Filter by Pending/Completed (as in Transaction History tabs)</li></ol></td>
+      <td>Filter counts match "Showing X of Y transactions" and Pending/Completed tab counts</td></tr>
+    <tr><td class="id">TC-FIN-007</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>EmployeeHistory for a specific employee</td><td>EmployeeId with history</td>
+      <td class="steps"><ol><li>Finance/EmployeeHistory EmployeeId</li></ol></td>
+      <td>Returns only that employee's transactions, matching Employee History screen after selecting them from dropdown</td></tr>
+    <tr><td class="id">TC-FIN-008</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Direct payment / ProcessTransaction with insufficient safe balance</td><td>Safe balance lower than requested amount</td>
+      <td class="steps"><ol><li>Attempt to process a payout larger than available Safe Balance</li></ol></td>
+      <td>Confirm expected behavior with backend: should be blocked with clear insufficient-funds error, not allowed to go negative silently</td></tr>
+    <tr><td class="id">TC-FIN-009</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Direct payment with zero/negative amount or unsupported currency</td><td>Finance</td>
+      <td class="steps"><ol><li>Amount=0 / negative</li><li>Currency="JPY"</li></ol></td>
+      <td>Validation errors returned</td></tr>
+    <tr><td class="id">TC-FIN-010</td><td><span class="type-tag">Permission</span></td><td><span class="badge High">High</span></td>
+      <td>Non-finance role attempts Finance/* actions</td><td>Admin/Manager/Employee tokens</td>
+      <td class="steps"><ol><li>Call Finance/ProcessTransaction, Finance/SafeBalances, Finance/Payments/Direct</li></ol></td>
+      <td>StatusCode 403 for all non-Finance roles</td></tr>
+    <tr><td class="id">TC-FIN-011</td><td><span class="type-tag">Functional</span></td><td><span class="badge Low">Low</span></td>
+      <td>Finance/GetAllRequests / Employee/GetNotifications shared-channel notifications</td><td>Approved requests and direct grants pending payout</td>
+      <td class="steps"><ol><li>Login as Finance</li><li>Employee/GetNotifications (per ISD, Finance uses this employee-channel action)</li></ol></td>
+      <td>Returns correct Finance-relevant "Action Required" notifications; verify this cross-role reuse is intentional, not a bug, with backend</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="dash"><summary>8. Dashboard Module</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-DASH-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Dashboard/Employee KPI accuracy</td><td>Employee with known data</td>
+      <td class="steps"><ol><li>Dashboard/Employee</li></ol></td>
+      <td>Available Balance, Spent This Month, Pending/Approved counts match dashboard screen exactly</td></tr>
+    <tr><td class="id">TC-DASH-002</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Dashboard/Manager team KPIs</td><td>Manager with team activity</td>
+      <td class="steps"><ol><li>Dashboard/Manager</li></ol></td>
+      <td>Correct aggregate pending/approved/rejected counts for team</td></tr>
+    <tr><td class="id">TC-DASH-003</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Dashboard/Admin system-wide summary</td><td>Admin</td>
+      <td class="steps"><ol><li>Dashboard/Admin</li></ol></td>
+      <td>Numbers reconcile with sums across all managers/employees</td></tr>
+    <tr><td class="id">TC-DASH-004</td><td><span class="type-tag">Functional</span></td><td><span class="badge Low">Low</span></td>
+      <td>Dashboard/MonthlySpend with varying Months param</td><td>Admin/Manager</td>
+      <td class="steps"><ol><li>Months=3, 6, 12</li></ol></td>
+      <td>Correct number of data points; matches graph render</td></tr>
+    <tr><td class="id">TC-DASH-005</td><td><span class="type-tag">Functional</span></td><td><span class="badge Low">Low</span></td>
+      <td>Zero-data state for all dashboards</td><td>New account with no activity</td>
+      <td class="steps"><ol><li>Call each Dashboard action for brand-new user/team</li></ol></td>
+      <td>Returns zeros/empty arrays, not errors; UI shows "No data available yet" states as seen in screenshots (e.g. "0 payments completed", flat trend line at 0)</td></tr>
+    <tr><td class="id">TC-DASH-006</td><td><span class="type-tag">Permission</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Employee attempts Dashboard/Manager or Dashboard/Admin</td><td>Employee token</td>
+      <td class="steps"><ol><li>Call restricted dashboard actions</li></ol></td>
+      <td>StatusCode 403</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="generic"><summary>9. Generic User Actions</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-USR-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Change password with correct OldPassword</td><td>Any authenticated user</td>
+      <td class="steps"><ol><li>User/ChangePassword OldPassword=current, NewPassword=new</li><li>Logout, login with new password</li></ol></td>
+      <td>Password changes successfully; new password works, old password no longer works</td></tr>
+    <tr><td class="id">TC-USR-002</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>Change password with wrong OldPassword</td><td>Any user</td>
+      <td class="steps"><ol><li>User/ChangePassword with incorrect OldPassword</li></ol></td>
+      <td>Rejected with clear error; password unchanged</td></tr>
+    <tr><td class="id">TC-USR-003</td><td><span class="type-tag">Negative</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Change password — new/confirm mismatch (UI level) and weak password</td><td>Any user, Settings/Profile screen</td>
+      <td class="steps"><ol><li>Enter mismatched New Password / Confirm New Password</li><li>Enter a very short/weak new password</li></ol></td>
+      <td>UI blocks submission with inline validation before hitting API; API also validates independently</td></tr>
+    <tr><td class="id">TC-USR-004</td><td><span class="type-tag">Boundary</span></td><td><span class="badge Low">Low</span></td>
+      <td>Change password to the same as current password</td><td>Any user</td>
+      <td class="steps"><ol><li>NewPassword == OldPassword</li></ol></td>
+      <td>Confirm expected rule with backend (allowed vs rejected)</td></tr>
+    <tr><td class="id">TC-USR-005</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Mark a single notification as read</td><td>Unread notification exists</td>
+      <td class="steps"><ol><li>User/MarkNotificationsRead NotificationId=&lt;id&gt;</li></ol></td>
+      <td>Only that notification's IsRead becomes true; unread badge count decrements by 1</td></tr>
+    <tr><td class="id">TC-USR-006</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Mark all notifications as read</td><td>Multiple unread notifications</td>
+      <td class="steps"><ol><li>User/MarkNotificationsRead with no NotificationId</li></ol></td>
+      <td>All notifications IsRead=true; badge count resets to 0 (matches badge "6"/"5" counts seen in screenshots)</td></tr>
+    <tr><td class="id">TC-USR-007</td><td><span class="type-tag">Negative</span></td><td><span class="badge Low">Low</span></td>
+      <td>Mark notification read with invalid/foreign NotificationId</td><td>Any user</td>
+      <td class="steps"><ol><li>NotificationId belonging to another user</li><li>Random/non-existent GUID</li></ol></td>
+      <td>Rejected (403/404) — must not allow marking other users' notifications</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="cross"><summary>10. Cross-Cutting API — Envelope, Error Handling, Security, Token</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-X-001</td><td><span class="type-tag">Functional</span></td><td><span class="badge High">High</span></td>
+      <td>Response casing consistency (statusCode/data vs StatusCode/Data)</td><td>-</td>
+      <td class="steps"><ol><li>Call Auth/Login (camelCase sample) and Employee/GetNotifications (PascalCase sample)</li><li>Verify client normalizes both</li></ol></td>
+      <td>Single API client correctly reads success/failure regardless of casing; UI never breaks due to casing mismatch — flag to backend team to standardize</td></tr>
+    <tr><td class="id">TC-X-002</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>400 response — form displays exact Message</td><td>Any validation-triggering call</td>
+      <td class="steps"><ol><li>Trigger a 400 (e.g. missing dept name)</li></ol></td>
+      <td>UI shows Message inline on the relevant form field/banner</td></tr>
+    <tr><td class="id">TC-X-003</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>403 response — redirect / permission UI</td><td>Any forbidden call</td>
+      <td class="steps"><ol><li>Trigger a 403 (wrong-role action)</li></ol></td>
+      <td>UI redirects to access-denied screen or shows permission error, does not crash or show blank screen</td></tr>
+    <tr><td class="id">TC-X-004</td><td><span class="type-tag">Negative</span></td><td><span class="badge High">High</span></td>
+      <td>500 response — generic message, no data leak</td><td>Trigger duplicate department name (confirmed 500 case)</td>
+      <td class="steps"><ol><li>Department/Create with duplicate name</li></ol></td>
+      <td>UI shows friendly generic message ("A department with this name already exists.") — raw Postgres error text (e.g. "23505: duplicate key...") must NEVER reach the end user</td></tr>
+    <tr><td class="id">TC-X-005</td><td><span class="type-tag">Security</span></td><td><span class="badge High">High</span></td>
+      <td>Action field tampering / unknown Action value</td><td>Any authenticated user</td>
+      <td class="steps"><ol><li>POST with Action="Admin/CreateUser" using an Employee token</li><li>POST with a non-existent Action string</li></ol></td>
+      <td>Role-mismatched actions rejected 403; unknown Action rejected gracefully (400/404), not a 500/crash</td></tr>
+    <tr><td class="id">TC-X-006</td><td><span class="type-tag">Security</span></td><td><span class="badge High">High</span></td>
+      <td>Parameter tampering — IDOR checks across all *Id parameters</td><td>Two users of same role, different data</td>
+      <td class="steps"><ol><li>Systematically substitute another user's RequestId/EmployeeId/TargetUserId/NotificationId into every action that accepts one</li></ol></td>
+      <td>No action allows reading/mutating another user's data outside declared scope (see TC-PC-011/024, TC-USR-007, TC-MGR-006 for specific instances)</td></tr>
+    <tr><td class="id">TC-X-007</td><td><span class="type-tag">Security</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>XSS via free-text fields (Description, Notes, ReasonFields, Title)</td><td>Any role</td>
+      <td class="steps"><ol><li>Submit "&lt;script&gt;alert(1)&lt;/script&gt;" in Description/Notes/Reason/Title fields</li></ol></td>
+      <td>Rendered as plain text everywhere (lists, notifications, receipts) — never executed</td></tr>
+    <tr><td class="id">TC-X-008</td><td><span class="type-tag">Boundary</span></td><td><span class="badge Low">Low</span></td>
+      <td>Payload size limits</td><td>-</td>
+      <td class="steps"><ol><li>Submit extremely long strings (10k+ chars) in free-text fields</li></ol></td>
+      <td>Rejected gracefully with 400, not a server crash/timeout</td></tr>
+    <tr><td class="id">TC-X-009</td><td><span class="type-tag">Functional</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Currency formatting consistency across all screens</td><td>Data with EGP/USD/SAR amounts including large values</td>
+      <td class="steps"><ol><li>Compare number formatting across Dashboard, Wallet, Balances, Transaction History, Notifications</li></ol></td>
+      <td>Consistent thousand separators and 2-decimal formatting everywhere (e.g., "EGP 934,311.00", "999999999.00 EGP" correctly grouped)</td></tr>
+    <tr><td class="id">TC-X-010</td><td><span class="type-tag">Security</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Concurrent sessions / token reuse after password change</td><td>User logged in on two devices</td>
+      <td class="steps"><ol><li>Change password on device A</li><li>Attempt an action on device B's still-open session</li></ol></td>
+      <td>Confirm expected behavior: old token invalidated immediately vs valid until natural expiry — document actual behavior</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="ui-login"><summary>11. UI — Login Page</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-UI-LOG-001</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Successful login redirects to correct role dashboard</td><td>Valid accounts of each role</td>
+      <td class="steps"><ol><li>Enter valid credentials for Admin/Manager/Employee/Finance</li><li>Click Sign In</li></ol></td>
+      <td>Redirects to Admin Panel / Manager Panel / Employee Panel / Finance Panel respectively, with correct sidebar menu items per role</td></tr>
+    <tr><td class="id">TC-UI-LOG-002</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Field-level validation on Email/Password (required markers *)</td><td>-</td>
+      <td class="steps"><ol><li>Click Sign In with empty fields</li></ol></td>
+      <td>Inline validation errors shown under Email*/Password* fields, Sign In does not fire a network call</td></tr>
+    <tr><td class="id">TC-UI-LOG-003</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Invalid credentials show error without exposing which field is wrong</td><td>-</td>
+      <td class="steps"><ol><li>Enter wrong password for a valid email</li></ol></td>
+      <td>Generic "Invalid credentials" banner shown; password field cleared, email retained</td></tr>
+    <tr><td class="id">TC-UI-LOG-004</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Password field masking &amp; show/hide toggle</td><td>-</td>
+      <td class="steps"><ol><li>Type password</li><li>Toggle visibility icon if present</li></ol></td>
+      <td>Characters masked by default; toggle reveals/hides correctly</td></tr>
+    <tr><td class="id">TC-UI-LOG-005</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Dark mode toggle on login page</td><td>-</td>
+      <td class="steps"><ol><li>Click moon/theme icon top-right</li></ol></td>
+      <td>Theme switches and persists on reload (per "Settings are stored locally in this device" note seen elsewhere)</td></tr>
+    <tr><td class="id">TC-UI-LOG-006</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Loading/disabled state on Sign In during network call</td><td>-</td>
+      <td class="steps"><ol><li>Click Sign In and observe button state</li><li>Attempt double-click</li></ol></td>
+      <td>Button shows loading state and is disabled to prevent duplicate login submissions</td></tr>
+    <tr><td class="id">TC-UI-LOG-007</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Responsive layout on mobile/tablet widths</td><td>-</td>
+      <td class="steps"><ol><li>Resize/view on mobile viewport</li></ol></td>
+      <td>Left brand panel stacks appropriately, form remains usable, no overlap/clipping</td></tr>
+    <tr><td class="id">TC-UI-LOG-008</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Session expiry redirect back to login</td><td>Logged-in user with expired token</td>
+      <td class="steps"><ol><li>Let token expire (or force expiry)</li><li>Attempt any in-app action</li></ol></td>
+      <td>User is auto-logged-out and redirected to Sign In with an appropriate "session expired" message</td></tr>
+    <tr><td class="id">TC-UI-LOG-009</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Direct URL access to protected route while logged out</td><td>-</td>
+      <td class="steps"><ol><li>Navigate directly to a Finance/Admin/Manager/Employee panel URL without logging in</li></ol></td>
+      <td>Redirected to Sign In; original destination optionally preserved for post-login redirect</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="ui-emp"><summary>12. UI — Employee Panel</summary>
+  <div class="sub-note">Dashboard, New Request, Add Expense, Notifications, Settings/Profile.</div>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-UI-EMP-001</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Dashboard header stats match wallet/actual data</td><td>Employee "menna" style test account</td>
+      <td class="steps"><ol><li>Open Dashboard</li></ol></td>
+      <td>"Available Balance", "Spent This Month" and Wallet Currencies cards (EGP/USD/SAR) all agree with each other and with Employee/GetWallet</td></tr>
+    <tr><td class="id">TC-UI-EMP-002</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>"New Request" button opens New Request form / navigates to Requests</td><td>Employee</td>
+      <td class="steps"><ol><li>Click "+ New Request" on Dashboard</li><li>Click "New Request" from sidebar "Requests" page</li></ol></td>
+      <td>Both entry points open the same New Request form consistently</td></tr>
+    <tr><td class="id">TC-UI-EMP-003</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>New Request form validation (Request Type, Amount, Currency, Reason)</td><td>Employee, New Request form open</td>
+      <td class="steps"><ol><li>Click Submit Request with all fields blank/default (Request Type unselected, Amount 0.00)</li></ol></td>
+      <td>Inline validation blocks submission; Request Type and Currency dropdowns required, Amount must be &gt; 0, Reason required</td></tr>
+    <tr><td class="id">TC-UI-EMP-004</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>New Request — Currency dropdown lists EGP/USD/SAR and amount field prefix updates</td><td>Employee</td>
+      <td class="steps"><ol><li>Open Currency dropdown</li><li>Select USD, then SAR</li></ol></td>
+      <td>Amount field currency label/prefix updates to match selection (mirrors "EGP" prefix shown in screenshot)</td></tr>
+    <tr><td class="id">TC-UI-EMP-005</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Cancel button on New Request discards changes</td><td>Employee, form partially filled</td>
+      <td class="steps"><ol><li>Fill some fields</li><li>Click Cancel</li></ol></td>
+      <td>Returns to Requests list without saving; no orphaned draft request created</td></tr>
+    <tr><td class="id">TC-UI-EMP-006</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Add Expense modal — required field validation</td><td>Employee, Expenses page, Add Expense modal open</td>
+      <td class="steps"><ol><li>Click "Add Expense" with Title/Category/Amount/Currency/Expense Date blank</li></ol></td>
+      <td>Submission blocked; each required field highlighted (Description and Receipt URL correctly remain optional per "Optional — link to an uploaded receipt" hint text)</td></tr>
+    <tr><td class="id">TC-UI-EMP-007</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Add Expense — Expense Date picker constraints</td><td>Employee</td>
+      <td class="steps"><ol><li>Open the mm/dd/yyyy date picker</li><li>Attempt to select a far-future date</li></ol></td>
+      <td>Date picker behaves correctly across browsers/locales; confirm whether future dates should be blocked</td></tr>
+    <tr><td class="id">TC-UI-EMP-008</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Add Expense — Receipt URL field accepts only valid URL / optional</td><td>Employee</td>
+      <td class="steps"><ol><li>Enter invalid text (not a URL) in Receipt URL</li><li>Leave it empty and submit</li></ol></td>
+      <td>Invalid URL format flagged if validated; empty field allowed per "Optional" label</td></tr>
+    <tr><td class="id">TC-UI-EMP-009</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Add Expense modal close (X) discards unsaved input</td><td>Employee, modal partially filled</td>
+      <td class="steps"><ol><li>Fill fields</li><li>Click the X close icon</li></ol></td>
+      <td>Modal closes without saving; reopening shows a fresh blank form</td></tr>
+    <tr><td class="id">TC-UI-EMP-010</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Empty-state widgets render correctly with zero data</td><td>New employee account, no expenses/requests</td>
+      <td class="steps"><ol><li>View Expense Trend, Budget Usage, Top Category, Recent Expenses, My Budget Requests widgets</li></ol></td>
+      <td>Each shows its correct icon + "No ... data available/found" message and any relevant CTA ("+ Add Expense" / "+ New Request"), matching screenshots exactly</td></tr>
+    <tr><td class="id">TC-UI-EMP-011</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Notification badge count and dropdown/list accuracy</td><td>Employee with unread notifications (badge shows "5" in screenshot)</td>
+      <td class="steps"><ol><li>Note badge count</li><li>Open Notifications page</li><li>Mark one as read; recheck badge</li></ol></td>
+      <td>Badge count matches unread total exactly and decrements correctly after marking read</td></tr>
+    <tr><td class="id">TC-UI-EMP-012</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Employee Profile page displays correct account info</td><td>Employee</td>
+      <td class="steps"><ol><li>Open Profile</li></ol></td>
+      <td>Name, email, role, status, member-since displayed accurately (and gracefully if "Member Since" is unavailable, no raw dash/blank confusion)</td></tr>
+    <tr><td class="id">TC-UI-EMP-013</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Settings — language switch applies immediately</td><td>Employee</td>
+      <td class="steps"><ol><li>Change Language dropdown</li></ol></td>
+      <td>UI text updates immediately without requiring page reload/logout, per "Changes apply immediately" hint</td></tr>
+    <tr><td class="id">TC-UI-EMP-014</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Sidebar navigation covers all menu items without dead links</td><td>Employee</td>
+      <td class="steps"><ol><li>Click Dashboard, Requests, Expenses, Profile, Notifications, Settings sequentially</li></ol></td>
+      <td>Each loads the correct page with matching header/title; active menu item highlighted correctly</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="ui-mgr"><summary>13. UI — Manager Panel (inferred from ISD; no screenshot supplied)</summary>
+  <div class="sub-note">No Manager-panel screenshots were provided. These cases are inferred from the ISD and the parallel structure of the Employee/Finance panels — verify actual screen layout against the live app once available.</div>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-UI-MGR-001</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Pending Requests list — Approve/Reject actions inline</td><td>Manager, pending team requests</td>
+      <td class="steps"><ol><li>Open Pending Requests</li><li>Approve one, Reject another (with reason)</li></ol></td>
+      <td>List updates immediately (optimistic or refetch); rejected item requires reason input before confirming</td></tr>
+    <tr><td class="id">TC-UI-MGR-002</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Direct Grant form validation and confirmation</td><td>Manager</td>
+      <td class="steps"><ol><li>Open Direct Grant form</li><li>Submit with invalid/zero amount</li><li>Submit valid grant</li></ol></td>
+      <td>Validation blocks bad input; valid grant shows success confirmation and triggers Finance notification</td></tr>
+    <tr><td class="id">TC-UI-MGR-003</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Team wallet balances table</td><td>Manager with multi-currency team</td>
+      <td class="steps"><ol><li>Open team balances view</li></ol></td>
+      <td>Matches Manager/Employees/Balances API data and per-employee currency formatting</td></tr>
+    <tr><td class="id">TC-UI-MGR-004</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Proof review screen (Approve / Request Review)</td><td>Submitted proof pending review</td>
+      <td class="steps"><ol><li>Open proof detail with receipt link</li><li>Approve or send back for review with reason</li></ol></td>
+      <td>Receipt opens/previews correctly; review reason required before "Request Review" can be confirmed</td></tr>
+    <tr><td class="id">TC-UI-MGR-005</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Manager notifications page parity with Employee/Finance notification UI</td><td>Manager</td>
+      <td class="steps"><ol><li>Open Notifications</li></ol></td>
+      <td>Same list styling, icon language, and mark-as-read behavior as Employee/Finance notification screens</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="ui-admin"><summary>14. UI — Admin Panel</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-UI-ADM-001</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Employee Management list — total count accuracy</td><td>7 employees exist (as in screenshot)</td>
+      <td class="steps"><ol><li>Open Employees tab</li></ol></td>
+      <td>"7 total" header count matches actual visible+scrolled rows exactly</td></tr>
+    <tr><td class="id">TC-UI-ADM-002</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Search box filters by name/email</td><td>Admin, Employees list</td>
+      <td class="steps"><ol><li>Type "menna" in Search</li><li>Type partial "@company.com"</li></ol></td>
+      <td>List filters correctly to matching rows only, case-insensitive</td></tr>
+    <tr><td class="id">TC-UI-ADM-003</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Department filter dropdown</td><td>Multiple departments exist</td>
+      <td class="steps"><ol><li>Select a department from "Department..." dropdown</li></ol></td>
+      <td>List filters to only that department's employees; "—" (no department) rows handled correctly, e.g. "Main Safe" row</td></tr>
+    <tr><td class="id">TC-UI-ADM-004</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Role and Status badges render correct color/label per user</td><td>Users with Admin/Finance/Employee/Manager roles</td>
+      <td class="steps"><ol><li>Visually inspect Role column badges</li></ol></td>
+      <td>Correct color-coding and label per role (Admin, Finance, Employee, Manager) and Status (Active/Inactive)</td></tr>
+    <tr><td class="id">TC-UI-ADM-005</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>"Add Employees" flow end-to-end via UI</td><td>Admin</td>
+      <td class="steps"><ol><li>Click "+ Add Employees"</li><li>Fill form and submit</li></ol></td>
+      <td>New row appears in list immediately with correct data and Active status</td></tr>
+    <tr><td class="id">TC-UI-ADM-006</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Row "..." actions menu (edit/deactivate/delete/promote)</td><td>Admin, any employee row</td>
+      <td class="steps"><ol><li>Click "..." on a row</li><li>Trigger each available action</li></ol></td>
+      <td>Each action opens correct modal/confirmation and produces expected result matching TC-ADM-006/008/010/011/014</td></tr>
+    <tr><td class="id">TC-UI-ADM-007</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Department Management tab — create/list departments</td><td>Admin</td>
+      <td class="steps"><ol><li>Switch to "Department Management" tab</li><li>Create a new department</li><li>Attempt duplicate name</li></ol></td>
+      <td>New department listed immediately; duplicate name shows friendly error, not raw DB text (see TC-DEPT-002/TC-X-004)</td></tr>
+    <tr><td class="id">TC-UI-ADM-008</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Notification bell badge count on Admin panel</td><td>Admin with unread notifications ("6" shown in screenshot)</td>
+      <td class="steps"><ol><li>Compare bell badge to Notifications sidebar badge and actual unread count</li></ol></td>
+      <td>All three counts agree</td></tr>
+    <tr><td class="id">TC-UI-ADM-009</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Dark mode toggle persists across Admin panel pages</td><td>Admin</td>
+      <td class="steps"><ol><li>Toggle dark mode icon</li><li>Navigate to different pages</li></ol></td>
+      <td>Theme remains consistent across navigation and after reload</td></tr>
+    <tr><td class="id">TC-UI-ADM-010</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Account dropdown (top-right "farida Admin") — logout</td><td>Admin</td>
+      <td class="steps"><ol><li>Open account dropdown</li><li>Click Logout</li></ol></td>
+      <td>Session ends, redirected to Sign In, token invalidated client-side</td></tr>
+    <tr><td class="id">TC-UI-ADM-011</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Table pagination / scrolling beyond visible rows</td><td>More employees than fit one screen</td>
+      <td class="steps"><ol><li>Scroll or paginate through full employee list</li></ol></td>
+      <td>All 7+ employees reachable and correctly rendered, no truncation or duplicate rows</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="ui-fin"><summary>15. UI — Finance Panel</summary>
+  <div class="sub-note">Overview, Transaction History, Balances, Direct Transfer modal, Employee History, Settings, Profile, Notifications.</div>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-UI-FIN-001</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Finance Overview cards match underlying data</td><td>Finance, known request/payment state</td>
+      <td class="steps"><ol><li>Compare Total Disbursed, Pending Payments, Custody Accounts cards to Finance/GetAllRequests + Finance/EmployeeBalances</li></ol></td>
+      <td>All figures reconcile exactly; "0 payments completed" / "No pending payments" empty states render correctly when applicable</td></tr>
+    <tr><td class="id">TC-UI-FIN-002</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Bug regression: "nav.balances" tab label</td><td>Finance Overview page</td>
+      <td class="steps"><ol><li>Open Finance Overview</li><li>Inspect the tab between "Transactions" and "Employee History"</li></ol></td>
+      <td>Should render a human-readable label (e.g. "Balances"), not the raw i18n key "nav.balances" seen in screenshot — file as defect if still present</td></tr>
+    <tr><td class="id">TC-UI-FIN-003</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>"LIVE" badges reflect real-time / recently-refreshed data</td><td>Finance</td>
+      <td class="steps"><ol><li>Trigger a transaction from another session</li><li>Observe whether Finance Overview cards update without manual refresh</li></ol></td>
+      <td>Confirm whether "LIVE" implies auto-refresh or is just a static label; document actual behavior</td></tr>
+    <tr><td class="id">TC-UI-FIN-004</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Transaction History — search, sort, and status tabs</td><td>Mixed pending/completed transactions</td>
+      <td class="steps"><ol><li>Search by keyword</li><li>Change "Newest first" sort</li><li>Switch All/Pending/Completed tabs</li></ol></td>
+      <td>Results filter/sort correctly; "Showing X of Y transactions" count updates accordingly; empty state ("No transactions found") shown correctly when zero</td></tr>
+    <tr><td class="id">TC-UI-FIN-005</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Export Ledger button</td><td>Finance Overview, transactions exist</td>
+      <td class="steps"><ol><li>Click "Export Ledger"</li></ol></td>
+      <td>Produces a downloadable, correctly formatted export (CSV/Excel/PDF) matching on-screen data; button disabled state (as shown grey in screenshot) confirmed when no data exists</td></tr>
+    <tr><td class="id">TC-UI-FIN-006</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Balances screen — Safe Balances figures and "verified from company ledger" note</td><td>Finance</td>
+      <td class="steps"><ol><li>Open Balances</li><li>Compare EGP/USD/SAR safe totals to Finance/SafeBalances API</li></ol></td>
+      <td>Exact match; "3 currencies held" count correct</td></tr>
+    <tr><td class="id">TC-UI-FIN-007</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Custody Accounts table — per-employee, per-currency totals and header totals</td><td>2+ custody accounts (menna, maya as in screenshot)</td>
+      <td class="steps"><ol><li>Verify "2 accounts", "Total EGP", "Total USD", "Total SAR" header chips sum the rows below correctly</li></ol></td>
+      <td>Header totals mathematically equal sum of per-employee rows exactly (e.g., EGP 58,591 + EGP 149,600 = EGP 208,191 as shown)</td></tr>
+    <tr><td class="id">TC-UI-FIN-008</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Custody Accounts — Search box filters employees</td><td>Finance, Balances page</td>
+      <td class="steps"><ol><li>Type an employee name/email in Search</li></ol></td>
+      <td>Table filters to matching custody account rows only</td></tr>
+    <tr><td class="id">TC-UI-FIN-009</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Direct Transfer modal — currency tab switching updates available balance</td><td>Finance, Transfer modal open for an employee</td>
+      <td class="steps"><ol><li>Click "Transfer" on menna's row</li><li>Switch between EGP/USD/SAR tabs</li></ol></td>
+      <td>"Available balance" figure updates to the correct value for the selected currency each time (58,591 EGP / $1,199.50 / SAR 56.00 respectively)</td></tr>
+    <tr><td class="id">TC-UI-FIN-010</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Direct Transfer — Confirm Transfer disabled until valid amount entered</td><td>Direct Transfer modal open</td>
+      <td class="steps"><ol><li>Observe "Confirm Transfer" button state with Amount field empty</li><li>Enter a valid amount</li><li>Enter amount &gt; available balance</li></ol></td>
+      <td>Button disabled (greyed) when amount empty/invalid; enabled for valid amount; blocked or warned when amount exceeds available balance</td></tr>
+    <tr><td class="id">TC-UI-FIN-011</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Direct Transfer — negative/zero/non-numeric amount input</td><td>Direct Transfer modal</td>
+      <td class="steps"><ol><li>Type "-50", "0", "abc" into Amount field</li></ol></td>
+      <td>Field rejects non-numeric input; negative/zero blocked from submission with inline error</td></tr>
+    <tr><td class="id">TC-UI-FIN-012</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Direct Transfer — Notes field optional, Cancel discards</td><td>Direct Transfer modal</td>
+      <td class="steps"><ol><li>Submit without Notes</li><li>Reopen modal, enter data, click Cancel</li></ol></td>
+      <td>Transfer succeeds without Notes; Cancel closes modal without side effects</td></tr>
+    <tr><td class="id">TC-UI-FIN-013</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Direct Transfer success updates Custody + Safe balances immediately</td><td>Valid transfer submitted</td>
+      <td class="steps"><ol><li>Complete a transfer</li><li>Recheck Safe Balances and the employee's custody row</li></ol></td>
+      <td>Safe balance decreases and custody balance increases by exact transferred amount, in the correct currency, with no rounding drift</td></tr>
+    <tr><td class="id">TC-UI-FIN-014</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Employee History — "Select employee" dropdown search and empty state</td><td>Finance, Employee History page</td>
+      <td class="steps"><ol><li>Search by name/email in "Select employee"</li><li>Before selecting anyone, confirm empty state</li></ol></td>
+      <td>Dropdown filters correctly; "Choose an employee to view their history" placeholder shown until a selection is made (as in screenshot)</td></tr>
+    <tr><td class="id">TC-UI-FIN-015</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Employee History — after selecting employee, filters/search/sort apply to that employee only</td><td>Employee selected</td>
+      <td class="steps"><ol><li>Select an employee</li><li>Apply Pending/Completed filter and search/sort</li></ol></td>
+      <td>Results scoped strictly to the selected employee; totals in header (Total/Completed/Pending) update to reflect only that employee's data</td></tr>
+    <tr><td class="id">TC-UI-FIN-016</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Finance Settings — theme (Light/Dark) and Language selectors</td><td>Finance, Settings page</td>
+      <td class="steps"><ol><li>Toggle Light/Dark</li><li>Change Language</li></ol></td>
+      <td>Theme applies instantly and persists per device; language changes apply immediately per hint text</td></tr>
+    <tr><td class="id">TC-UI-FIN-017</td><td><span class="type-tag">UI</span></td><td><span class="badge High">High</span></td>
+      <td>Finance Settings/Profile — Change Password validation (current/new/confirm, show/hide eye icons)</td><td>Finance, Settings and Profile pages both have password forms</td>
+      <td class="steps"><ol><li>Submit with mismatched New/Confirm</li><li>Submit with wrong Current Password</li><li>Toggle each eye icon</li></ol></td>
+      <td>Inline validation on mismatch; wrong current password rejected with clear message; eye icons correctly show/hide each respective field independently</td></tr>
+    <tr><td class="id">TC-UI-FIN-018</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Consistency between duplicate "Change Password" forms on Settings vs Profile</td><td>Finance</td>
+      <td class="steps"><ol><li>Change password via Settings page</li><li>Verify Profile page's password form reflects fresh/empty state and both call the same underlying action</li></ol></td>
+      <td>No conflicting state; both forms behave identically and don't allow submitting two different password changes simultaneously</td></tr>
+    <tr><td class="id">TC-UI-FIN-019</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Finance Profile — "Member Since" empty value handling</td><td>Finance profile with no creation date recorded</td>
+      <td class="steps"><ol><li>Open Finance Profile</li></ol></td>
+      <td>Should not show a bare "—" if avoidable; if data genuinely unavailable confirm this is intended, otherwise file as data-completeness defect</td></tr>
+    <tr><td class="id">TC-UI-FIN-020</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Notifications page — long messages truncate gracefully</td><td>Finance, notification with long text (e.g. "A manager has issued a direct grant for 500.00 USD that is waiting for...")</td>
+      <td class="steps"><ol><li>Inspect a long notification row</li><li>Click/hover to see if full text is accessible</li></ol></td>
+      <td>Truncated text ("...") must be fully readable via tooltip, expand, or detail view — not permanently cut off</td></tr>
+    <tr><td class="id">TC-UI-FIN-021</td><td><span class="type-tag">UI</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Notifications — icon differentiates event types correctly</td><td>Finance, mixed notification types</td>
+      <td class="steps"><ol><li>Compare green-check icon (approved request payouts) vs blue icon (manager direct grants) rows</li></ol></td>
+      <td>Icon/color consistently maps to the correct notification category across the whole list</td></tr>
+    <tr><td class="id">TC-UI-FIN-022</td><td><span class="type-tag">UI</span></td><td><span class="badge Low">Low</span></td>
+      <td>Sidebar active-page highlighting and account dropdown/logout</td><td>Finance</td>
+      <td class="steps"><ol><li>Navigate through all Finance sidebar items</li><li>Use account dropdown to logout</li></ol></td>
+      <td>Correct page highlighted at all times; logout clears session and returns to Sign In</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="e2e"><summary>16. End-to-End Integration Scenarios</summary>
+  <table class="tc">
+    <tr><th>ID</th><th>Type</th><th>Priority</th><th>Title</th><th>Preconditions</th><th>Steps</th><th>Expected Result</th></tr>
+    <tr><td class="id">TC-E2E-001</td><td><span class="type-tag">Integration</span></td><td><span class="badge High">High</span></td>
+      <td>Full Advance lifecycle (UI, all 4 roles)</td><td>4 test accounts: Employee, Manager, Finance, plus Admin for setup</td>
+      <td class="steps"><ol><li>Employee submits Advance request via UI</li><li>Manager approves via UI</li><li>Finance processes + updates balance via UI</li><li>Employee sees updated wallet, spends, uploads proof via UI</li><li>Manager approves proof via UI</li></ol></td>
+      <td>Every UI screen reflects correct state at each step; final state shows Completed everywhere (Employee requests list, Manager approved list, Finance transaction history)</td></tr>
+    <tr><td class="id">TC-E2E-002</td><td><span class="type-tag">Integration</span></td><td><span class="badge High">High</span></td>
+      <td>Full Reimbursement lifecycle</td><td>Same as above</td>
+      <td class="steps"><ol><li>Employee submits Reimbursement with receipt attached immediately</li><li>Manager approves</li><li>Finance reimburses via wallet</li></ol></td>
+      <td>Reimbursement flow completes without requiring the SubmitPayment step (or confirm with backend whether it still applies) — document actual observed flow</td></tr>
+    <tr><td class="id">TC-E2E-003</td><td><span class="type-tag">Integration</span></td><td><span class="badge High">High</span></td>
+      <td>Rejection path end-to-end</td><td>Employee, Manager</td>
+      <td class="steps"><ol><li>Employee submits request</li><li>Manager rejects with reason via UI</li><li>Employee checks Notifications and Requests list</li></ol></td>
+      <td>Employee sees Rejected status with visible RejectionReason; notification received and readable</td></tr>
+    <tr><td class="id">TC-E2E-004</td><td><span class="type-tag">Integration</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Proof revision loop end-to-end</td><td>Employee, Manager</td>
+      <td class="steps"><ol><li>Complete flow through SubmitPayment</li><li>Manager requests review</li><li>Employee resubmits new receipt</li><li>Manager approves</li></ol></td>
+      <td>All state transitions visible correctly in both Employee and Manager UI at every step</td></tr>
+    <tr><td class="id">TC-E2E-005</td><td><span class="type-tag">Integration</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Direct Grant end-to-end (Manager → Finance)</td><td>Manager, Finance</td>
+      <td class="steps"><ol><li>Manager issues Direct Grant via UI</li><li>Finance sees "Action Required" notification</li><li>Finance processes the payout</li></ol></td>
+      <td>Employee wallet increases correctly; notification cleared once processed</td></tr>
+    <tr><td class="id">TC-E2E-006</td><td><span class="type-tag">Integration</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>Direct Transfer end-to-end (Finance → Employee, via Balances page)</td><td>Finance</td>
+      <td class="steps"><ol><li>Finance uses Direct Transfer modal on Balances page</li><li>Verify Safe Balance decreases, Custody balance and Employee wallet increase</li></ol></td>
+      <td>All three views reconcile; transaction appears in Transaction History and Employee History</td></tr>
+    <tr><td class="id">TC-E2E-007</td><td><span class="type-tag">Integration</span></td><td><span class="badge Medium">Medium</span></td>
+      <td>New employee onboarding to first successful request</td><td>Admin</td>
+      <td class="steps"><ol><li>Admin creates user + assigns department + (if needed) promotes/leaves as Employee</li><li>New user logs in for first time</li><li>Submits first petty cash request</li></ol></td>
+      <td>Onboarding produces a fully functional account with no residual/stale data from account creation; first request flows normally</td></tr>
+    <tr><td class="id">TC-E2E-008</td><td><span class="type-tag">Integration</span></td><td><span class="badge Low">Low</span></td>
+      <td>Cross-role notification consistency for a single event</td><td>Full lifecycle triggered</td>
+      <td class="steps"><ol><li>Trigger a request submission, approval, and payout</li><li>Check Employee, Manager, and Finance notification feeds for the same event chain</li></ol></td>
+      <td>Each role receives its own correctly-scoped notification for each relevant step, with consistent amounts/currency/timestamps across all three feeds</td></tr>
+  </table>
+  </details>
+
+  <!-- ============================================================ -->
+  <details id="bugs"><summary>17. Observed Issues to Verify (flagged directly from screenshots)</summary>
+    <div class="bug">
+      <h4>1. Untranslated i18n key shown as a tab label</h4>
+      <p>Finance Overview screen shows a tab literally labeled <b>"nav.balances"</b> instead of a translated label like "Balances" (visible next to "Transactions" and "Employee History"). Verify fix and add a regression test (TC-UI-FIN-002).</p>
+    </div>
+    <div class="bug">
+      <h4>2. Department name typo</h4>
+      <p>Admin → Employee Management shows employee "maya" assigned to department <b>"Marekting"</b> — likely a typo for "Marketing". Confirm whether this is seed/test data or an actual persisted department name, and correct at the source since department names are unique keys.</p>
+    </div>
+    <div class="bug">
+      <h4>3. "Export Ledger" button appears disabled with zero data</h4>
+      <p>On Finance Overview, "Export Ledger" is greyed out when there are 0 transactions. Confirm this is the intended empty-state behavior rather than a broken control (TC-UI-FIN-005).</p>
+    </div>
+    <div class="bug">
+      <h4>4. "Member Since —" shown as a bare dash</h4>
+      <p>Finance Profile's "Member Since" field renders as "—" with no date. Confirm whether account-creation date is expected to be populated for this account, or whether this is a legitimate empty state (TC-UI-FIN-019).</p>
+    </div>
+    <div class="bug">
+      <h4>5. Truncated notification text</h4>
+      <p>Several Finance notifications end in "..." (e.g., "A manager has issued a direct grant for 500.00 USD that is waiting for..."). Confirm there is a way to read the full message (tooltip/expand/detail page) — currently no such affordance is visible in the screenshot (TC-UI-FIN-020).</p>
+    </div>
+    <div class="bug">
+      <h4>6. Two duplicate approval actions in the API (per ISD note)</h4>
+      <p>ISD explicitly flags that both <code>PettyCash/Approve</code> and <code>Manager/UpdateRequestStatus</code> can approve the same request. This is a design risk for double-submission bugs if both are wired into the UI. Confirm with backend which one the frontend should exclusively use, and regression-test the other is either removed from UI or safely idempotent (TC-MGR-002, TC-MGR-003).</p>
+    </div>
+    <div class="bug">
+      <h4>7. Two Finance "Change Password" entry points</h4>
+      <p>Both Finance Settings and Finance Profile screens contain a full Change Password form. Confirm this duplication is intentional UX and not a maintenance/consistency risk (TC-UI-FIN-018).</p>
+    </div>
+    <div class="bug">
+      <h4>8. Response envelope casing inconsistency</h4>
+      <p>ISD confirms live samples return both <code>statusCode/data</code> and <code>StatusCode/Data</code> depending on endpoint. This must be handled defensively by the frontend client and should ideally be standardized by backend (TC-X-001).</p>
+    </div>
+  </details>
+
+</div>
+
+<footer>
+  <p>Generated as a QA planning artifact. Several test cases reference behaviors not explicitly documented in ISD v1.1 (e.g., exact role-scoping rules for Direct Grant, deletion of users with outstanding balances, insufficient-funds handling) — these are marked for confirmation with the backend/product team before final execution and should not be assumed to be defects until verified against actual intended behavior.</p>
+</footer>
+
+</body>
+</html>

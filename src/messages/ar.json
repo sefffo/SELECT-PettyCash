@@ -591,6 +591,8 @@
     "topCategory": "أعلى الفئات",
     "topCategoryHint": "أعلى فئات المصروفات لديك",
     "topCategoryTotal": "عبر أعلى الفئات",
+    "topCategoryEmpty": "لا توجد بيانات فئات حتى الآن",
+    "topCategoryEmptyHint": "ستظهر الفئات هنا عند تسجيل مصروفاتك.",
     "other": "أخرى",
     "noExpenseData": "لا توجد بيانات مصروفات حتى الآن.",
     "noExpenseDataHint": "ستظهر الرسوم البيانية عند تسجيل مصروفاتك.",

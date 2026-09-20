@@ -120,6 +120,9 @@ export default function EmployeeNewCashRequest() {
               error={errors.amount?.message ?? ''}
               registration={register('amount', { valueAsNumber: true })}
               currency={selectedCurrency}
+              sx={{
+                '& .MuiOutlinedInput-root': { fontSize: 16, fontWeight: 700, '& input': { textAlign: 'right' } },
+              }}
             />
 
             <TextField

@@ -177,6 +177,10 @@ export function NewCashRequestDialog({ open, onClose }: NewCashRequestDialogProp
                 error={errors.amount?.message ?? ''}
                 registration={register('amount', { valueAsNumber: true })}
                 currency={selectedCurrency}
+                sx={{
+                  '& .MuiOutlinedInput-root': { fontSize: 15.5, fontWeight: 700, '& input': { textAlign: 'right' } },
+                  ...inputSx,
+                }}
               />
 
               <TextField

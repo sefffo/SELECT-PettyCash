@@ -16,7 +16,6 @@ export { DashboardCardFooter } from './DashboardCardFooter';
 export { DashboardTimeline } from './DashboardTimeline';
 export { CompletedTransfersChartCard } from './CompletedTransfersChartCard';
 export { DashboardTimelineCard } from './DashboardTimelineCard';
-export type { TimelineTone } from './DashboardTimelineCard';
 export { DirectMoneyRequestDialog } from './DirectMoneyRequestDialog';
 export type { DirectMoneyEmployeeOption, DirectMoneyRequestParams } from './DirectMoneyRequestDialog';
 export { SectionHeader } from './SectionHeader';

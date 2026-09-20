@@ -640,6 +640,8 @@
     "topCategory": "Top Category",
     "topCategoryHint": "Your highest expense categories",
     "topCategoryTotal": "across top categories",
+    "topCategoryEmpty": "No category data yet",
+    "topCategoryEmptyHint": "Categories will appear here once your expenses are recorded.",
     "other": "Other",
     "noExpenseData": "No expense data available yet.",
     "noExpenseDataHint": "Charts will update once your expenses are recorded.",

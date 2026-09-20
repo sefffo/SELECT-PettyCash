@@ -100,7 +100,7 @@ export default function EmployeeDashboard() {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.65fr) minmax(300px, 1fr)' },
+          gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'repeat(2, minmax(0, 1fr))' },
           gap: { xs: 2, md: 2.5 },
           alignItems: 'stretch',
           mt: 3,

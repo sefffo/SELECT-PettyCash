@@ -17,14 +17,6 @@ interface CategoryDatum {
 
 const MAX_CATEGORIES = 6;
 
-// Placeholder categories shown when the API returns no data yet
-const PLACEHOLDER_CATEGORIES = [
-  'Meals',
-  'Transportation',
-  'Office Supplies',
-  'Other',
-];
-
 interface TopCategoryTooltipProps {
   active?: boolean;
   payload?: ReadonlyArray<{ payload?: CategoryDatum }>;
@@ -84,27 +76,18 @@ export function TopCategoryCard({ currency = 'EGP' }: { currency?: string }) {
     .sort((a, b) => b.amount - a.amount)
     .slice(0, MAX_CATEGORIES);
 
-  // When API returns categories but all amounts are 0, still show bars at a
-  // minimum visual height so the chart is not blank. Fall back to placeholder
-  // labels when the response is completely empty.
-  const hasRealData = rawData.length > 0;
-  const allZero = hasRealData && rawData.every((item) => item.amount === 0);
+  // Only hide the chart when the API returned no categories at all
+  const isEmpty = !isLoading && !isError && rawData.length === 0;
 
-  const chartData: CategoryDatum[] = hasRealData
-    ? rawData
-    : PLACEHOLDER_CATEGORIES.map((label) => ({ label, amount: 0, percentage: 0 }));
+  // When the API returns categories but all amounts are 0, still show bars at
+  // a minimum visual height so the chart is not blank.
+  const allZero = rawData.every((item) => item.amount === 0);
+  const minBarAmount = allZero ? 1 : Math.max(...rawData.map((d) => d.amount)) * 0.04;
 
-  // Visual bar minimum so zero-amount bars are still visible as a thin line
-  const minBarAmount = allZero || !hasRealData
-    ? 1
-    : Math.max(...chartData.map((d) => d.amount)) * 0.04;
-
-  const displayData = chartData.map((d) => ({
+  const displayData = rawData.map((d) => ({
     ...d,
     displayAmount: d.amount > 0 ? d.amount : minBarAmount,
   }));
-
-  const isEmpty = false; // always render the chart
 
   const barColors = displayData.map((_, index) =>
     alpha(theme.palette.primary.main, Math.max(0.25, 1 - index * 0.16)),
@@ -141,9 +124,16 @@ export function TopCategoryCard({ currency = 'EGP' }: { currency?: string }) {
       />
 
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-        {isLoading || isError ? (
+        {isLoading || isError || isEmpty ? (
           <Box sx={{ flex: 1, display: 'flex' }}>
-            <ChartCardState loading={isLoading} error={isError} empty={isEmpty} onRetry={() => void refetch()} />
+            <ChartCardState
+              loading={isLoading}
+              error={isError}
+              empty={isEmpty}
+              onRetry={() => void refetch()}
+              emptyTitle={t('employee.topCategoryEmpty')}
+              emptyDescription={t('employee.topCategoryEmptyHint')}
+            />
           </Box>
         ) : (
           <Box sx={{ height: { xs: 190, sm: 210 }, mt: 0.5 }}>
@@ -161,7 +151,7 @@ export function TopCategoryCard({ currency = 'EGP' }: { currency?: string }) {
                   tick={{ fontSize: 11, fill: theme.palette.text.secondary }}
                 />
                 <Tooltip
-                  content={allZero || !hasRealData ? <></> : <TopCategoryTooltip currency={currency} />}
+                  content={allZero ? <></> : <TopCategoryTooltip currency={currency} />}
                   cursor={{ fill: alpha(theme.palette.primary.main, 0.06) }}
                 />
                 <Bar dataKey="displayAmount" radius={[0, 6, 6, 0]} barSize={14}>
@@ -175,12 +165,14 @@ export function TopCategoryCard({ currency = 'EGP' }: { currency?: string }) {
         )}
       </Box>
 
-      <Box sx={{ mt: 1, display: 'flex', alignItems: 'baseline', gap: 1, flexWrap: 'wrap', rowGap: 0.25, minWidth: 0 }}>
-        <Typography sx={{ fontSize: 20, fontWeight: 700, color: 'text.primary' }}>
-          {formatCurrencyByCode(total, currency)}
-        </Typography>
-        <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{t('employee.topCategoryTotal')}</Typography>
-      </Box>
+      {!isEmpty && !isLoading && !isError && (
+        <Box sx={{ mt: 1, display: 'flex', alignItems: 'baseline', gap: 1, flexWrap: 'wrap', rowGap: 0.25, minWidth: 0 }}>
+          <Typography sx={{ fontSize: 20, fontWeight: 700, color: 'text.primary' }}>
+            {formatCurrencyByCode(total, currency)}
+          </Typography>
+          <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{t('employee.topCategoryTotal')}</Typography>
+        </Box>
+      )}
     </Box>
   );
 }

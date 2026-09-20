@@ -33,7 +33,7 @@ export function CurrencyInput({
       slotProps={{
         input: {
           startAdornment: (
-            <InputAdornment position="start" sx={{ fontWeight: 600, color: 'text.secondary' }}>
+            <InputAdornment position="start" sx={{ fontWeight: 600, color: 'text.secondary', alignItems: 'center' }}>
               {currency}
             </InputAdornment>
           ),

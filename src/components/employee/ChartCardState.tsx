@@ -71,11 +71,21 @@ export function ChartCardState({ loading, error, empty, onRetry, emptyTitle, emp
 
   if (empty) {
     return (
-      <EmptyState
-        icon="📊"
-        title={emptyTitle ?? t('employee.noExpenseData')}
-        description={emptyDescription ?? t('employee.noExpenseDataHint')}
-      />
+      <Box
+        sx={{
+          flex: 1,
+          minHeight: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <EmptyState
+          icon="📊"
+          title={emptyTitle ?? t('employee.noExpenseData')}
+          description={emptyDescription ?? t('employee.noExpenseDataHint')}
+        />
+      </Box>
     );
   }
 
